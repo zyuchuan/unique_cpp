@@ -113,7 +113,6 @@ size_t basic_string::length() { return Traits::length(data); }
 
 <br/>
 <hr/>
-<br/>
 
 ## 1.2 Type Trait
 
