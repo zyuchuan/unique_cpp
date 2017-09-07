@@ -42,7 +42,7 @@ typedef basic_string<wchar_t, char_traits<wchar_t>, allocator<wchar_t> > wstring
 template<class T, class Traits = char_traits<T> > class basic_string
 ```
 
-注意第二个模板参数`Traits`，看名字似乎是一个*Trait*，而它也确实是一个*Trait*，而且这个*Trait*有个默认值`char_traits<T>`，也是个模板类，来看看它的定义：
+注意第二个模板参数`Traits`，看名字似乎是一个*Trait*，而它也确实是一个*Trait*，而且这个*Trait*有个默认值`char_traits<T>`，也是个模板类。来看看`char_traits`的定义：
 
 ```
 template<class T>
@@ -79,7 +79,7 @@ size_t char_traits<wchar_t> {
 
 ```
 
-可以看到，`char_traits`定义了个函数`length()`，这个函数针对不同的模板参数`T`，有不同的实现。对于`char`类型，调用`strlen()`计算字符串长度；对于`wchar_t`类型，调用`wcslen()`计算字符串长度。
+可以看到`char_traits`定义函数`length()`，这个函数针对不同的模板参数`T`，有不同的实现。对于`char`类型，调用`strlen()`计算字符串长度；对于`wchar_t`类型，调用`wcslen()`计算字符串长度。
 
 接下来的事情就很简单了，在`basic_string`定义函数`length()`：
 
@@ -88,7 +88,7 @@ template <class T, class Traits, class Allocator>
 size_t basic_string::length() { return Traits::length(data); }
 ```
 
-齐活！一个Trait闪亮登场了！
+齐活！一个优雅的解决方案闪亮登场。
 
 <br/>
 
