@@ -116,9 +116,9 @@ size_t basic_string::length() { return Traits::length(data); }
 
 ## 1.2 Type Trait
 
-Type Trait是C++11中引入的新功能，用于在编译期查询或者编辑类型的属性。C++11的Type Trait由一系列的模板类组成，全部放在头文件`<type_traits>`中。关于C++ 11 Type Trait的详细信息，可以参考[cppreference.com](http://en.cppreference.com/w/cpp/header/type_traits)。
+*Type Trait*是C++11中引入的新功能，用于在编译期查询或者编辑类型的属性。C++11的*Type Trait*由一系列的模板类组成，全部放在头文件`<type_traits>`中。关于C++ 11 *Type Trait*的详细信息，可以参考[cppreference.com](http://en.cppreference.com/w/cpp/header/type_traits)。
 
-本书不打算对每一个type trait做出详细的介绍，仅选择一些高逼格的类，解释设计思路和实现原理，顺便膜拜一下大神们神一般的编码技巧。
+本书不打算对每个type trait都一一介绍，仅选择一些高逼格的*trait*，解释其设计思路和实现原理，目的是让你能透彻了解C++ *Type Trait*，顺便膜拜一下大神们神一般的编码技巧。
 
 我们先从最简单trait `is_const`入手，`is_const`检查一个类型定义有没有`const`修饰符，它的用法如下：
 
