@@ -13,9 +13,7 @@
 C++标准库中的模板类`string`和`wstring`就是Trait技术的典型例子，这两个类的声明如下（为了方便阅读，代码中省略一些和主题无关的细节）：
 
 ```
-template <class T,
-          class Traits = char_traits<T>,
-          class Allocator = allocator<T> >
+template <class T, class Traits = char_traits<T> >
 class basic_string {
 public:
     typedef Traits                             traits_type;
@@ -36,9 +34,16 @@ typedef basic_string<wchar_t, char_traits<wchar_t>, allocator<wchar_t> > wstring
 
 可见`string`和`wstring`其实都是`basica_string`的特化，`string`是针对`char`的特化，而`wstring`是针对`wchart_t`的特化。
 
-字符串都是有长度的，我们希望`basic_string`能提供一个`length()`函数，方便用户获取长度值。问题是，并没有一个通用的函数能同时获取`char`类型和`wchar_t`类型的长度，对`char`类型字符串，获取长度的函数是`strlen(char*)`，而对`wchar_t`类型，获取长度的函数是`wcslen(wchar_t*)`。
+字符串都是有长度的，我们希望`basic_string`能提供一个`length()`函数，方便用户获取长度值。问题是，并没有一个通用的函数能同时获取`char`类型字符串和`wchar_t`类型字符串的长度，对`char`类型字符串，获取长度的函数是`strlen(char*)`，而对`wchar_t`类型，获取长度的函数是`wcslen(wchar_t*)`。
 
-是时候让`Trait`登场了，前面已经说了，`Trait`的作用就是携带信息，而`basci_string`的类声明中刚好有一个`Trait`，就是它了：
+是时候让`Trait`登场了，再看一下`basic_string`的声明：
+
+```
+template<class T, class Traits=char_traits<T> > class basic_string
+```
+注意第二个模板参数`Traits`，由名字可知，这是一个*Trait*，而且
+
+前面说过，`Trait`的作用就是携带信息，而`basci_string`的类声明中刚好有一个`Trait`，就是它了：
 
 ```
 template<class T>
