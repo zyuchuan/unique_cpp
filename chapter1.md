@@ -36,7 +36,7 @@ typedef basic_string<wchar_t, char_traits<wchar_t>, allocator<wchar_t> > wstring
 
 可见`string`和`wstring`其实都是`basica_string`的特化，`string`是针对`char`的特化，而`wstring`是针对`wchart_t`的特化。
 
-字符串都是有长度的，我们希望`basic_string`
+字符串都是有长度的，我们希望`basic_string`能提供一个`length()`函数，方便用户获取长度值。问题是，
 
 在`basic_string`的模板参数中，`Traits`就是一个Trait，它也是一个模板类，定义如下：
 
