@@ -39,11 +39,10 @@ typedef basic_string<wchar_t, char_traits<wchar_t>, allocator<wchar_t> > wstring
 是时候让`Trait`登场了，再看一下`basic_string`的声明：
 
 ```
-template<class T, class Traits=char_traits<T> > class basic_string
+template<class T, class Traits = char_traits<T> > class basic_string
 ```
-注意第二个模板参数`Traits`，由名字可知，这是一个*Trait*，而且
 
-前面说过，`Trait`的作用就是携带信息，而`basci_string`的类声明中刚好有一个`Trait`，就是它了：
+注意第二个模板参数`Traits`，看名字似乎是一个*Trait*，而它也确实是一个*Trait*，而且这个*Trait*有个默认值`char_traits<T>`，也是个模板类，来看看它的定义：
 
 ```
 template<class T>
