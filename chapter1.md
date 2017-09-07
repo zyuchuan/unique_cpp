@@ -120,34 +120,32 @@ size_t basic_string::length() { return Traits::length(data); }
 
 本书不打算对每个type trait都一一介绍，仅选择一些高逼格的*trait*，解释其设计思路和实现原理，目的是让你能透彻了解C++ *Type Trait*，顺便膜拜一下大神们神一般的编码技巧。
 
-我们先从最简单trait `is_const`入手，`is_const`检查一个类型定义有没有`const`修饰符，它的用法如下：
+### 1.2.1 is_const
+
+我们先从最简单*trait* `is_const`入手，`is_const`检查一个类型声明有没有`const`修饰符，它的用法如下：
 
 ```
 #include <iostream>
 #include <type_traits>
  
-int main() 
-{
+int main() {
     std::cout << std::boolalpha;
-    std::cout << std::is_const<int>::value << '\n'; // false
-    std::cout << std::is_const<const int>::value  << '\n'; // true
+    std::cout << std::is_const<int>::value << '\n';         // false
+    std::cout << std::is_const<const int>::value  << '\n';  // true
     std::cout << std::is_const<const int*>::value  << '\n'; // false
     std::cout << std::is_const<int* const>::value  << '\n'; // true
     std::cout << std::is_const<const int&>::value  << '\n'; // false
 }
 ```
 
-实现原理也很简单，无非就是模板特化而已，源代码如下（省略了和主题无关的细节）：
+实现原理也很简单，源代码如下（省略了和主题无关的细节）：
 
 ```
 // header: <type_traits>
 
 template <class T, T v>
-struct integral_constant
-{
+struct integral_constant {
     static constexpr const T    value = v;
-    
-    ...
 };
 
 typedef integral_constant<bool, true> true_type;
@@ -163,12 +161,7 @@ struct is_const<const T> : public true_type {};
 
 代码很好理解，无非就是针对`const`类型的模板特化而已。
 
-好了，科普时间结束，我们来看一下C++ 11标准库中那些高逼格的type traits是怎么实现的。
-
-
-## 1.3 C++标准库中的Type Traits
-
-### 1.3.1 is\_class
+### 1.2.2 is\_class
 
 如果要你来写一个type trait，判断某个类型是否是一个class或struct,你该怎么做？我估计你已经瞬间就晕菜了。考虑一下，什么是`class`，`class`无非就是一组数据以及用以操纵这些数据的函数组成，对于类中的数据，C++允许你定义一个指向类成员变量的指针。指向类成员变量的指针是`class`和`struct`所特有的属性，那可不可以针对这些特有属性，在模板特化上做文章呢？答案是肯定的，而且这也正是`is_class`的实现原理：
 
