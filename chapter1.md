@@ -84,7 +84,7 @@ size_t char_traits<wchar_t> {
 接下来的事情就很简单了，在`basic_string`定义函数`length()`：
 
 ```
-template <class T, class Traits, class Allocator>
+template <class T, class Traits>
 size_t basic_string::length() { return Traits::length(data); }
 ```
 
