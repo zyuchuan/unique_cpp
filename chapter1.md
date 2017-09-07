@@ -81,37 +81,39 @@ size_t char_traits<wchar_t> {
 
 可以看到`char_traits`定义函数`length()`，这个函数针对不同的模板参数`T`，有不同的实现。对于`char`类型，调用`strlen()`计算字符串长度；对于`wchar_t`类型，调用`wcslen()`计算字符串长度。
 
-接下来的事情就很简单了，在`basic_string`定义函数`length()`：
+接下来的事情就很简单了，在`basic_string`中定义函数`length()`：
 
 ```
 template <class T, class Traits>
 size_t basic_string::length() { return Traits::length(data); }
 ```
 
-齐活！一个优雅的解决方案闪亮登场。
+齐活！借助*Trati*技术，一个优雅的解决方案闪亮登场！
 
 <br/>
 
-> **注**：这里为了解释Trait概念，对`basic_string`的定义做了简化处理，C++标准库的实现方式与此有很大的不同，[不信就狠戳这里](http://en.cppreference.com/w/cpp/string/basic_string)。
+> **注**：这里为了解释*Trait*概念，对`basic_string`的定义做了简化处理，C++标准库的实现方式与此有很大的不同，[不信就狠戳这里](http://en.cppreference.com/w/cpp/string/basic_string)。
 
 <br/>
 
 ### 小结
 
-相信聪明如你者已经发现：“这TM不就是设计模式中的Strategy模式吗？”恭喜你学会抢答，Trait确实和Strategy模式很像，但是，
+相信聪明如你者已经发现：“这TM不就是设计模式中的Strategy模式吗？” 恭喜你学会抢答，*Trait*确实和Strategy模式很像，但是，
 
-1. Strategy模式中，strategy的选择是在运行期进行的，而Trait是基于模板的，所以strategy的选择是在**编译期**完成的。
-2. Strategy模式中，strategy的选择通常都是基于变量的值，而Trait是基于模板的，所以的strategy的选择是基于**变量类型**的。
+1. Strategy模式中，strategy的选择是在运行期进行的，而*Trait*是基于模板的，所以strategy的选择是在**编译期**完成的。
+2. Strategy模式中，strategy的选择通常都是基于变量的值，而*Trait*是基于模板的，所以的strategy的选择是基于**变量类型**的。
 
-一句话，Trait其实就是编译期类型推导。不仅Trait如此，C++中所有基于模板的花样都是编译期类型推导，重要的画话说三遍：
-
-**编译期类型推导！**
+一句话，*Trait*的实质就是编译期类型推导。不仅*Trait*如此，C++中所有基于模板的解析其实质都是编译期类型推导。重要的话说三遍：
 
 **编译期类型推导！**
 
 **编译期类型推导！**
 
+**编译期类型推导！**
+
+<br/>
 <hr/>
+<br/>
 
 ## 1.2 Type Trait
 
