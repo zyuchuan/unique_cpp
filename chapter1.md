@@ -10,7 +10,7 @@
 
 > trait是一个小型对象，它的主要目的就是携带信息，而这些信息会被其它的对象或算法使用，用来决定某个“policy”或“implementation”的细节。
 
-你应该C++标准库中的模板类`string`和`wstring`就是*Trait*应用的典型例子，这两个类的声明如下（为了方便阅读，代码中省略一些和主题无关的细节）：
+还是不知所云？我再给你举个例子，C++标准库中有两个字符串模板类`string`和`wstring`，这两个类的声明如下（为了方便阅读，代码中省略一些和主题无关的细节）：
 
 ```
 template <class T, class Traits = char_traits<T> >
