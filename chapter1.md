@@ -197,6 +197,60 @@ struct is_class
 如果`T`不是一个`class`或`struct`，那`int T::*`就是一个非法的语句，编译器只能退而求其次，匹配“三个点”版本，于是`sizeof(....)`的值为1。
 
 
+### 1.3.10 common\_type
+
+`common_type`返回所有模板参数的公有类型
+
+```
+template<class ...T> struct commont_type;
+
+template<class T>
+struct common_type {
+    typedef typename std::decay<T>::type type;
+};
+
+template<class T, class U>
+struct common_type {
+private:
+    static T&& t();
+    statuc U&& u();
+    static bool f();
+public:
+    typedef typename std::decay<decltype(f() ? t() : u())>::type type;
+};
+
+template<class T, class U, class ...V>
+struct common_type<T, U, V...> {
+    typedef typename common_type<typename common_type<T, U>::type, V...>::type type;
+};
+```
+
+代码比较简单，首先声明了一个模板类，然后分别针对模板参数的个数为一个和两个的情形做了特化，对于三个以上的模板参数的情况，则用递归定义。
+
+等等，好像哪里不对？
+
+1. 哪里能看出来推导公共类型了？
+2. 这行代码有问题: `typedef typename std::decay<decltype(f() ? t() : u())::type type`，函数`f()`根本没有定义，所以三目运算符`? :`根本没法求值。
+
+恭喜你，你有一双火眼金睛。让我来告诉你三目运算符是怎么回事。没错，`f()`没有定义，因为编译器根本不需要，编译器在碰到这种情况是，会自动计算公共类型，然后把这个公共类型作为`decltype`的参数。
+
+```
+int main() {
+    std::cout << typeid(decltype(
+        true ? std::declval<int>() : std::declval<double>())).name() 
+        << std::endl;
+        
+    std::cout << typeid(decltype(
+        false ? std::declval<int>() : std::declval<double>())).name() 
+        << std::endl;
+}
+```
+
+在我的XCode 8.3中，上面两行代码都输出`d`，也就是`double`。这就证明了编译器在分析三目运算符时，自动对参数进行了转换，并返回最大公共类型。
+
+真是令人拍案叫绝的神技啊！
+
+
 ### 1.3.6 is\_function
 
 ```
@@ -272,55 +326,4 @@ template<class T> struct is_polymorphic
     : public integral_constant<bool, sizeof(is_polymorphic_impl<T>(0)) == 1>{};
 ```
 
-### 1.3.10 common\_type
 
-`common_type`返回所有模板参数的公有类型
-
-```
-template<class ...T> struct commont_type;
-
-template<class T>
-struct common_type {
-    typedef typename std::decay<T>::type type;
-};
-
-template<class T, class U>
-struct common_type {
-private:
-    static T&& t();
-    statuc U&& u();
-    static bool f();
-public:
-    typedef typename std::decay<decltype(f() ? t() : u())>::type type;
-};
-
-template<class T, class U, class ...V>
-struct common_type<T, U, V...> {
-    typedef typename common_type<typename common_type<T, U>::type, V...>::type type;
-};
-```
-
-代码比较简单，首先声明了一个模板类，然后分别针对模板参数的个数为一个和两个的情形做了特化，对于三个以上的模板参数的情况，则用递归定义。
-
-等等，好像哪里不对？
-
-1. 哪里能看出来推导公共类型了？
-2. 这行代码有问题: `typedef typename std::decay<decltype(f() ? t() : u())::type type`，函数`f()`根本没有定义，所以三目运算符`? :`根本没法求值。
-
-恭喜你，你有一双火眼金睛。让我来告诉你三目运算符是怎么回事。没错，`f()`没有定义，因为编译器根本不需要，编译器在碰到这种情况是，会自动计算公共类型，然后把这个公共类型作为`decltype`的参数。
-
-```
-int main() {
-    std::cout << typeid(decltype(
-        true ? std::declval<int>() : std::declval<double>())).name() 
-        << std::endl;
-        
-    std::cout << typeid(decltype(
-        false ? std::declval<int>() : std::declval<double>())).name() 
-        << std::endl;
-}
-```
-
-在我的XCode 8.3中，上面两行代码都输出`d`，也就是`double`。这就证明了编译器在分析三目运算符时，自动对参数进行了转换，并返回最大公共类型。
-
-真是令人拍案叫绝的神技啊！
