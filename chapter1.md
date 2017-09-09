@@ -214,11 +214,13 @@ common_type<int, float, double>::type       // double
 // 类声明，注意三个点，这说明这个类可以有任意多个模板参数
 template<class ...T> struct commont_type;
 
+// 针对只有一个模板参数的特化
 template<class T>
 struct common_type<T> {
     typedef typename std::decay<T>::type type;
 };
 
+// 针对两个模板参数的特化
 template<class T, class U>
 struct common_type<T, U> {
 private:
@@ -229,6 +231,7 @@ public:
     typedef typename std::decay<decltype(f() ? t() : u())>::type type;
 };
 
+// 针对三个或以上模板参数的特化
 template<class T, class U, class ...V>
 struct common_type<T, U, V...> {
     typedef typename common_type<typename common_type<T, U>::type, V...>::type type;
@@ -261,7 +264,7 @@ int main() {
 真是令人拍案叫绝的神技啊！
 
 
-### 1.3.6 is\_function
+### 1.2.4 is\_function
 
 ```
 namspace libcpp_is_function_imp {
@@ -302,21 +305,13 @@ struct is_function : public libcpp_is_function<T> {};
 
 值得注意的是，代码中只是声明了函数，并没有定义，因为不需要。在做类型推导的时候，编译器不需要知道函数的定义，只需要知道函数的返回值就可以了。
 
-### 1.3.7 is\_member\_pointer
-
-```
-template<class T> struct libcpp_is_member_pointer : public false_type{};
-template<class T, class U> struct libcpp_is_member_pointer<T, U::*> public true_type{};
-
-template<class T> struct is_member_pointer 
-    : public libcpp_is_member_pointer<typename remove_cv<T>::type>{};
-```
 
 ### 1.3.8 is\_member\_function\_pointer
 
 ```
 template<class T> struct libcpp_is_member_function_pointer 
     : public false_type {}
+    
 template<class Ret, class Kls> struct libcpp_is_member_function_pointer<Ret, Kls::*>
     : public is_function<Ret> {};
 
