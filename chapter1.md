@@ -197,20 +197,30 @@ struct is_class
 如果`T`不是一个`class`或`struct`，那`int T::*`就是一个非法的语句，编译器只能退而求其次，匹配“三个点”版本，于是`sizeof(....)`的值为1。
 
 
-### 1.3.10 common\_type
+### 1.2.3 common\_type
 
-`common_type`返回所有模板参数的公有类型
+`common_type`返回所有模板参数的最大公共类型，比如说如果有
 
 ```
+common_type<int, float>::type               // float
+common_type<int, float, double>::type       // double
+```
+
+似乎是一件很复杂的是，确实很复杂，不过如果看了源代码，你一定会大呼，原来这么简单，我怎么就想不到，你如果想到了，就扔了这本书吧，你已经不需要了。
+
+```
+// header: <type_tratis>
+
+// 类声明，注意三个点，这说明这个类可以有任意多个模板参数
 template<class ...T> struct commont_type;
 
 template<class T>
-struct common_type {
+struct common_type<T> {
     typedef typename std::decay<T>::type type;
 };
 
 template<class T, class U>
-struct common_type {
+struct common_type<T, U> {
 private:
     static T&& t();
     statuc U&& u();
