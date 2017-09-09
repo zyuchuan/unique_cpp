@@ -125,17 +125,12 @@ size_t basic_string::length() { return Traits::length(data); }
 我们先从最简单的*type trait* `is_const`入手，`is_const`检查一个类型声明有没有`const`修饰符，它的用法如下：
 
 ```
-#include <iostream>
-#include <type_traits>
- 
-int main() {
-    std::cout << std::boolalpha;
-    std::cout << std::is_const<int>::value << '\n';         // false
-    std::cout << std::is_const<const int>::value  << '\n';  // true
-    std::cout << std::is_const<const int*>::value  << '\n'; // false
-    std::cout << std::is_const<int* const>::value  << '\n'; // true
-    std::cout << std::is_const<const int&>::value  << '\n'; // false
-}
+ std::cout << std::boolalpha;
+ std::cout << std::is_const<int>::value << '\n';         // false
+ std::cout << std::is_const<const int>::value  << '\n';  // true
+ std::cout << std::is_const<const int*>::value  << '\n'; // false
+ std::cout << std::is_const<int* const>::value  << '\n'; // true
+ std::cout << std::is_const<const int&>::value  << '\n'; // false
 ```
 
 实现原理也很简单，源代码如下（省略了和主题无关的细节）：
@@ -160,7 +155,11 @@ template<class T>
 struct is_const<const T> : public true_type {};
 ```
 
-注意上面代码中的`true_type`和`false_type`，这两个类的唯一作用就是对`true`和`false`做外敷包装。这是因为在编译期，编译器能做的只是类型推导，所以必须将`true`和`false`包装成对象的形式，否则编译器会报错。
+注意上面代码中的`true_type`和`false_type`，这两个类是对`true`和`false`做外敷包装。这样做有几个好处：
+
+1. 将`true`和`false`包装成对象的形式，使得编译器可以根据一个`bool`值做类型推导。
+2. 将`true`和`false`包装成对象后，可以利用继承特性写出更简洁的代码。
+3. `true`和`false`是同一类型（`bool`类型），而`true_type`和`false_type`则是两个不同的类，很多时候，可以利用这个事实，做一些函数重载，我们后面会看到这方面的应用。
 
 很好理解，无非就是针对`const`类型的模板特化而已。
 
