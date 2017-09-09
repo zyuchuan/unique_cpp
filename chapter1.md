@@ -10,7 +10,7 @@
 
 > trait是一个小型对象，它的主要目的就是携带信息，而这些信息会被其它的对象或算法使用，用来决定某个“policy”或“implementation”的细节。
 
-还是不知所云？我再举个例子，C++标准库中有两个字符串模板类`string`和`wstring`，这两个类的声明如下（为了方便阅读，代码中省略一些和主题无关的细节）：
+还是不知所云？我再举个例子，C++标准库中有两个字符串模板类`string`和`wstring`，类的声明如下（为了方便阅读，代码中省略一些和主题无关的细节）：
 
 ```
 template <class T, class Traits = char_traits<T> >
@@ -163,7 +163,7 @@ struct is_const<const T> : public true_type {};
 
 ### 1.2.2 is\_class
 
-如果要你来写一个*type trait*，判断某个类型是否是一个class或struct,你该怎么做？我估计你已经瞬间就晕菜了。考虑一下，什么是`class`，`class`无非就是一组数据以及用以操纵这些数据的函数组成，对于类中的数据，C++允许你定义一个指向类成员变量的指针。指向类成员变量的指针是`class`和`struct`所特有的属性，那可不可以针对这些特有属性，在模板特化上做文章呢？答案是肯定的，而且这也正是`is_class`的实现原理：
+如果要你来写一个*type trait*，判断某个类型是否是一个class或struct,你该怎么做？我估计你已经瞬间就晕菜了。考虑一下，什么是`class`，`class`无非就是一组数据以及用以操纵这些数据的函数的集合，对于类中的数据，C++允许你定义一个指向类成员变量的指针。指向类成员变量的指针就是`class`所特有的属性，那可不可以针对这些特有属性，在模板特化上做文章呢？答案是肯定的，而且这也正是`is_class`的实现原理：
 
 ```
 // header <type_traits>
@@ -187,6 +187,8 @@ struct is_class
     : public integral_constant<bool, sizeof(is_class_imp::test<T>(0)) == 1> {}
     
 ```
+
+等等，`sizeof(is_class_imp::test<T>(0))`是什么？一个函数的`size`是什么？函数的`size`就是函数返回类型的`size`，可是，函数并没有定义啊？C++编译器根本不需要看到函数的定义，编译器只要知道这个函数的返回类型就行了。事情清楚了，对普通的类型，编译器会匹配`test(...)`，而这个函数的`size`是2，对于`class`或`struct`，编译器会匹配`test(int T::*)`。
 
 几点说明：
 
