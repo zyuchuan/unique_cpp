@@ -122,7 +122,7 @@ size_t basic_string::length() { return Traits::length(data); }
 
 ### 1.2.1 is_const
 
-我们先从最简单*trait* `is_const`入手，`is_const`检查一个类型声明有没有`const`修饰符，它的用法如下：
+我们先从最简单的*type trait* `is_const`入手，`is_const`检查一个类型声明有没有`const`修饰符，它的用法如下：
 
 ```
 #include <iostream>
@@ -151,15 +151,19 @@ struct integral_constant {
 typedef integral_constant<bool, true> true_type;
 typedef integral_constant<bool, false> false_type;
 
-// is_const
+
 template<class T>
 struct is_const : public false_type {};
 
+// 针对const类型的特化版本
 template<class T>
 struct is_const<const T> : public true_type {};
 ```
 
-代码很好理解，无非就是针对`const`类型的模板特化而已。
+注意上面代码中的`true_type`和`false_type`，这两个类的唯一作用就是对`true`和`false`做外敷包装。这是因为在编译期，编译器能做的只是类型推导，所以必须将`true`和`false`包装成对象的形式，否则编译器会报错。
+
+很好理解，无非就是针对`const`类型的模板特化而已。
+
 
 ### 1.2.2 is\_class
 
