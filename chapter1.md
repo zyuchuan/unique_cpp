@@ -161,7 +161,7 @@ struct is_const<const T> : public true_type {};
 2. 将`true`和`false`包装成对象后，可以利用继承特性写出更简洁的代码。
 3. `true`和`false`是同一类型（`bool`类型），而`true_type`和`false_type`则是两个不同的类，很多时候，可以利用这个事实，做一些函数重载，我们后面会看到这方面的应用。
 
-很好理解，无非就是针对`const`类型的模板特化而已。
+很好理解，无非就是针对`const`类型的模板特化而已。如果模板参数`T`没有`const`修饰，则编译器会匹配第一个定义，否则匹配第二个定义。
 
 
 ### 1.2.2 is\_class
@@ -205,8 +205,8 @@ struct is_class
 `common_type`返回所有模板参数的最大公共类型，比如说如果有
 
 ```
-common_type<int, float>::type               // float
-common_type<int, float, double>::type       // double
+common_type<int, float>::type           // float，因为int可以转换成float
+common_type<int, float, double>::type   // double，因为int, float都可以转换成double
 ```
 
 似乎是一件很复杂的是，确实很复杂，不过如果看了源代码，你一定会大呼，原来这么简单，我怎么就想不到，你如果想到了，就扔了这本书吧，你已经不需要了。
@@ -251,15 +251,8 @@ struct common_type<T, U, V...> {
 恭喜你，你有一双火眼金睛。让我来告诉你三目运算符是怎么回事。没错，`f()`没有定义，因为编译器根本不需要，编译器在碰到这种情况是，会自动计算公共类型，然后把这个公共类型作为`decltype`的参数。
 
 ```
-int main() {
-    std::cout << typeid(decltype(
-        true ? std::declval<int>() : std::declval<double>())).name() 
-        << std::endl;
-        
-    std::cout << typeid(decltype(
-        false ? std::declval<int>() : std::declval<double>())).name() 
-        << std::endl;
-}
+decltype(true ? std::declval<int>() : std::declval<double>())) // double
+decltype(false ? std::declval<int>() : std::declval<double>())) // double
 ```
 
 在我的XCode 8.3中，上面两行代码都输出`d`，也就是`double`。这就证明了编译器在分析三目运算符时，自动对参数进行了转换，并返回最大公共类型。
