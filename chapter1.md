@@ -34,7 +34,7 @@ typedef basic_string<wchar_t, char_traits<wchar_t>, allocator<wchar_t> > wstring
 
 可见`string`和`wstring`其实都是`basica_string`的特化，`string`是针对`char`的特化，而`wstring`是针对`wchart_t`的特化。
 
-字符串都是有长度的，我们希望`basic_string`能提供一个`length()`函数，方便用户获取长度值。问题是，并没有一个通用的函数能同时获取`char`类型字符串和`wchar_t`类型字符串的长度，对`char`类型字符串，获取长度的函数是`strlen(char*)`，而对`wchar_t`类型，获取长度的函数是`wcslen(wchar_t*)`。
+字符串都是有长度的，我们希望`basic_string`能提供一个`length()`函数，方便用户获取字符串的长度。问题是，并没有一个通用的函数能同时获取`char`类型字符串和`wchar_t`类型字符串的长度，对`char`类型字符串，获取长度的函数是`strlen(char*)`，而对`wchar_t`类型，获取长度的函数是`wcslen(wchar_t*)`。
 
 是时候让*Trait*登场了，再看一下`basic_string`的声明：
 
@@ -79,7 +79,7 @@ size_t char_traits<wchar_t> {
 
 ```
 
-可以看到`char_traits`定义函数`length()`，这个函数针对不同的模板参数`T`，有不同的实现。对于`char`类型，调用`strlen()`计算字符串长度；对于`wchar_t`类型，调用`wcslen()`计算字符串长度。
+可以看到`char_traits<T>::length()`这个函数针对不同的模板参数`T`，有不同的实现。对于`char`类型，调用`strlen()`计算字符串长度；对于`wchar_t`类型，调用`wcslen()`计算字符串长度。
 
 接下来的事情就很简单了，在`basic_string`中定义函数`length()`：
 
@@ -319,7 +319,7 @@ template<class T> struct is_member_function_pointer
     : public libcpp_is_member_function_pointer<typename remove_cv<T>::type>::type {};
 ```
 
-### 1.3.9 is\_polymorphic
+### 1.2.6 is\_polymorphic
 
 ```
 template<typename T> char& is_polymorphic_impl(
@@ -330,5 +330,3 @@ template<typename T> struct two& is_polymorphic_impl(...);
 template<class T> struct is_polymorphic
     : public integral_constant<bool, sizeof(is_polymorphic_impl<T>(0)) == 1>{};
 ```
-
-
