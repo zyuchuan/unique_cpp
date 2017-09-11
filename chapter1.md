@@ -328,13 +328,10 @@ std::cout << is_function<T>::value << std::endl;            // true
 
 ```
 namspace libcpp_is_function_imp {
-    struct dummy_type{};
     template<calss T> char    test(T*);
-    template<class T> char    test(dummy_type);
     template<class T> two     test(...);
     
     template<calss T> T&     source(int);
-    template<class T> dummy_type source(...);
 }
 
 // 如果T是class, union, void, reference或null pointer,
