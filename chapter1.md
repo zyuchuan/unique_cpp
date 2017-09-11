@@ -118,7 +118,7 @@ size_t basic_string::length() { return Traits::length(data); }
 
 *Type Trait*是C++11中引入的新功能，用于在编译期查询或者编辑类型的属性。C++11的*Type Trait*由一系列的模板类组成，全部放在头文件`<type_traits>`中。关于C++ 11 *Type Trait*的详细信息，可以参考[cppreference.com](http://en.cppreference.com/w/cpp/header/type_traits)。
 
-本书不打算对每个type trait都一一介绍，仅选择一些高逼格的*trait*，解释其设计思路和实现原理，目的是让你能透彻了解C++ *Type Trait*，顺便膜拜一下大神们神一般的编码技巧。
+本书不打算对每个type trait都一一介绍，仅选择一些高逼格的*trait*，解释其设计思路和实现原理，目的是让你能透彻了解C++ *Type Trait*，顺便膜拜一下大神们的编码技巧。
 
 ### 1.2.1 is_const
 
@@ -155,13 +155,7 @@ template<class T>
 struct is_const<const T> : public true_type {};
 ```
 
-注意上面代码中的`true_type`和`false_type`，这两个类是对`true`和`false`做外敷包装。这样做有几个好处：
-
-1. 将`true`和`false`包装成对象的形式，使得编译器可以根据一个`bool`值做类型推导。
-2. 将`true`和`false`包装成对象后，可以利用继承特性写出更简洁的代码。
-3. `true`和`false`是同一类型（`bool`类型），而`true_type`和`false_type`则是两个不同的类，很多时候，可以利用这个事实，做一些函数重载，我们后面会看到这方面的应用。
-
-很好理解，无非就是针对`const`类型的模板特化而已。如果模板参数`T`没有`const`修饰，则编译器会匹配第一个定义，否则匹配第二个定义。
+代码很好理解，无非就是针对`const`类型的模板特化而已，这里就不详细解释了。如果你理解起来有难度，恐怕你得补习一下C++模板知识了。
 
 
 ### 1.2.2 is\_class
