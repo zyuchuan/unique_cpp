@@ -313,7 +313,7 @@ std::cout << is_function<decltype(f)>::value << std::endl;  // true
 std::cout << is_function<int>::value << std::endl;          // false
 
 using T = PM_traits<decltype(&A::fun)>::member_type;
-std::cout << is_function<T>::value << std::endl;            // false
+std::cout << is_function<T>::value << std::endl;            // true
 
 ```
 
