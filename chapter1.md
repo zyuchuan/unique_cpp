@@ -360,11 +360,10 @@ struct is_function : public libcpp_is_function<T> {};
 1. 如果你对一个`class`, `union`, `void`, `reference`或`null pointer`，执行`is_function`操作，此时`libcpp_is_function`的第二个模板参数为`true`，而针对这种情况定义了一个特化版本，该特化版本继承于`false_type`，这是我们需要的结果。
 
 2. 除去第一种情况，编译器会激活非特化版本，此时编译器会对模板类`integral_const`的第二个模板参数进行类型推导：
-    2.1 如果`T`是一个function对象，`T& source(int)`会被解析，并返回这个函数对象类型，
+    2.1 如果`T`是一个function对象，则`libcpp_is_function_imp::source<T>(0))`的返回值`T&`能精确匹配`test(T*)`，于是编译器将类的声明替换为
+    `struct libcpp_is_function : public integral_const<bool, size(char) == 1>`，进而替换成`struct libcpp_is_function : public integral_const<bool, true>`，这也是我们需要的结果。
 
-    2.2 如果`T`不是一个function对象，`T& source(int)`还是会被解析，但是此时的返回值是`T&`，然后`test(...)`会被解析，`sizeof`返回2，
-
-    2.3 有的编译器可能不接受返回函数对象，此时`source(...)`会被解析
+    2.2 如果`T`不是一个function对象，但是此时的返回值是`T&`，然后`test(...)`会被解析，`sizeof`返回2，
 
 值得注意的是，代码中只是声明了函数，并没有定义，因为不需要。在做类型推导的时候，编译器不需要知道函数的定义，只需要知道函数的返回值就可以了。
 
