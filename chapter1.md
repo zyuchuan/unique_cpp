@@ -160,7 +160,7 @@ struct is_const<const T> : public true_type {};
 
 ### 1.2.2 is\_class
 
-如果要你来写一个*type trait*，判断某个类型是否是一个class或struct，比如
+如果要你来写一个*type trait*，判断某个类型是否是一个class或struct，比如有如下代码：
 
 ```
 struct A {};
@@ -185,7 +185,7 @@ false
 
 你该怎么做？
 
-我估计你已经瞬间就晕菜了。考虑一下，什么是`class`，`class`无非就是一组数据以及用以操纵这些数据的函数的集合，对于类中的数据，C++允许你定义一个指向类成员变量的指针。指向类成员变量的指针就是`class`所特有的属性，那可不可以针对这些特有属性，在模板特化上做文章呢？答案是肯定的，而且这也正是`is_class`的实现原理：
+考虑一下什么是`class`，`class`无非就是一组数据以及用以操纵这些数据的函数的集合。对于类中的数据，C++允许你定义一个指向类成员变量的指针，这是`class`所特有的属性，那可不可以针对这些特有属性，在模板特化上做文章呢？答案是肯定的，而且这也正是`is_class`的实现原理：
 
 ```
 // header <type_traits>
@@ -283,6 +283,36 @@ decltype(false ? std::declval<int>() : std::declval<double>())) // double
 
 
 ### 1.2.4 is\_function
+
+`is_function`检查某个类型是否是`function`，注意，`std::function`，lambda表达式，重载了`operator()`的类，已经函数指针都不能算是`function`：
+
+```
+// http://en.cppreference.com/w/cpp/types/is_function
+
+strcut A {
+    int fun();
+};
+
+template<typename T>
+struct PM_traits{};
+
+template<class T, class U>
+struct PM_traits<U T::*> {
+    using member_type = U;
+}
+
+int f();
+
+std::cout << std::boolalpha;
+std::cout << is_function<A>::value << std::endl;            // false
+std::cout << is_function<int(int)>::value << std::endl;     // true
+std::cout << is_function<decltype(f)>::value << std::endl;  // true
+std::cout << is_function<int>::value << std::endl;          // false
+
+using T = PM_traits<decltype(&A::fun)>::member_type;
+std::cout << is_function<T>::value << std::endl;            // false
+
+```
 
 ```
 namspace libcpp_is_function_imp {
