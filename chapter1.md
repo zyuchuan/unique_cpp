@@ -195,7 +195,12 @@ struct is_class
 
 当编译器看到`sizeof(is_class_imp::test<T>(0))`的时候，首先需要决定匹配哪个`test`函数。如果模板参数`T`确实是一个`class`或`struct`，那`int T::*`就是合法的C++表达式。至于`T`中有没有`int`类型的成员变量，编译器根本不关心，因为编译器关心的是如何求出`sizeof`的值。所以，如果`T`是个`class`或`struct`，第一个函数匹配得更好，编译器于是用第一个函数的返回类型去求`sizeof`。
 
-如果`T`不是一个`class`或`struct`，那`int T::*`就是一个非法的表达式，根据[SFINAE](https://en.wikipedia.org/wiki/Substitution_failure_is_not_an_error)规则，编译器不会报错，而是试着匹配第二个函数，也就是`test`的三个点版本，而三个点是可以匹配任何参数类型的，于是`sizeof(....)`的值为1。
+如果`T`不是一个`class`或`struct`，那`int T::*`就是一个非法的表达式，根据[SFINAE](https://en.wikipedia.org/wiki/Substitution_failure_is_not_an_error)规则，编译器不会报错，而是试着匹配第二个函数，也就是`test`的三个点版本，而三个点是可以匹配任何参数类型的，于是`sizeof(....)`的值为2，也就是说代码变成这样:
+
+```
+template<class T>
+struct is_class : public integral_constant<bool, false> {};
+```
 
 
 ### 1.2.3 common\_type
