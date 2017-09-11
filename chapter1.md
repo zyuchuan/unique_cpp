@@ -307,11 +307,20 @@ struct PM_traits<U T::*> {
 int f();
 
 std::cout << std::boolalpha;
+
+// 1. A是个class，不是function;
 std::cout << is_function<A>::value << std::endl;            // false
+
+// 2. int(int)表示一个以int为参数，并返回int的function类型；
 std::cout << is_function<int(int)>::value << std::endl;     // true
+
+// 3. f是个function的名字，decltype(f)是个function类型
 std::cout << is_function<decltype(f)>::value << std::endl;  // true
+
+// 4. 显然int不是一个function
 std::cout << is_function<int>::value << std::endl;          // false
 
+// 5. T被解析成 int()，是个function
 using T = PM_traits<decltype(&A::fun)>::member_type;
 std::cout << is_function<T>::value << std::endl;            // true
 
