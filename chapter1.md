@@ -287,8 +287,10 @@ decltype(false ? std::declval<int>() : std::declval<double>())) // double
 `is_function`检查某个类型是否是`function`，注意，`std::function`，lambda表达式，重载了`operator()`的类，以及函数指针都不能算是`function`：
 
 ```
-// sample code comes from
-// http://en.cppreference.com/w/cpp/types/is_function
+/*
+ Sample code comes from
+ http://en.cppreference.com/w/cpp/types/is_function
+*/
 
 strcut A {
     int fun();
