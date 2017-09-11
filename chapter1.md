@@ -337,6 +337,8 @@ namspace libcpp_is_function_imp {
     template<class T> dummy_type source(...);
 }
 
+// 如果T是class, union, void, reference或null pointer,
+// 则第二个模板参数的值为true，而针对这种情况，有一个特化的版本
 template<class T, bool = is_class<T>::value ||
                          is_union<T>::value ||
                          is_void<T>::value  ||
@@ -346,6 +348,8 @@ struct libcpp_is_function : public integral_const<bool,
       sizeof(libcpp_is_function_imp::test<T>(libcpp_is_function_imp::source<T>(0))) == 1>
 {};
 
+// 针对class, union, void, reference和null pointer的
+// 特化版本
 template<class T>
 struct libcpp_is_function<Tp, true> : public false_type {};
 
@@ -359,9 +363,11 @@ struct is_function : public libcpp_is_function<T> {};
 1. 如果你对一个`class`, `union`, `void`, `reference`或`null pointer`，执行`is_function`操作，此时`libcpp_is_function`的第二个模板参数为`true`，而针对这种情况定义了一个特化版本，该特化版本继承于`false_type`，这是我们需要的结果。
 
 2. 除去第一种情况，编译器会激活非特化版本，此时编译器会对模板类`integral_const`的第二个模板参数进行类型推导：
-2.1 如果`T`是一个function对象，`T& source(int)`会被解析，并返回这个函数对象类型，
-2.2 如果`T`不是一个function对象，`T& source(int)`还是会被解析，但是此时的返回值是`T&`，然后`test(...)`会被解析，`sizeof`返回2，
-2.3 有的编译器可能不接受返回函数对象，此时`source(...)`会被解析
+    2.1 如果`T`是一个function对象，`T& source(int)`会被解析，并返回这个函数对象类型，
+
+    2.2 如果`T`不是一个function对象，`T& source(int)`还是会被解析，但是此时的返回值是`T&`，然后`test(...)`会被解析，`sizeof`返回2，
+
+    2.3 有的编译器可能不接受返回函数对象，此时`source(...)`会被解析
 
 值得注意的是，代码中只是声明了函数，并没有定义，因为不需要。在做类型推导的时候，编译器不需要知道函数的定义，只需要知道函数的返回值就可以了。
 
