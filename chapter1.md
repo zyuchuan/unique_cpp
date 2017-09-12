@@ -286,7 +286,7 @@ struct common_type<T, U, V...> {
 ```
 std::cout << 
     typeid(decltype(true ? std::declval<int>() : std::declval<double>())).name() << std::endl;  // double
-    
+
 std::cout << 
     typeid(decltype(false ? std::declval<int>() : std::declval<double>())).name() << std::endl; // double
 ```
@@ -294,6 +294,8 @@ std::cout <<
 在我的XCode 8.3中，上面两行代码都输出`d`，也就是`double`。这就证明了编译器在三目表达式时，自动对参数类型进行了转换，并返回最大公共类型。
 
 用三目运算符来推导最大公共类型，我只能用“顶（sang）礼（xin）膜（bing）拜（kuang）”来形容。在C++11的标准库中，类似的使用“奇技淫巧”例子还有很多，这里就不一一介绍了。知乎上有一篇关于C++“奇技淫巧”的讨论帖子，有兴趣的同学可以[狠戳这里](https://www.zhihu.com/question/27338446)
+
+<br/>
 
 ### 1.2.4 is\_function
 
