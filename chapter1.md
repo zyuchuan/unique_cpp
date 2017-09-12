@@ -367,7 +367,7 @@ struct is_function : public libcpp_is_function<T> {};
     2.1 如果`T`是一个function对象，比如`void(void)`，则`libcpp_is_function_imp::source<T>(0))`的返回值为`void(void)&`，是个函数对象，而能精确匹配`test<T>(T*)`会被替换成`test<void(void>(void(*)(void)`，注意，在编译器眼里，函数对象和函数指针是一种类型，也就是说`void(void)`和`void(*)(void)`是一种类型，编译器于是会匹配参数为`T*`的重载版本`test(T*)`，而`sizeof(test<T>(T*)`的值为`1`，于是编译器将类的声明替换为
     `struct libcpp_is_function : public integral_const<bool, true>`，这是我们需要的结果。
 
-    2.2 如果`T`不是一个function对象，比如为`int`，这是`source`函数的返回类型为`int&`，但是，`int&`和`int*`类型不相同，于是编译器会退而求其次，匹配`test(...)`函数，于是类的声明就成了`struct libcpp_is_function : public integral_const<bool, true>`，这仍然是我们需要的结果。
+    2.2 如果`T`不是一个function对象，比如为`int`，这是`source`函数的返回类型为`int&`，但是，`int&`和`int*`类型不相同，于是编译器会退而求其次，匹配`test(...)`函数，于是类的声明就成了`struct libcpp_is_function : public integral_const<bool, false>`，这仍然是我们需要的结果。
 
 
 值得注意的是，代码中只是声明了函数，并没有定义，因为不需要。前面已经强调过，编译器只是在做类型推导，根本不需要看到定义。
