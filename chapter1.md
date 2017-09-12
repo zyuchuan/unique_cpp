@@ -228,6 +228,7 @@ template<class T>
 struct is_class : public integral_constant<bool, false> {};
 ```
 
+看到这里，相信你已经明白了`is_class`的实现原理，无非就是利用了重载函数的匹配规则而已。值得注意的是，上面代码中的`test`函数只有声明，没有定义。其实文件`type_traits`中声明了众多的辅助函数，却没有一个定义，因为根本不需要。正如前面反复强调的，编译器只是在做编译器类型推导，编译器唯一需要的就是参数类型和返回类型，有没有定义编译器完全不关心。
 
 ### 1.2.3 common\_type
 
