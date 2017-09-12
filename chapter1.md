@@ -302,17 +302,11 @@ std::cout <<
 最后来一道硬菜：`is_function`。`is_function`检查某个类型是否是`function`，注意，`std::function`，lambda表达式，重载了`operator()`的类，以及函数指针都不能算是`function`：
 
 ```
-/* 
-Sample code comes from
-http://en.cppreference.com/w/cpp/types/is_function
-*/
+// Sample code comes from http://en.cppreference.com/w/cpp/types/is_function
 
-strcut A {
-    int fun();
-};
+strcut A { int fun(); };
 
-template<typename T>
-struct PM_traits{};
+template<typename T> struct PM_traits{};
 
 template<class T, class U>
 struct PM_traits<U T::*> {
@@ -349,7 +343,6 @@ std::cout << is_function<T>::value << std::endl;            // true
 namspace libcpp_is_function_imp {
     template<calss T> char    test(T*);
     template<class T> two     test(...);
-    
     template<calss T> T&     source(int);
 }
 
@@ -364,8 +357,7 @@ struct libcpp_is_function : public integral_const<bool,
       sizeof(libcpp_is_function_imp::test<T>(libcpp_is_function_imp::source<T>(0))) == 1>
 {};
 
-// 针对class, union, void, reference和null pointer的
-// 特化版本
+// 针对class, union, void, reference和null pointer的特化版本
 template<class T>
 struct libcpp_is_function<Tp, true> : public false_type {};
 
@@ -385,11 +377,15 @@ struct is_function : public libcpp_is_function<T> {};
     2.2 如果`T`不是一个function对象，比如为`int`，这是`source`函数的返回类型为`int&`，但是，`int&`和`int*`类型不相同，于是编译器会退而求其次，匹配`test(...)`函数，于是类的声明就成了`struct libcpp_is_function : public integral_const<bool, false>`，这仍然是我们需要的结果。
 
 
-值得注意的是，代码中只是声明了函数，并没有定义，因为不需要。前面已经强调过，编译器只是在做类型推导，根本不需要看到定义。
+<br/>
+
+### 小结
 
 C++11标准库定义的*type trait*还有很多，这里就不一一介绍了。总的来说，这些type traits都是基于模板特化和函数重载，利用编译器的编译器推行推导能力完成。
 
 关于效率，C++是为效率而生，作为一个C++代码仔，最关心的莫过于效率。*type trait*都是编译器类型推导，对运行时的冲击为零，所以非常高效。
+
+<br/>
 
 ## 1.3 自己动手写一个Type Trait
 
