@@ -372,28 +372,17 @@ struct is_function : public libcpp_is_function<T> {};
 
 值得注意的是，代码中只是声明了函数，并没有定义，因为不需要。前面已经强调过，编译器只是在做类型推导，根本不需要看到定义。
 
+C++11标准库定义的*type trait*还有很多，这里就不一一介绍了。总的来说，这些type traits都是基于模板特化和函数重载，利用编译器的编译器推行推导能力完成。
 
-### 1.2.5 is\_member\_function\_pointer
+关于效率，C++是为效率而生，作为一个C++代码仔，最关心的莫过于效率。*type trait*都是编译器类型推导，对运行时的冲击为零，所以非常高效。
 
-```
-template<class T> struct libcpp_is_member_function_pointer 
-    : public false_type {}
-
-template<class Ret, class Kls> struct libcpp_is_member_function_pointer<Ret, Kls::*>
-    : public is_function<Ret> {};
-
-template<class T> struct is_member_function_pointer
-    : public libcpp_is_member_function_pointer<typename remove_cv<T>::type>::type {};
-```
-
-### 1.2.6 is\_polymorphic
+## 1.3 自己动手写一个Type Trait
 
 ```
-template<typename T> char& is_polymorphic_impl(
-    typename enable_if<sizeof((T*)dynamic_cast<const volatile void*>(declval<T*>())) != 0, int>::type>;
+template<typename T, typename = std::string>
+struct has_to_string : std::false_type {};
 
-template<typename T> struct two& is_polymorphic_impl(...);
+template<typename T>
+struct has_to_string : decltype(std::declval<T>().to_string())> : std::true_type {};
 
-template<class T> struct is_polymorphic
-    : public integral_constant<bool, sizeof(is_polymorphic_impl<T>(0)) == 1>{};
 ```
