@@ -157,6 +157,7 @@ struct is_const<const T> : public true_type {};
 
 代码很好理解，无非就是针对`const`类型的模板特化而已，这里就不详细解释了。如果你理解起来有难度，恐怕得补习一下C++模板知识了。
 
+<br/>
 
 ### 1.2.2 is\_class
 
