@@ -299,7 +299,7 @@ std::cout <<
 
 ### 1.2.4 is\_function
 
-`is_function`检查某个类型是否是`function`，注意，`std::function`，lambda表达式，重载了`operator()`的类，以及函数指针都不能算是`function`：
+最后来一道硬菜：`is_function`。`is_function`检查某个类型是否是`function`，注意，`std::function`，lambda表达式，重载了`operator()`的类，以及函数指针都不能算是`function`：
 
 ```
 /* 
