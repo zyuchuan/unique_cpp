@@ -32,7 +32,7 @@ typedef basic_string<char, char_traits<char>, allocator<char> > string;
 typedef basic_string<wchar_t, char_traits<wchar_t>, allocator<wchar_t> > wstring;
 ```
 
-可见`string`和`wstring`其实都是`basica_string`的特化，`string`是针对`char`的特化，而`wstring`是针对`wchart_t`的特化。
+可见`string`和`wstring`其实都是`basica_string`针对不同字符类型的实例，`string`是针对`char`类型的实例，而`wstring`是针对`wchart_t`类型的实例。
 
 字符串都是有长度的，我们希望`basic_string`能提供一个`length()`函数，方便用户获取字符串的长度。问题是，并没有一个通用的函数能同时获取`char`类型字符串和`wchar_t`类型字符串的长度，对`char`类型字符串，获取长度的函数是`strlen(char*)`，而对`wchar_t`类型，获取长度的函数是`wcslen(wchar_t*)`。
 
@@ -118,7 +118,7 @@ size_t basic_string::length() { return Traits::length(data); }
 
 *Type Trait*是C++11中引入的新功能，用于在编译期查询或者编辑类型的属性。C++11的*Type Trait*由一系列的模板类组成，全部放在头文件`<type_traits>`中。关于C++ 11 *Type Trait*的详细信息，可以参考[cppreference.com](http://en.cppreference.com/w/cpp/header/type_traits)。
 
-本书不打算对每个type trait都一一介绍，仅选择一些高逼格的*trait*，解释其设计思路和实现原理，目的是让你能透彻了解C++ *Type Trait*，顺便膜拜一下大神们的编码技巧。
+本书不打算对每个type trait都一一介绍，仅选择一些有代表性的*trait*，解释其设计思路和实现原理，目的是让你能透彻了解C++ *Type Trait*，顺便膜拜一下大神们的编码技巧。
 
 ### 1.2.1 is_const
 
@@ -155,7 +155,7 @@ template<class T>
 struct is_const<const T> : public true_type {};
 ```
 
-代码很好理解，无非就是针对`const`类型的模板特化而已，这里就不详细解释了。如果你理解起来有难度，恐怕你得补习一下C++模板知识了。
+代码很好理解，无非就是针对`const`类型的模板特化而已，这里就不详细解释了。如果你理解起来有难度，恐怕得补习一下C++模板知识了。
 
 
 ### 1.2.2 is\_class
@@ -185,7 +185,7 @@ false
 
 你该怎么做？
 
-考虑一下什么是`class`，`class`无非就是一组数据以及用以操纵这些数据的函数的集合。对于类中的数据，C++允许你定义一个指向类成员变量的指针，这是`class`所特有的属性，那可不可以针对这些特有属性，在模板特化上做文章呢？答案是肯定的，而且这也正是`is_class`的实现原理：
+有点晕菜是不是？考虑一下什么是`class`，`class`无非就是一组数据以及用以操纵这些数据的函数的集合。对于类中的数据，C++允许你定义一个指向类成员变量的指针，这是`class`所特有的属性，那可不可以针对这些特有属性，在模板特化上做文章呢？答案是肯定的，而且这也正是`is_class`的实现原理：
 
 ```
 // header <type_traits>
@@ -206,15 +206,22 @@ namespace is_class_imp {
 
 template<class T>
 struct is_class 
-    : public integral_constant<bool, sizeof(is_class_imp::test<T>(0)) == 1> {}
+    : public integral_constant<bool, sizeof(is_class_imp::test<T>(0)) == 1> {};
     
 ```
 
-有趣的是，`is_class`是通过函数重载实现的。上面的代码重载了函数`test`，第一个重载函数接受一个，呃...，那个“T冒号冒号星号”是啥？...`int T::*`定义了一个`int`类型的指向类成员变量的指针，也就是说函数接受一个类成员变量指针，当然也接受一个结构体成员变量指针（C++中`struct`和`class`其实是一样的）。第二个`test`是个可变参数函数，接受任意数量和类型的参数。
+上面的代码重载了函数`test`，第一个重载函数接受一个，呃...，那个“T冒号冒号星号”是啥？...`int T::*`定义了一个`int`类型的指向类成员变量的指针，也就是说函数接受一个类成员变量指针作为参数，当然也接受一个结构体成员变量指针（C++中`struct`和`class`其实是一样的）作为参数。第二个`test`是个可变参数函数，接受任意数量和类型的参数。
 
-当编译器看到`sizeof(is_class_imp::test<T>(0))`的时候，首先需要决定匹配哪个`test`函数。如果模板参数`T`确实是一个`class`或`struct`，那`int T::*`就是合法的C++表达式。至于`T`中有没有`int`类型的成员变量，编译器根本不关心，因为编译器关心的是如何求出`sizeof`的值。所以，如果`T`是个`class`或`struct`，第一个函数匹配得更好，编译器于是用第一个函数的返回类型去求`sizeof`。
+当编译器看到`sizeof(is_class_imp::test<T>(0))`的时候，首先需要决定匹配哪个`test`函数。如果模板参数`T`确实是一个`class`或`struct`，那`int T::*`就是合法的C++表达式。至于`T`中有没有`int`类型的成员变量，编译器根本不关心。
 
-如果`T`不是一个`class`或`struct`，那`int T::*`就是一个非法的表达式，根据[SFINAE](https://en.wikipedia.org/wiki/Substitution_failure_is_not_an_error)规则，编译器不会报错，而是试着匹配第二个函数，也就是`test`的三个点版本，而三个点是可以匹配任何参数类型的，于是`sizeof(....)`的值为2，也就是说代码变成这样:
+等等！你又发现了问题，“`test`函数只有声明，没有定义，没有定义的函数该怎么编译？” 答案是根本不需要，编译器关心的是如何求出表达式`sizeof(...)`的值，而求解`sizeof(...)`只需要知道`is_class_imp::test<T>(0)`的返回类型，不需要看到函数的定义。所以如果`T`是个`class`或`struct`，那`int t::*`就是合法的类型定义，且精确匹配第一个重载函数，于是编译器用第一个函数的返回类型去求`sizeof`，于是`is_class`的声明就会被替换成
+
+```
+template<class T>
+struct is_class : public integral_constant<bool, true> {};
+```
+
+如果`T`不是一个`class`或`struct`，那`int T::*`就是一个非法的类型定义，根据[SFINAE](https://en.wikipedia.org/wiki/Substitution_failure_is_not_an_error)规则，编译器不会报错，而是试着匹配第二个重载函数，也就是`test`的三个点版本，而这个版本是可以匹配任何参数类型的，`is_class`的声明会被替换成
 
 ```
 template<class T>
