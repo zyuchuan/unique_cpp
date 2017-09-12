@@ -326,7 +326,11 @@ std::cout << is_function<T>::value << std::endl;            // true
 
 ```
 
+是不是觉得很神奇？我们来看一下源代码：
+
 ```
+// header: <type_traits>
+
 namspace libcpp_is_function_imp {
     template<calss T> char    test(T*);
     template<class T> two     test(...);
