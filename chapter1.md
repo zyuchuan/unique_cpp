@@ -360,12 +360,13 @@ struct is_function : public libcpp_is_function<T> {};
 1. 如果你对一个`class`, `union`, `void`, `reference`或`null pointer`，执行`is_function`操作，此时`libcpp_is_function`的第二个模板参数为`true`，而针对这种情况定义了一个特化版本，该特化版本继承于`false_type`，这是我们需要的结果。
 
 2. 除去第一种情况，编译器会激活非特化版本，此时编译器会对模板类`integral_const`的第二个模板参数进行类型推导：
-    2.1 如果`T`是一个function对象，则`libcpp_is_function_imp::source<T>(0))`的返回值`T&`能精确匹配`test(T*)`，于是编译器将类的声明替换为
-    `struct libcpp_is_function : public integral_const<bool, size(char) == 1>`，进而替换成`struct libcpp_is_function : public integral_const<bool, true>`，这也是我们需要的结果。
+    2.1 如果`T`是一个function对象，比如`void(void)`，则`libcpp_is_function_imp::source<T>(0))`的返回值为`void(void)&`，是个函数对象，而能精确匹配`test<T>(T*)`会被替换成`test<void(void>(void(*)(void)`，注意，在编译器眼里，函数对象和函数指针是一种类型，也就是说`void(void)`和`void(*)(void)`是一种类型，编译器于是会匹配参数为`T*`的重载版本`test(T*)`，而`sizeof(test<T>(T*)`的值为`1`，于是编译器将类的声明替换为
+    `struct libcpp_is_function : public integral_const<bool, true>`，这是我们需要的结果。
 
-    2.2 如果`T`不是一个function对象，但是此时的返回值是`T&`，然后`test(...)`会被解析，`sizeof`返回2，
+    2.2 如果`T`不是一个function对象，比如为`int`，这是`source`函数的返回类型为`int&`，但是，`int&`和`int*`类型不相同，于是编译器会退而求其次，匹配`test(...)`函数，于是类的声明就成了`struct libcpp_is_function : public integral_const<bool, true>`，这仍然是我们需要的结果。
 
-值得注意的是，代码中只是声明了函数，并没有定义，因为不需要。在做类型推导的时候，编译器不需要知道函数的定义，只需要知道函数的返回值就可以了。
+
+值得注意的是，代码中只是声明了函数，并没有定义，因为不需要。前面已经强调过，编译器只是在做类型推导，根本不需要看到定义。
 
 
 ### 1.2.5 is\_member\_function\_pointer
