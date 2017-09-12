@@ -114,7 +114,7 @@ size_t basic_string::length() { return Traits::length(data); }
 <br/>
 <hr/>
 
-## 1.2 Type Trait
+## 1.2 Type Traits
 
 *Type Trait*是C++11中引入的新功能，用于在编译期查询或者编辑类型的属性。C++11的*Type Trait*由一系列的模板类组成，全部放在头文件`<type_traits>`中。关于C++ 11 *Type Trait*的详细信息，可以参考[cppreference.com](http://en.cppreference.com/w/cpp/header/type_traits)。
 
