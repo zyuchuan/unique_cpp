@@ -398,6 +398,22 @@ C++11标准库定义的*type trait*还有很多，这里就不一一介绍了。
 
 ## 1.3 自己动手写一个Type Trait
 
+下面我们自己动手，写一个*trait* `has_to_string`，我们希望达到如下的效果：
+
+```
+struct A {
+    std::string to_string();
+};
+
+struct B {
+
+}
+
+std::cout << has_to_string<A>::value << std::endl; // 1
+std::cout << has_to_string<B>::value << std::endl; // 0
+
+```
+
 ```
 template<typename T, typename = std::string>
 struct has_to_string : std::false_type {};
