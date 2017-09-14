@@ -372,10 +372,15 @@ struct is_function : public libcpp_is_function<T> {};
 
 2. 除去第一种情况，编译器会激活非特化版本，此时编译器会对模板类`integral_const`的第二个模板参数进行类型推导：
 
-    2.1 如果`T`是一个function对象，比如`void(void)`，则`libcpp_is_function_imp::source<T>(0))`的返回值为`void(void)&`。在编译器眼里，函数对象和函数指针是一种类型，也就是说`void(void)`和`void(*)(void)`是一种类型，编译器于是会匹配参数为`T*`的重载版本`test(T*)`，于是，`sizeof(...)`表达式被替换成`sizeof(test<void(void)>(void(*)(void))`，进而替换成`sizeof(char)`，最终，类的声明被替换成
+    2.1 如果`T`是一个function对象，比如`void(void)`，则`libcpp_is_function_imp::source<T>(0))`的返回值为`void(void)&`。在编译器眼里，函数对象和函数指针是一种类型，也就是说`void(void)`和`void(*)(void)`是一种类型，编译器于是会匹配参数为`T*`的重载版本`test(T*)`，于是，`sizeof(...)`表达式被替换成`sizeof(test<void(void)>(void(*)(void))`，进而替换成`sizeof(char)`，最终，类的声明被替换成：
+
 ```
-struct libcpp_is_function : public integral_const<bool, true>
+        template<class T>
+        struct libcpp_is_function : public integral_const<bool, true> {};
 ```
+
+    这也是我们需要的结果。
+
     2.2 如果`T`不是一个function对象，比如为`int`，这是`source`函数的返回类型为`int&`，但是，`int&`和`int*`类型不相同，于是编译器会退而求其次，匹配`test(...)`函数，于是类的声明就成了`struct libcpp_is_function : public integral_const<bool, false>`，这仍然是我们需要的结果。
 
 
