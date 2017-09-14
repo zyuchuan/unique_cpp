@@ -381,8 +381,12 @@ struct is_function : public libcpp_is_function<T> {};
     这也是我们需要的结果。
     
     
-
-    2.2 如果`T`不是一个function对象，比如为`int`，这是`source`函数的返回类型为`int&`，但是，`int&`和`int*`类型不相同，于是编译器会退而求其次，匹配`test(...)`函数，于是类的声明就成了`struct libcpp_is_function : public integral_const<bool, false>`，这仍然是我们需要的结果。
+    2.2 如果`T`不是一个function对象，比如为`int`，这时`source`函数的返回类型为`int&`。由于`int&`和`int*`不是同一个类型，编译器只能匹配`test(...)`函数，于是类的声明就成了：
+    
+        template<class T>
+        struct libcpp_is_function : public integral_const<bool, false>
+    
+    这仍然是我们需要的结果。
 
 
 <br/>
