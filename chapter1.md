@@ -414,6 +414,8 @@ std::cout << has_to_string<B>::value << std::endl; // 0
 
 ```
 
+这里给出一种可能的实现：
+
 ```
 template<typename T, typename = std::string>
 struct has_to_string : std::false_type {};
