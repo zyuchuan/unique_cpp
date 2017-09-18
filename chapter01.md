@@ -1,4 +1,4 @@
-# 1. Type Traits
+#1. Type Traits
 
 ## 1.1 什么是Trait
 
