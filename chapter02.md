@@ -25,4 +25,6 @@ auto t2 = std::make_tuple<std::string, double, int>("Jack", 30.0, 2);
 
 ### 2.2.4 std::get()
 
+## 2.3 tuple的实现原理
+
 tuple的源代码及其复杂，大量使用元编程技巧，我不打算把本章编程C++元编程入门讲解，所以，我会实现一个简化版的*tuple*。
