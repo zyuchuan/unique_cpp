@@ -16,6 +16,76 @@ C++标准库对`tuple`进行了很好的包装，使得使用很方便，你用`
 
 如果你对`boost::tuple`有所了解的话，应该知道`tuple`的实现使用了递归嵌套。`libc++`另辟袭击，采用了多重继承的手法实现。不过`tuple`的源代码极其复杂，大量使用了元编程技巧，很难理解。我不打算把这本书变成模板元编程入门，所以我在`libc++`的基础上，实现了一个极简版的`tuple`，希望能帮助你理解。
 
+要理解`tuple`是怎样工作的，先要理解辅助类是怎样工作的
+
+```
+// forward declaration
+template<class ...T> class tuple;
+
+template<class ...T> class tuple_size;
+
+template<class ...T>
+class tuple_size<tuple<T...> > : public std::integral_constant<size_t, sizeof...(T)> {};
+```
+
+这个比较好理解，如果`tuple_size`作用于一个`tuple`，则`tuple_size`的值就是`sizeof...(T)`的值，关于`std::integral_constant`，可以看这里。
+
+所以你可以这样写
+
+```
+cout << tuple_size<tuple<int, double, char> >::value << endl;    // 3
+```
+我们不需要知道`tuple`的具体定义，编译器只要知道它是一个可变参数模板类就行了。
+
+下一个辅助类就是`tuple_types`：
+
+```
+template<class ...T> struct tuple_types{};
+
+template<class T, size_t End = tuple_size<T>::value, size_t Start = 0>
+struct make_tuple_types {};
+
+template<class ...T, size_t End>
+struct make_tuple_types<tuple<T...>, End, 0> {
+    typedef tuple_types<T...> type;
+};
+
+template<class ...T, size_t End>
+struct make_tuple_types<tuple_types<T...>, End, 0> {
+        typedef tuple_types<T...> type;
+};
+    
+```
+注意这里有点简化了，
+
+下面一个辅助类有点复杂：
+
+```
+template<size_t ...value> struct tuple_indices {};
+
+template<class IndexType, IndexType ...values>
+struct integer_sequence {
+    template<size_t Start>
+    using to_tuple_indices = tuple_indices<(values + Start)...>;
+};
+
+template<size_t End, size_t Start>
+using make_indices_imp = typename __make_integer_seq<integer_sequence, size_t, End - Start>::template to_tuple_indices<Start>;
+
+template<size_t End, size_t Start = 0>
+struct make_tuple_indices {
+    typedef make_indices_imp<End, Start> type;
+};
+```
+
+`__make_integer_seq`是LLVM编译器的一个内置的函数，最终会展开成一系列的类
+
+最后一个辅助类是`tuple_element`，它代表`tuple`中某一位置的类型
+
+```
+
+
+
 ```
 template<size_t Index, class Head>
 class tuple_leaf {
