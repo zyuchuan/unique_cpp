@@ -61,4 +61,16 @@ struct tuple {
 };
 ```
 
-注意`tuple_imp`的构造函数，如果
+所以，如果有这样的代码
+
+```
+tuple(1, 2.0, 'a')
+```
+
+编译器会将只展开成
+
+```
+struct tuple_imp : public tuple_leaf<0, int>,    // value = 1
+                   public tuple_leaf<1, double>    // value = 2.0
+                   public tuple_leaf<2, char>    // value = 'a'
+```
