@@ -105,3 +105,4 @@ inline typename tuple_element<Index, tuple<T...> >::type& get(tuple<T...>& t) {
     return static_cast<tuple_leaf<Index, type>&>(t.base_).get();
 ```
 
+先通过`tuple_element`，取得对应的type和Index，然后将`tuple_imp`强制转型成相应的`tuple_leaf`，再取得值，很巧妙吧。
