@@ -44,9 +44,9 @@ namespace unique_cpp {
     // tuple_size
     template<class ...T> class tuple_size;
     
+    // 针对tuple的特化版本
     template<class ...T>
     class tuple_size<tuple<T...> > : public std::integral_constant<size_t, sizeof...(T)> {};
-    
     
     
     // tuple_types
