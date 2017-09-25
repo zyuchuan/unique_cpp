@@ -31,3 +31,20 @@ public:
     const Head& get() const {return value;}
 };
 ```
+
+`tuple_leaf`是`tuple`的基本组成单位，每一个`tuple_leaf`都保存了一个索引，就是第一个模板参数，同时还有值。
+
+```
+template<class Index, class ...T> struct tuple_imp;
+
+template<size_t ...Index, class ...T>
+struct tuple_imp<tuple_indices<Index...>, T...> : 
+    public tuple_leaf<Index, T>... {
+    
+    tuple_imp(){}
+    
+    template<size_t ...Uf, class ...Tf, class ...U>
+    tuple_imp(tuple_indices<Uf...>, tuple_types<Tf...>, U&& ...u) 
+        : tuple_leaf<Uf, Tf>(std::forward<U>(u))... { }
+};
+```
