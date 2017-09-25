@@ -94,3 +94,13 @@ template<class ...T>
 inline tuple<typename make_tuple_return<T>::type...> make_tuple<T&& ...t) {
     return tuple<typename make_tuple_return<T>::type...>(std::forward<T>(t)...);
 }
+
+你可以这样写`get`函数
+
+```
+template<size_t Index, class ...T>
+inline typename tuple_element<Index, tuple<T...> >::type& get(tuple<T...>& t) {
+    typedef typename tuple_element<Index, tuple<T...> >::type type;
+    return static_cast<tuple_leaf<Index, type>&>(t.base_).get();
+```
+
