@@ -74,3 +74,23 @@ struct tuple_imp : public tuple_leaf<0, int>,    // value = 1
                    public tuple_leaf<1, double>    // value = 2.0
                    public tuple_leaf<2, char>    // value = 'a'
 ```
+
+很巧妙不是？
+
+为了方便使用，还定义了函数`make_tuple`：
+
+```
+template<class T>
+struct make_tuple_return_imp {
+    typedef T type;
+};
+
+template<class T>
+struct make_tuple_return {
+    typedef typename make_tuple_return_imp<typename std::decay<T>::type>::type type;
+};
+
+template<class ...T>
+inline tuple<typename make_tuple_return<T>::type...> make_tuple<T&& ...t) {
+    return tuple<typename make_tuple_return<T>::type...>(std::forward<T>(t)...);
+}
