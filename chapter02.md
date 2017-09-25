@@ -47,4 +47,18 @@ struct tuple_imp<tuple_indices<Index...>, T...> :
     tuple_imp(tuple_indices<Uf...>, tuple_types<Tf...>, U&& ...u) 
         : tuple_leaf<Uf, Tf>(std::forward<U>(u))... {}
 };
+
+template<class ...T>
+struct tuple {
+    typedef tuple_imp<typename make_tuple_indices<sizeof...(T)>::type, T...> base;
+    
+    base base_;
+    
+    tuple(const T& ...t)
+        : base(typename make_tuple_indices<sizeof...(T)>::type(),
+               typename make_tuple_types<tuple, sizeof...(T)>::type(),
+               t...){}
+};
 ```
+
+注意`tuple_imp`的构造函数，如果
