@@ -15,3 +15,19 @@ C++标准库对`tuple`进行了很好的包装，使得使用很方便，你用`
 ## 2.3 tuple的实现原理
 
 如果你对`boost::tuple`有所了解的话，应该知道`tuple`的实现使用了递归嵌套。`libc++`另辟袭击，采用了多重继承的手法实现。不过`tuple`的源代码极其复杂，大量使用了元编程技巧，很难理解。我不打算把这本书变成模板元编程入门，所以我在`libc++`的基础上，实现了一个极简版的`tuple`，希望能帮助你理解。
+
+```
+template<size_t Index, class Head>
+class tuple_leaf {
+    Head value;
+
+public:
+    tuple_leaf() : vlaue(){}
+    
+    template<class T>
+    explicit tuple_leaf(cosnt T& t) : value(t){}
+    
+    Head& get(){return value;}
+    const Head& get() const {return value;}
+};
+```
