@@ -45,6 +45,6 @@ struct tuple_imp<tuple_indices<Index...>, T...> :
     
     template<size_t ...Uf, class ...Tf, class ...U>
     tuple_imp(tuple_indices<Uf...>, tuple_types<Tf...>, U&& ...u) 
-        : tuple_leaf<Uf, Tf>(std::forward<U>(u))... { }
+        : tuple_leaf<Uf, Tf>(std::forward<U>(u))... {}
 };
 ```
