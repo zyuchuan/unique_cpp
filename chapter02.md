@@ -136,8 +136,6 @@ tuple_indices<0>, tuple_indices<1>, tuple_indices<2>
 
 最后一个辅助类是`tuple_element`，它代表`tuple`中某一位置的类型
 
-
-
 ```
 template<size_t Index, class Head>
 class tuple_leaf {
