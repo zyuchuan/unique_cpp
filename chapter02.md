@@ -32,16 +32,16 @@ auto t = std::make_tuple(1, 2.0, 'a');
 std::cout << std::get<0>(t) << ", " << std::get<1>(t) << ", " << std::get<2>(t) << std::endl; // 1, 2.0, a
 ```
 
-C++ 11标准库中还定义了一些辅助类，方便我们取得`tuple`的信息：
+C++ 11标准库中还定义了一些辅助类，方便我们取得一个`tuple`类的信息：
 
 ```
 using tuple_type = std::tuple<int, double, char>;
 
-// tuple_size
+// tuple_size: 在编译期获得tuple元素个数
 cout << std::tuple_size<tuple_type>::value << endl; // 3
 
-// tuple_element
-
+// tuple_element: 在编译期获得tuple的元素类型
+cout << typeid(std::tuple_element<2, tuple_type>::type).name() << endl; // c
 ```
 
 ## 2.3 tuple的实现原理
