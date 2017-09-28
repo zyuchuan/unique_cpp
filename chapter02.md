@@ -134,7 +134,39 @@ tuple_indices<0>, tuple_indices<1>, tuple_indices<2>
 
 这样就定义了一个`tuple`的索引。
 
-最后一个辅助类是`tuple_element`，它代表`tuple`中某一位置的类型
+最后一个辅助类是`tuple_element`：
+
+```
+namespace indexer_detail {
+    template<size_t Index, class T>
+    struct indexed {
+        using type = T;
+    };
+        
+    template<class Types, class Indexes> struct indexer;
+        
+    template<class ...Types, size_t ...Index>
+    struct indexer<tuple_types<Types...>, tuple_indices<Index...> > : public indexed<Index, Types>... {};
+        
+    template<size_t Index, class T>
+    indexed<Index, T> at_index(indexed<Index, T> const&);
+} // namespace indexer_detail
+    
+template<size_t Index, class ...Types>
+using type_pack_element = typename decltype(indexer_detail::at_index<Index>(
+    indexer_detail::indexer<tuple_types<Types...>,
+    typename make_tuple_indices<sizeof...(Types)>::type>{}))::type;
+    
+template<size_t Index, class ...T>
+struct tuple_element<Index, tuple_types<T...> > {
+    typedef type_pack_element<Index, T...> type;
+};
+    
+template<size_t Index, class ...T>
+struct tuple_element<Index, tuple<T...> > {
+    typedef type_pack_element<Index, T...> type;
+};
+```
 
 ```
 template<size_t Index, class Head>
