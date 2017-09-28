@@ -186,7 +186,7 @@ decltype(
 
 看似很复杂，其实无非就是变量代换而已，编译器只不过是机器，做不了复杂的推理。
 
-好了，酒水备齐了，下面上煮菜：
+好了，酒水备齐了，下面上主菜：
 
 ```
 template<size_t Index, class Head>
@@ -204,7 +204,9 @@ public:
 };
 ```
 
-`tuple_leaf`是`tuple`的基本组成单位，每一个`tuple_leaf`都保存了一个索引，就是第一个模板参数，同时还有值。
+`tuple_leaf`是`tuple`的基本组成单位，每一个`tuple_leaf`都保存了一个索引（就是第一个模板参数），同时还有值。
+
+继续看：
 
 ```
 template<class Index, class ...T> struct tuple_imp;
@@ -232,19 +234,18 @@ struct tuple {
                t...){}
 };
 ```
-
-所以，如果有这样的代码
+还是多重继承，每一个`tuple`都继承自数个`tuple_leaf`，而前面说过，每个`tuple_leaf`都有索引和值，你看，齐活了不是。所以，如果有这样的代码
 
 ```
 tuple(1, 2.0, 'a')
 ```
 
-编译器会将只展开成
+编译器会展开成
 
 ```
-struct tuple_imp : public tuple_leaf<0, int>,    // value = 1
-                   public tuple_leaf<1, double>    // value = 2.0
-                   public tuple_leaf<2, char>    // value = 'a'
+struct tuple_imp : public tuple_leaf<0, int>,       // value = 1
+                   public tuple_leaf<1, double>     // value = 2.0
+                   public tuple_leaf<2, char>       // value = 'a'
 ```
 
 很巧妙不是？
