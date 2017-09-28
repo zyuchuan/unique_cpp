@@ -168,6 +168,26 @@ struct tuple_element<Index, tuple<T...> > {
 };
 ```
 
+我知道你又迷糊了，让我详细解释一下，如果你写下这样的代码：
+
+```
+tuple_element<1, tuple<int, double, char> >::type
+```
+
+编译器会展开成`tuple_pack_element<1, int, double, char>`，再展开成
+
+```
+decltype(
+    at_index<1>(indexer<tuple_types<int, double, char>, tuple_indices<3>>{})
+)
+```
+
+注意，上面的代码中定义了类`indexer`，而函数`at_index`只接受`at_index`类型的参数，于是编译器再来个向上转型，将`indexer`向上转型成`indexed<1,double>`（仔细想想为什么？），而`indexed<1, double>::type`就是`double`。
+
+看似很复杂，其实无非就是变量代换而已，编译器只不过是机器，做不了复杂的推理。
+
+好了，酒水备齐了，下面上煮菜：
+
 ```
 template<size_t Index, class Head>
 class tuple_leaf {
