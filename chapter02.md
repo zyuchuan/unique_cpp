@@ -15,6 +15,15 @@ using tuple_type = std::tuple<int, double, char>;
 tuple_type t1(1, 2.0, 'a');
 ```
 
+不过我们一般都用`std::make_tuple`函数来创建一个`tuple`，使用`std::make_tuple`的好处是不需要指定`tuple`参数的类型，编译器会自己推断：
+
+```
+#include <iostream>
+#include <tuple>
+
+auto t1 = std::make_tuple(1, 2.0, 'a');
+std::cout << typeid(t1).name() << std::endl
+```
 
 
 ### 2.2.1 make_tuple
