@@ -108,7 +108,31 @@ struct make_tuple_indices {
 };
 ```
 
-`__make_integer_seq`是LLVM编译器的一个内置的函数，最终会展开成一系列的类
+`__make_integer_seq`是LLVM编译器的一个内置的函数，它的作用，顾名思义，是在编译期生成一个序列，如果你写下这样的代码：
+
+```
+__mkae_integer_seq<integer_sequence, size_t, 3>
+```
+
+则编译器会将它展开成：
+
+```
+integer_sequence<0>, integer_sequence<1>, integer_sequence<2>
+```
+
+所以，对于下面的代码：
+
+```
+make_tuple_indices<3>
+```
+
+编译器最终会展开成：
+
+```
+tuple_indices<0>, tuple_indices<1>, tuple_indices<2>
+```
+
+这样就定义了一个`tuple`的索引。
 
 最后一个辅助类是`tuple_element`，它代表`tuple`中某一位置的类型
 
