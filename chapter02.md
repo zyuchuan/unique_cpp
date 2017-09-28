@@ -48,7 +48,7 @@ cout << typeid(std::tuple_element<2, tuple_type>::type).name() << endl; // c
 
 如果你对`boost::tuple`有所了解的话，应该知道`boost::tuple`是使用递归嵌套实现的，这也是大多数类库，比如Loki和MS VC，实现`tuple`的方法。不过`libc++`另辟蹊径，采用了多重继承的手法实现。`libc++`的`tuple`的源代码极其复杂，大量使用了元编程技巧，如果我一行行解读这些源代码，那本章就会变成元编程入门。所以我将`libc++ tuple`的源代码简化，实现了一个极简版`tuple`，希望能帮助你理解`tuple`的工作原理。
 
-要理解`tuple`是怎样工作的，先要理解辅助类是怎样工作的
+我们先从辅助类开始：
 
 ```
 // forward declaration
@@ -56,18 +56,16 @@ template<class ...T> class tuple;
 
 template<class ...T> class tuple_size;
 
+// 针对tuple类型的特化
 template<class ...T>
 class tuple_size<tuple<T...> > : public std::integral_constant<size_t, sizeof...(T)> {};
 ```
 
-这个比较好理解，如果`tuple_size`作用于一个`tuple`，则`tuple_size`的值就是`sizeof...(T)`的值，关于`std::integral_constant`，可以看这里。
-
-所以你可以这样写
+这个比较好理解，如果`tuple_size`作用于一个`tuple`，则`tuple_size`的值就是`sizeof...(T)`的值。所以你可以这样写：
 
 ```
 cout << tuple_size<tuple<int, double, char> >::value << endl;    // 3
 ```
-我们不需要知道`tuple`的具体定义，编译器只要知道它是一个可变参数模板类就行了。
 
 下一个辅助类就是`tuple_types`：
 
@@ -88,7 +86,7 @@ struct make_tuple_types<tuple_types<T...>, End, 0> {
 };
     
 ```
-注意这里有点简化了，
+在这个简化版的`typle_types`并不做具体的事，就是纯粹的类型定义。
 
 下面一个辅助类有点复杂：
 
