@@ -25,11 +25,23 @@ auto t1 = std::make_tuple(1, 2.0, 'a');
 std::cout << typeid(t1).name() << std::endl
 ```
 
-可以使用`std::get`函数取出存储在`tuple`中的数据：
+可以使用`std::get`函数取出`tuple`中的数据：
 
 ```
 auto t = std::make_tuple(1, 2.0, 'a');
 std::cout << std::get<0>(t) << ", " << std::get<1>(t) << ", " << std::get<2>(t) << std::endl; // 1, 2.0, a
+```
+
+C++ 11标准库中还定义了一些辅助类，方便我们取得`tuple`的信息：
+
+```
+using tuple_type = std::tuple<int, double, char>;
+
+// tuple_size
+cout << std::tuple_size<tuple_type>::value << endl; // 3
+
+// tuple_element
+
 ```
 
 ## 2.3 tuple的实现原理
