@@ -11,7 +11,8 @@ C++11 标准库中的`tuple`是一个模板类，使用时需要包含文件`<tu
 ```
 #include <tuple>
 
-std::tuple<int, double, char> t1(1, 2.0, 'a');
+using tuple_type = std::tuple<int, double, char>;
+tuple_type t1(1, 2.0, 'a');
 ```
 
 ### 2.2.1 make_tuple
