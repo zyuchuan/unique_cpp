@@ -6,7 +6,7 @@
 
 ## 2.2 tuple的用法
 
-C++11 标准库中的`tuple`是一个模板类，使用时需要包含文件`<tuple>`：
+C++ 11标准库中的`tuple`是一个模板类，使用时需要包含头文件`<tuple>`：
 
 ```
 #include <tuple>
@@ -43,6 +43,8 @@ cout << std::tuple_size<tuple_type>::value << endl; // 3
 // tuple_element: 在编译期获得tuple的元素类型
 cout << typeid(std::tuple_element<2, tuple_type>::type).name() << endl; // c
 ```
+
+关于`tuple`的用法就简要介绍到这里，C++ Reference上有关于`[std::tuple](http://en.cppreference.com/w/cpp/utility/tuple)`的详细介绍，感兴趣的同学可以去看看。下面我们着重讲一下`tuple`的实现原理。
 
 ## 2.3 tuple的实现原理
 
