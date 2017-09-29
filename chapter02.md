@@ -273,6 +273,7 @@ struct tuple_imp : public tuple_leaf<0, int>,       // value = 1
 
 ```
 // make_tuple
+
 template<class T>
 struct make_tuple_return_imp {
     typedef T type;
@@ -289,10 +290,15 @@ inline tuple<typename make_tuple_return<T>::type...> make_tuple<T&& ...t) {
 }
 
 // get
+
 template<size_t Index, class ...T>
 inline typename tuple_element<Index, tuple<T...> >::type& get(tuple<T...>& t) {
     typedef typename tuple_element<Index, tuple<T...> >::type type;
     return static_cast<tuple_leaf<Index, type>&>(t.base_).get();
 ```
 
-先通过`tuple_element`，取得对应的type和Index，然后将`tuple_imp`强制转型成相应的`tuple_leaf`，再取得值，很巧妙吧。
+这些代码我就不解释了，留给你自己消化。
+
+## 3 总结
+
+本章展示的`tuple`只是个简化版的示例而已，要实现工业强度的`tuple`，要做的工作还很多。有兴趣的同学可以去看看`libc++`的源代码。
