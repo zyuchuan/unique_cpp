@@ -48,7 +48,7 @@ cout << typeid(std::tuple_element<2, tuple_type>::type).name() << endl; // c
 
 ## 2.3 tuple的实现原理
 
-如果你对`boost::tuple`有所了解的话，应该知道`boost::tuple`是使用递归嵌套实现的，这也是大多数类库，比如Loki和MS VC，实现`tuple`的方法。不过`libc++`另辟蹊径，采用了多重继承的手法实现。`libc++`的`tuple`的源代码极其复杂，大量使用了元编程技巧，如果我一行行解读这些源代码，那本章就会变成元编程入门。所以我将`libc++ tuple`的源代码简化，实现了一个极简版`tuple`，希望能帮助你理解`tuple`的工作原理。
+如果你对`boost::tuple`有所了解的话，应该知道`boost::tuple`是使用递归嵌套实现的，这也是大多数类库--比如Loki和 MS VC--实现`tuple`的方法。而`libc++`另辟蹊径，采用了多重继承的手法实现。`libc++`的`tuple`的源代码极其复杂，大量使用了元编程技巧，如果我一行行解读这些源代码，那本章就会变成C++模板元编程入门。为了让你有继续看下去的勇气，我将`libc++ tuple`的源代码简化，实现了一个极简版`tuple`，希望能帮助你理解`tuple`的工作原理。
 
 我们先从辅助类开始：
 
