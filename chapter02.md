@@ -44,7 +44,7 @@ cout << std::tuple_size<tuple_type>::value << endl; // 3
 cout << typeid(std::tuple_element<2, tuple_type>::type).name() << endl; // c
 ```
 
-关于`tuple`的用法就简要介绍到这里，C++ Reference上有关于`[std::tuple](http://en.cppreference.com/w/cpp/utility/tuple)`的详细介绍，感兴趣的同学可以去看看。下面我们着重讲一下`tuple`的实现原理。
+关于`tuple`的用法就简要介绍到这里，C++ Reference上有关于[`std::tuple`](http://en.cppreference.com/w/cpp/utility/tuple)的详细介绍，感兴趣的同学可以去看看。下面我们着重讲一下`tuple`的实现原理。
 
 ## 2.3 tuple的实现原理
 
