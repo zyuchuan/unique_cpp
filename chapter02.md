@@ -301,4 +301,4 @@ inline typename tuple_element<Index, tuple<T...> >::type& get(tuple<T...>& t) {
 
 ## 3 总结
 
-本章展示的`tuple`只是个简化版的示例而已，要实现工业强度的`tuple`，要做的工作还很多。有兴趣的同学可以去看看`libc++`的源代码。
+本章展示的`tuple`只是个简化版的示例而已，要实现工业强度的`tuple`，要做的工作还很多。有兴趣的同学可以去看看`libc++`的[源代码](https://llvm.org/svn/llvm-project/libcxx/trunk/include/tuple)。
