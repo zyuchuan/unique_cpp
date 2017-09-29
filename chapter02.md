@@ -88,7 +88,8 @@ struct make_tuple_types<tuple_types<T...>, End, 0> {
 };
     
 ```
-在这个简化版的`typle_types`并不做具体的事，就是纯粹的类型定义。
+
+这个简化版的`typle_types`并不做具体的事，就是纯粹的类型定义。需要说明的是，如果你要使用这个简化版的`tuple_types`，最好保证`End == sizeof...(T) - 1`，否则有可能编译器会报错。
 
 下面一个辅助类有点复杂：
 
