@@ -267,9 +267,12 @@ struct tuple_imp : public tuple_leaf<0, int>,       // value = 1
 
 是不是有种脑洞大开的感觉？
 
-为了方便使用，还定义了函数`make_tuple`：
+### 2.3.6 make_tuple 和 get
+
+为了方便使用，标准库还定义了函数`make_tuple`和`get`
 
 ```
+// make_tuple
 template<class T>
 struct make_tuple_return_imp {
     typedef T type;
@@ -284,11 +287,8 @@ template<class ...T>
 inline tuple<typename make_tuple_return<T>::type...> make_tuple<T&& ...t) {
     return tuple<typename make_tuple_return<T>::type...>(std::forward<T>(t)...);
 }
-```
 
-你可以这样写`get`函数
-
-```
+// get
 template<size_t Index, class ...T>
 inline typename tuple_element<Index, tuple<T...> >::type& get(tuple<T...>& t) {
     typedef typename tuple_element<Index, tuple<T...> >::type type;
