@@ -4,7 +4,6 @@
 
 [C++ Reference](http://en.cppreference.com/w/)对[tuple](http://en.cppreference.com/w/cpp/utility/tuple)的解释是“fixed-size collection of heterogeneous values”，也就是有固定长度的异构数据的集合。每一个C++代码仔都很熟悉的`std::pair`就是一种`tuple`。但是`std::pair`只能容纳两个数据，而C++11标准库中定义的`tuple`可以容纳任意多个、任意类型的数据。
 
-<br/>
 ## 2.2 tuple的用法
 
 C++ 11标准库中的`tuple`是一个模板类，使用时需要包含头文件`<tuple>`：
@@ -47,7 +46,6 @@ cout << typeid(std::tuple_element<2, tuple_type>::type).name() << endl; // c
 
 关于`tuple`的用法就简要介绍到这里，C++ Reference上有关于[`std::tuple`](http://en.cppreference.com/w/cpp/utility/tuple)的详细介绍，感兴趣的同学可以去看看。下面我们着重讲一下`tuple`的实现原理。
 
-<br/>
 ## 2.3 tuple的实现原理
 
 如果你对`boost::tuple`有所了解的话，应该知道`boost::tuple`是使用递归嵌套实现的，这也是大多数类库，比如Loki和MS VC，实现`tuple`的方法。不过`libc++`另辟蹊径，采用了多重继承的手法实现。`libc++`的`tuple`的源代码极其复杂，大量使用了元编程技巧，如果我一行行解读这些源代码，那本章就会变成元编程入门。所以我将`libc++ tuple`的源代码简化，实现了一个极简版`tuple`，希望能帮助你理解`tuple`的工作原理。
