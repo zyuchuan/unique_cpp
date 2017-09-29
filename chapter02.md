@@ -199,6 +199,9 @@ decltype(
 
 看似很复杂，其实无非就是文字代换而已。
 
+
+### 2.3.5 tuple
+
 好了，酒水备齐了，下面上主菜：
 
 ```
@@ -247,7 +250,8 @@ struct tuple {
                t...){}
 };
 ```
-还是多重继承，每一个`tuple`都继承自数个`tuple_leaf`，而前面说过，每个`tuple_leaf`都有索引和值，你看，齐活了不是。所以，如果有这样的代码
+
+看到了吧，每一个`tuple`都继承自数个`tuple_leaf`。而前面说过，每个`tuple_leaf`都有索引和值，所以定义一个`tuple`所需要的信息都保存在这些`tuple_leaf`中。如果有这样的代码
 
 ```
 tuple(1, 2.0, 'a')
@@ -261,7 +265,7 @@ struct tuple_imp : public tuple_leaf<0, int>,       // value = 1
                    public tuple_leaf<2, char>       // value = 'a'
 ```
 
-很巧妙不是？
+是不是有种脑洞大开的感觉？
 
 为了方便使用，还定义了函数`make_tuple`：
 
