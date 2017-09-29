@@ -91,7 +91,7 @@ struct make_tuple_types<tuple_types<T...>, End, 0> {
 
 这个简化版的`typle_types`并不做具体的事，就是纯粹的类型定义。需要说明的是，如果你要使用这个简化版的`tuple_types`，最好保证`End == sizeof...(T) - 1`，否则有可能编译器会报错。
 
-下面一个辅助类有点复杂：
+下面这个有点复杂：
 
 ```
 template<size_t ...value> struct tuple_indices {};
@@ -111,7 +111,7 @@ struct make_tuple_indices {
 };
 ```
 
-`__make_integer_seq`是LLVM编译器的一个内置的函数，它的作用，顾名思义，是在编译期生成一个序列，如果你写下这样的代码：
+`__make_integer_seq`是LLVM编译器的一个内置的函数，它的作用--顾名思义--是在编译期生成一个序列，如果你写下这样的代码：
 
 ```
 __mkae_integer_seq<integer_sequence, size_t, 3>
