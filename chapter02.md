@@ -181,13 +181,13 @@ struct tuple_element<Index, tuple<T...> > {
 };
 ```
 
-我知道你又迷糊了，让我详细解释一下，如果你写下这样的代码：
+我知道上面的代码又让你头晕目眩，所以我会详细解释一下。如果你写下这样的代码：
 
 ```
 tuple_element<1, tuple<int, double, char> >::type
 ```
 
-编译器会展开成`tuple_pack_element<1, int, double, char>`，再展开成
+编译器会展开成（省略那些烦人的namespace限定符后）：`tuple_pack_element<1, int, double, char>`，进而展开成
 
 ```
 decltype(
@@ -195,9 +195,9 @@ decltype(
 )
 ```
 
-注意，上面的代码中定义了类`indexer`，而函数`at_index`只接受`at_index`类型的参数，于是编译器再来个向上转型，将`indexer`向上转型成`indexed<1,double>`（仔细想想为什么？），而`indexed<1, double>::type`就是`double`。
+注意，上面的代码中定义了类`indexer`作为函数`at_index`的参数，而函数`at_index`只接受`at_index`类型的参数，于是编译器会来个向上转型，将`indexer`向上转型成`indexed<1,double>`（仔细想想为什么？），而`indexed<1, double>::type`就是`double`。
 
-看似很复杂，其实无非就是变量代换而已，编译器只不过是机器，做不了复杂的推理。
+看似很复杂，其实无非就是文字代换而已。
 
 好了，酒水备齐了，下面上主菜：
 
