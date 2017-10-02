@@ -1,6 +1,6 @@
-#4. Type Traits
+#3. Type Traits
 
-## 4.1 什么是Trait
+## 3.1 什么是Trait
 
 “Trait”在英语中特指“a particular quality of your personality”，翻译成人话就是“逼格”的意思。那C++的“逼格”又是什么呢？C++之父[Bjarne Stroustrup](http://www.stroustrup.com/index.html)对此的解释是：
 
@@ -114,13 +114,13 @@ size_t basic_string::length() { return Traits::length(data); }
 <br/>
 <hr/>
 
-## 4.2 Type Traits
+## 3.2 Type Traits
 
 *Type Trait*是C++11中引入的新功能，用于在编译期查询或者编辑类型的属性。C++11的*Type Trait*由一系列的模板类组成，全部放在头文件`<type_traits>`中。关于C++ 11 *Type Trait*的详细信息，可以参考[cppreference.com](http://en.cppreference.com/w/cpp/header/type_traits)。
 
 本书不打算对每个type trait都一一介绍，仅选择一些有代表性的*trait*，解释其设计思路和实现原理，目的是让你能透彻了解C++ *Type Trait*，顺便膜拜一下大神们的编码技巧。
 
-### 4.2.1 is_const
+### 3.2.1 is_const
 
 我们先从最简单的*type trait* `is_const`入手，`is_const`检查一个类型声明有没有`const`修饰符，它的用法如下：
 
@@ -159,7 +159,7 @@ struct is_const<const T> : public true_type {};
 
 <br/>
 
-### 4.2.2 is\_class
+### 3.2.2 is\_class
 
 如果要你来写一个*type trait*，判断某个类型是否是一个class或struct，比如有如下代码：
 
@@ -233,7 +233,7 @@ struct is_class : public integral_constant<bool, false> {};
 
 <br/>
 
-### 4.2.3 common\_type
+### 3.2.3 common\_type
 
 `common_type`返回所有模板参数的最大公共类型，比如
 
@@ -297,7 +297,7 @@ std::cout <<
 
 <br/>
 
-### 4.2.4 is\_function
+### 3.2.4 is\_function
 
 最后来一道硬菜：`is_function`。`is_function`检查某个类型是否是`function`。注意，`is_function`不能用于检查`std::function`，lambda表达式，重载了`operator()`的类，以及函数指针。
 
@@ -396,7 +396,7 @@ C++11标准库定义的*type trait*还有很多，这里就不一一介绍了。
 
 <br/>
 
-## 4.3 自己动手写一个Type Trait
+## 3.3 自己动手写一个Type Trait
 
 下面我们自己动手，写一个*trait* `has_to_string`，我们希望达到如下的效果：
 
