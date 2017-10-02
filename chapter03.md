@@ -1,10 +1,10 @@
-# 2. tuple
+# 3. tuple
 
-## 2.1 tuple简史
+## 3.1 tuple简史
 
 [C++ Reference](http://en.cppreference.com/w/)对[tuple](http://en.cppreference.com/w/cpp/utility/tuple)的解释是“fixed-size collection of heterogeneous values”，也就是有固定长度的异构数据的集合。每一个C++代码仔都很熟悉的`std::pair`就是一种`tuple`。但是`std::pair`只能容纳两个数据，而C++11标准库中定义的`tuple`可以容纳任意多个、任意类型的数据。
 
-## 2.2 tuple的用法
+## 3.2 tuple的用法
 
 C++ 11标准库中的`tuple`是一个模板类，使用时需要包含头文件`<tuple>`：
 
@@ -46,11 +46,11 @@ cout << typeid(std::tuple_element<2, tuple_type>::type).name() << endl; // c
 
 关于`tuple`的用法就简要介绍到这里，C++ Reference上有关于[`std::tuple`](http://en.cppreference.com/w/cpp/utility/tuple)的详细介绍，感兴趣的同学可以去看看。下面我们着重讲一下`tuple`的实现原理。
 
-## 2.3 tuple的实现原理
+## 3.3 tuple的实现原理
 
 如果你对`boost::tuple`有所了解的话，应该知道`boost::tuple`是使用递归嵌套实现的，这也是大多数类库--比如Loki和 MS VC--实现`tuple`的方法。而`libc++`另辟蹊径，采用了多重继承的手法实现。`libc++`的`tuple`的源代码极其复杂，大量使用了元编程技巧，如果我一行行解读这些源代码，那本章就会变成C++模板元编程入门。为了让你有继续看下去的勇气，我将`libc++ tuple`的源代码简化，实现了一个极简版`tuple`，希望能帮助你理解`tuple`的工作原理。
 
-### 2.3.1 tuple_size
+### 3.3.1 tuple_size
 
 我们先从辅助类开始：
 
@@ -71,7 +71,7 @@ class tuple_size<tuple<T...> > : public std::integral_constant<size_t, sizeof...
 cout << tuple_size<tuple<int, double, char> >::value << endl;    // 3
 ```
 
-### 2.3.2 tuple_types
+### 3.3.2 tuple_types
 
 下一个辅助类就是`tuple_types`：
 
@@ -96,7 +96,7 @@ struct make_tuple_types<tuple_types<T...>, End, 0> {
 这个简化版的`typle_types`并不做具体的事，就是纯粹的类型定义。需要说明的是，如果你要使用这个简化版的`tuple_types`，最好保证`End == sizeof...(T) - 1`，否则有可能编译器会报错。
 
 
-### 2.3.3 type_indices
+### 3.3.3 type_indices
 
 下面这个有点复杂：
 
@@ -145,7 +145,7 @@ tuple_indices<0>, tuple_indices<1>, tuple_indices<2>
 这样就定义了一个`tuple`的索引。
 
 
-### 2.3.4 tuple_element
+### 3.3.4 tuple_element
 
 最后一个辅助类是`tuple_element`：
 
@@ -200,7 +200,7 @@ decltype(
 看似很复杂，其实无非就是文字代换而已。
 
 
-### 2.3.5 tuple
+### 3.3.5 tuple
 
 好了，酒水备齐了，下面上主菜：
 
@@ -267,7 +267,7 @@ struct tuple_imp : public tuple_leaf<0, int>,       // value = 1
 
 是不是有种脑洞大开的感觉？
 
-### 2.3.6 make_tuple 和 get
+### 3.3.6 make_tuple 和 get
 
 为了方便使用，标准库还定义了函数`make_tuple`和`get`
 
@@ -299,6 +299,6 @@ inline typename tuple_element<Index, tuple<T...> >::type& get(tuple<T...>& t) {
 
 这些代码我就不解释了，留给你自己消化。
 
-## 3 总结
+## 3.4 总结
 
 本章展示的`tuple`只是个简化版的示例而已，要实现工业强度的`tuple`，要做的工作还很多。有兴趣的同学可以去看看`libc++`的[源代码](https://llvm.org/svn/llvm-project/libcxx/trunk/include/tuple)。
