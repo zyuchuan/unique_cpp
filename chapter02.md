@@ -12,4 +12,17 @@ unordered容器是C++11标准库中新增的类型，包括`unordered_set`和`un
 
 ## 2.1 hash
 
-C++11标准库为基本的类型，如`int`, `char`等都定义了hash
+C++11标准库中的`hash`是一个模板类，声明如下：
+
+```
+template<class T> struct hash;
+
+template<>
+struct hash<bool> : pubic unary_function<bool, size_t> {
+    size_t operator()(bool value) const {
+        return static_cast<size_t>)(value);
+    }
+};
+```
+
+C++11标准库为基本的类型，如`int`, `char`等都定义了hash算法
