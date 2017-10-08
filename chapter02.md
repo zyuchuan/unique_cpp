@@ -23,6 +23,69 @@ struct hash<bool> : pubic unary_function<bool, size_t> {
         return static_cast<size_t>)(value);
     }
 };
+
+template<>
+struct hash<char> : pubic unary_function<char, size_t> {
+    size_t operator(char value) const {
+        return static_cast<size_t>(value);
+    }
+};
 ```
 
-C++11标准库为基本的类型，如`int`, `char`等都定义了hash算法
+可以看到，对于简单类型，C++标准库的hash算法很简单，就是数值本身，所以你可以这样使用hash
+
+```
+hash<int> int_hash;
+cout << int_hash(3) << endl; // 3
+```
+
+标准库还提供了另外两种hash算法：[murmur2](https://en.wikipedia.org/wiki/MurmurHash)和[cityhash64](https://github.com/google/cityhash)。本书不是算法书，所以不打算详细介绍这两个算法，
+
+```
+// header: <memory>
+
+template<class Size, size_t = sizeof(Size) * __CHAR_BIT__>
+struct murmur2_or_cityhash;
+```
+
+上面的模板中，第二个参数用来指定使用哪种hash算法：
+
+```
+template<class Size>
+struct murmur2_or_cityhash<Size, 32> {
+    Size operator()(const void* key, size len) {
+        // murmur2 hash算法
+    }
+};
+
+template<class Size>
+struct murmur2_or_cityhash<Size, 64> {
+    Size operator()(const void* key, size len) {
+        // cityhash64 hash算法
+    }
+
+};
+```
+
+为了方便使用
+
+```
+template<class T, size_t = sizeof(T) / sizeof(size_t)>
+struct scalar_hash;
+
+template<class T>
+struct scalar_hash<T, 0> : public unary_function<T, size_t> {
+    size_t operator()(T value) const {
+        union {
+            T         t;
+            size_t     a;
+        } _u;
+        _u.a = 0;
+        _u.t = value;
+        return _u.a;
+    }
+};
+
+template<class T>
+struct 
+```
