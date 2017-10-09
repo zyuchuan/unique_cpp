@@ -53,7 +53,7 @@ struct murmur2_or_cityhash;
 ```
 template<class Size>
 struct murmur2_or_cityhash<Size, 32> {
-    Size operator()(const void* key, size len) {
+    Size operator()(const void* key, Size len) {
         // murmur2 hash算法
     }
 };
