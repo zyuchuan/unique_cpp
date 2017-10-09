@@ -23,6 +23,8 @@ struct hash {
 };
 ```
 
+可以看到，`hash<T>::operator()`的
+
 2. `operator()`的签名为：`size_t operator()(T key) const noexcept`
 2. 返回一个size_t类型的值，这个值就是输入参数的hash值；
 3. hash方程不能抛出异常；
