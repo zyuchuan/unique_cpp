@@ -77,8 +77,8 @@ template<class T>
 struct scalar_hash<T, 0> : public unary_function<T, size_t> {
     size_t operator()(T value) const {
         union {
-            T         t;
-            size_t     a;
+            T      t;
+            size_t a;
         } _u;
         _u.a = 0;
         _u.t = value;
@@ -86,6 +86,86 @@ struct scalar_hash<T, 0> : public unary_function<T, size_t> {
     }
 };
 
-template<class T>
-struct 
+template <class T>
+struct scalar_hash<_Tp, 1>
+    : public unary_function<_Tp, size_t>
+{
+    _LIBCPP_INLINE_VISIBILITY
+    size_t operator()(_Tp __v) const _NOEXCEPT
+    {
+        union
+        {
+            _Tp    __t;
+            size_t __a;
+        } __u;
+        __u.__t = __v;
+        return __u.__a;
+    }
+};
+
+template <class _Tp>
+struct __scalar_hash<_Tp, 2>
+    : public unary_function<_Tp, size_t>
+{
+    _LIBCPP_INLINE_VISIBILITY
+    size_t operator()(_Tp __v) const _NOEXCEPT
+    {
+        union
+        {
+            _Tp __t;
+            struct
+            {
+                size_t __a;
+                size_t __b;
+            } __s;
+        } __u;
+        __u.__t = __v;
+        return __murmur2_or_cityhash<size_t>()(&__u, sizeof(__u));
+    }
+};
+
+template <class _Tp>
+struct __scalar_hash<_Tp, 3>
+    : public unary_function<_Tp, size_t>
+{
+    _LIBCPP_INLINE_VISIBILITY
+    size_t operator()(_Tp __v) const _NOEXCEPT
+    {
+        union
+        {
+            _Tp __t;
+            struct
+            {
+                size_t __a;
+                size_t __b;
+                size_t __c;
+            } __s;
+        } __u;
+        __u.__t = __v;
+        return __murmur2_or_cityhash<size_t>()(&__u, sizeof(__u));
+    }
+};
+
+template <class _Tp>
+struct __scalar_hash<_Tp, 4>
+    : public unary_function<_Tp, size_t>
+{
+    _LIBCPP_INLINE_VISIBILITY
+    size_t operator()(_Tp __v) const _NOEXCEPT
+    {
+        union
+        {
+            _Tp __t;
+            struct
+            {
+                size_t __a;
+                size_t __b;
+                size_t __c;
+                size_t __d;
+            } __s;
+        } __u;
+        __u.__t = __v;
+        return __murmur2_or_cityhash<size_t>()(&__u, sizeof(__u));
+    }
+};
 ```
