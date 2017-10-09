@@ -12,16 +12,18 @@ unordered容器是C++11标准库中新增的类型，包括`unordered_set`和`un
 
 ## 2.1 hash
 
-The enabled specializations of the (since C++17) hash template defines a function object that implements a hash function. Instances of this function object satisfy Hash. In particular, they define an operator() that:
-1. Accepts a single parameter of type Key.
-2. Returns a value of type size_t that represents the hash value of the parameter.
-3. Does not throw exceptions when called.
-4. For two parameters k1 and k2 that are equal, std::hash<Key>()(k1) == std::hash<Key>()(k2).
-5. For two different parameters k1 and k2 that are not equal, the probability that std::hash<Key>()(k1) == std::hash<Key>()(k2) should be very small, approaching 1.0/std::numeric_limits<size_t>::max().
+C++11标准中明确指明了hash方程的形式和必须满足的条件。总的来说，C++标准要求：
 
-C++11标准中指明了`hash`是一个满足下列条件的function object
+1. hash方程应该是一个function object，也就是重载了`operator()`的对象：
 
-1. 接受一个单一参数，这个参数的类型必须和Key类型一致；
+```
+template<T>
+struct hash {
+    size_t operator()(T key) const noexcept;
+};
+```
+
+2. `operator()`的签名为：`size_t operator()(T key) const noexcept`
 2. 返回一个size_t类型的值，这个值就是输入参数的hash值；
 3. hash方程不能抛出异常；
 4. 对于两个参数`k1`和`k2`，如果`k1==k2`，则`std::hash<Key>()(k1) == std::hash<Key>()(k2)`;
