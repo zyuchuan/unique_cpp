@@ -241,7 +241,17 @@ inline size_t __do_string_hash(Ptr p, Ptr e) {
 
 ```
 struct Foo {
-    int     a;
-    char     b;
+    int         a;
+    char        b;
+    std::string c;
 };
 ```
+
+你可以这样计算hash：
+
+template<>
+struct hash<Foo> : public unary_function<Foo, size_t> {
+    size_t operator()（const Foo& foo）const noexcept {
+        return murmur2_or_cityhash<size_t>(&foo, sizeof(Foo));
+    }
+};
