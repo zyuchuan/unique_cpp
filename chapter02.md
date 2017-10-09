@@ -98,23 +98,17 @@ struct scalar_hash<T, 1> : public unary_function<T, size_t> {
     }
 };
 
-template <class _Tp>
-struct __scalar_hash<_Tp, 2>
-    : public unary_function<_Tp, size_t>
-{
-    _LIBCPP_INLINE_VISIBILITY
-    size_t operator()(_Tp __v) const _NOEXCEPT
-    {
-        union
-        {
-            _Tp __t;
-            struct
-            {
-                size_t __a;
-                size_t __b;
-            } __s;
-        } __u;
-        __u.__t = __v;
+template <class T>
+struct scalar_hash<T, 2> : public unary_function<T, size_t> {
+    size_t operator()(Tp value) const {
+        union {
+            Tp t;
+            struct {
+                size_t a;
+                size_t b;
+            } s;
+        } _u;
+        _u.t = value;
         return __murmur2_or_cityhash<size_t>()(&__u, sizeof(__u));
     }
 };
