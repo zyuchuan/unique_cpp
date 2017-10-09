@@ -65,7 +65,7 @@ struct hash<char> : pubic unary_function<char, size_t> {
 };
 ```
 
-### 2.1.2 复杂数值类型
+### 2.1.2 浮点数值类型
 
 针对复杂数值类型，如`float`、`double`等，libc++提供了两种hash算法：[murmur2](https://en.wikipedia.org/wiki/MurmurHash)和[cityhash64](https://github.com/google/cityhash)：
 
@@ -96,7 +96,7 @@ struct murmur2_or_cityhash<Size, 64> {
 };
 ```
 
-`murmur2_or_cityhash::operator()`接受两个参数，并不满足C++标准的要求，不 为了方便使用
+`murmur2_or_cityhash::operator()`接受两个参数，并不满足C++标准的要求，为了方便使用，libc++又定义了一个外敷类`scalar_hash`：
 
 ```
 template<class T, size_t = sizeof(T) / sizeof(size_t)>
@@ -176,7 +176,7 @@ struct scalar_hash<T, 4> : public unary_function<T, size_t> {
 };
 ```
 
-对于复杂数值类型，如`float`、`double`：
+浮点数值类型最终的hash计算方法如下：
 
 ```
 template <>
@@ -202,23 +202,24 @@ struct hash<double> : public scalar_hash<double> {
 };
 ```
 
-对于`string`，也定义了相应的hash
+### 2.1.3 内置非数值类型
+
+对于标准库中的非数值类型，比如`string`等，标准库也提供了hash方程：
 
 ```
 // header: <string>
 
-template<class _CharT, class _Traits, class _Allocator>
-struct hash<basic_string<_CharT, _Traits, _Allocator> >
-    : public unary_function<basic_string<_CharT, _Traits, _Allocator>, size_t>
-{
-    size_t operator()(const basic_string<_CharT, _Traits, _Allocator>& __val) const;
+template<class CharT, class Traits, class Allocator>
+struct hash<basic_string<CharT, Traits, Allocator> >
+    : public unary_function<basic_string<CharT, Traits, Allocator>, size_t> {
+    
+    size_t operator()(const basic_string<CharT, Traits, Allocator>& val) const noexcept;
 };
 
-template<class _CharT, class _Traits, class _Allocator>
-size_t
-hash<basic_string<_CharT, _Traits, _Allocator> >::operator()(
-        const basic_string<_CharT, _Traits, _Allocator>& __val) const {
-    return __do_string_hash(__val.data(), __val.data() + __val.size());
+template<class CharT, class Traits, class Allocator>
+size_t hash<basic_string<CharT, Traits, Allocator> >::operator()(
+        const basic_string<CharT, Traits, Allocator>& val) const noexcept {
+    return __do_string_hash(val.data(), val.data() + val.size());
 }
 ```
 
@@ -227,11 +228,11 @@ hash<basic_string<_CharT, _Traits, _Allocator> >::operator()(
 ```
 // header: <__string>
 
-template<class _Ptr>
-inline size_t __do_string_hash(_Ptr __p, _Ptr __e) {
-    typedef typename iterator_traits<_Ptr>::value_type value_type;
-    return __murmur2_or_cityhash<size_t>()(__p, (__e-__p)*sizeof(value_type));
+template<class Ptr>
+inline size_t __do_string_hash(Ptr p, Ptr e) {
+    typedef typename iterator_traits<Ptr>::value_type value_type;
+    return murmur2_or_cityhash<size_t>()(p, (e-p)*sizeof(value_type));
 }
 ```
 
-
+### 2.1.4 自定义类型
