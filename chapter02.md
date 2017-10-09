@@ -27,7 +27,9 @@ struct hash {
 
 1. 对于类型为`T`的参数`t1`和`t2`，如果`t1 == t2`，则`hash<T>()(t1) == hash<T>()(t2)`;
 
-2. 对于类型为`T`的参数`t1`和`t2`，如果`t1 != t2`，则`hash<T>()(t1) == hash<T>()(t2)`的概率应近似于`1.0/std::numeric_limits<size_t>::max()`（在我的MacBook Pro上，这个值为5.42101 x 10-20）。
+2. 对于类型为`T`的参数`t1`和`t2`，如果`t1 != t2`，则`hash<T>()(t1) == hash<T>()(t2)`的概率应近似于`1.0/std::numeric_limits<size_t>::max()`（在我的MacBook Pro上，这个值为0.00000000000000000005.421）。
+
+不过，C++标准只是规定了hash方程的形式和必须满足的条件，具体到如何计算hash值，则没有要求，所以不同的实现由不同的计算方法，对libc++而言，
 
 ```
 template<class T> struct hash;
