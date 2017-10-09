@@ -236,3 +236,12 @@ inline size_t __do_string_hash(Ptr p, Ptr e) {
 ```
 
 ### 2.1.4 自定义类型
+
+如果你有一个类，
+
+```
+struct Foo {
+    int     a;
+    char     b;
+};
+```
