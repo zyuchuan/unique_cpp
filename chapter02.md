@@ -12,9 +12,7 @@ unordered容器是C++11标准库中新增的类型，包括`unordered_set`和`un
 
 ## 2.1 hash
 
-C++11标准中明确指明了hash方程的形式和必须满足的条件。总的来说，C++标准要求：
-
-1. hash方程应该是一个function object，也就是重载了`operator()`的对象：
+C++11标准中明确指出：hash方程应该是一个*function object*，也就是重载了`operator()`的对象：
 
 ```
 template<T>
@@ -23,13 +21,13 @@ struct hash {
 };
 ```
 
-可以看到，`hash<T>::operator()`的
+可以看到，`hash<T>::operator()`接收一个`T`类型的参数，并返回一个`size_t`类型的值，这个值就是输入参数的hash值。注意关键字`noexcept`，C++标准不允许hash方程抛出异常。
 
-2. `operator()`的签名为：`size_t operator()(T key) const noexcept`
-2. 返回一个size_t类型的值，这个值就是输入参数的hash值；
-3. hash方程不能抛出异常；
-4. 对于两个参数`k1`和`k2`，如果`k1==k2`，则`std::hash<Key>()(k1) == std::hash<Key>()(k2)`;
-5. 如果k1和k2不相等，则`std::hash<Key>()(k1) == std::hash<Key>()(k2)`的概率应该小至`1.0/std::numeric_limits<size_t>::max()`。
+另外，C++标准还对hash方程的计算结果有明确要求：
+
+1. 对于类型为`T`的参数`t1`和`t2`，如果`t1 == t2`，则`hash<T>()(t1) == hash<T>()(t2)`;
+
+2. 对于类型为`T`的参数`t1`和`t2`，如果`t1 != t2`，则`hash<T>()(t1) == hash<T>()(t2)`的概率应近似于`1.0/std::numeric_limits<size_t>::max()`（）。
 
 ```
 template<class T> struct hash;
