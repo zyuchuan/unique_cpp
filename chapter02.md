@@ -163,16 +163,13 @@ struct hash<float> : public scalar_hash<float> {
 };
 
 template <>
-struct _LIBCPP_TEMPLATE_VIS hash<double>
-    : public __scalar_hash<double>
-{
-    _LIBCPP_INLINE_VISIBILITY
-    size_t operator()(double __v) const _NOEXCEPT
+struct hash<double> : public scalar_hash<double> {
+    size_t operator()(double value) const
     {
         // -0.0 and 0.0 should return same hash
-       if (__v == 0)
+       if (value == 0)
            return 0;
-        return __scalar_hash<double>::operator()(__v);
+        return scalar_hash<double>::operator()(value);
     }
 };
 ```
