@@ -12,21 +12,21 @@ unordered容器是C++11标准库中新增的类型，包括`unordered_set`和`un
 
 ## 2.1 hash
 
-C++11标准库提供了比较完备的hash支持，对于简单数值类型，可以直接计算hash值，对于复杂数值类型，也可以直接计算hash值，对于常用类型，比如`std::string`，也提供了计算hash值的方法，另外，还提供了方法，方便计算自定义类型的hash值。
-
-C++11标准库的hash计算方法有点特别，首先hash是一个类，模板类，这个类定义了`operator()`，然后针对不同类型做了特化。从这也可以看到C++发展的一个特点：使用模板做任何事情。
-
-最基本的`hash`类只有声明，没有定义：
+C++11标准库提供了一个专门的类`hash`来计算hash值：
 
 ```
 template<class T> struct hash;
 ```
+
+类`hash`的声明及其简单，就是一个模板类，这个类没有定义，因为并没有一种通用的方法来计算hash值。相反，标准库中对每种类型都定义了特化版本，通过这些特化版本来计算hash值。
 
 ### 2.1.1 简单数值类型
 
 C++标准库针对简单数值类型，如`bool`、`int`、`char`等，hash的计算很简单，就是返回数值本身：
 
 ```
+// header: <functional>
+
 template<>
 struct hash<bool> : pubic unary_function<bool, size_t> {
     size_t operator()(bool value) const {
