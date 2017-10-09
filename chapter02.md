@@ -174,4 +174,32 @@ struct hash<double> : public scalar_hash<double> {
 };
 ```
 
+对于`string`，也定义了相应的hash
+
+```
+// header: <string>
+
+template<class _CharT, class _Traits, class _Allocator>
+struct hash<basic_string<_CharT, _Traits, _Allocator> >
+    : public unary_function<basic_string<_CharT, _Traits, _Allocator>, size_t>
+{
+    size_t operator()(const basic_string<_CharT, _Traits, _Allocator>& __val) const;
+};
+
+template<class _CharT, class _Traits, class _Allocator>
+size_t
+hash<basic_string<_CharT, _Traits, _Allocator> >::operator()(
+        const basic_string<_CharT, _Traits, _Allocator>& __val) const {
+    return __do_string_hash(__val.data(), __val.data() + __val.size());
+}
+
+// header: <__string>
+
+template<class _Ptr>
+inline size_t __do_string_hash(_Ptr __p, _Ptr __e) {
+    typedef typename iterator_traits<_Ptr>::value_type value_type;
+    return __murmur2_or_cityhash<size_t>()(__p, (__e-__p)*sizeof(value_type));
+}
+```
+
 
