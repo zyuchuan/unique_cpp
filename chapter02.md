@@ -262,3 +262,5 @@ struct hash<Foo> : public unary_function<Foo, size_t> {
 };
 
 ```
+
+## 3 hash_table
