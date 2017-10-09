@@ -148,3 +148,33 @@ struct scalar_hash<T, 4> : public unary_function<T, size_t> {
 };
 ```
 
+对于复杂数值类型，如`float`、`double`：
+
+```
+template <>
+struct hash<float> : public scalar_hash<float> {
+    size_t operator()(float value) const
+    {
+        // -0.0 and 0.0 should return same hash
+       if (value == 0)
+           return 0;
+        return scalar_hash<float>::operator()(value);
+    }
+};
+
+template <>
+struct _LIBCPP_TEMPLATE_VIS hash<double>
+    : public __scalar_hash<double>
+{
+    _LIBCPP_INLINE_VISIBILITY
+    size_t operator()(double __v) const _NOEXCEPT
+    {
+        // -0.0 and 0.0 should return same hash
+       if (__v == 0)
+           return 0;
+        return __scalar_hash<double>::operator()(__v);
+    }
+};
+```
+
+
