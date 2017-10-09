@@ -72,7 +72,7 @@ struct hash<char> : pubic unary_function<char, size_t> {
 ```
 // header: <memory>
 
-template<class Size, size_t = sizeof(Size) * __CHAR_BIT__>  // __CHAR_BIT_ = 8
+template<class Size, size_t = sizeof(Size) * 8>
 struct murmur2_or_cityhash;
 
 // use murmur2 on 32-bit system, 
@@ -96,7 +96,7 @@ struct murmur2_or_cityhash<Size, 64> {
 };
 ```
 
-为了方便使用
+`murmur2_or_cityhash::operator()`接受两个参数，并不满足C++标准的要求，不 为了方便使用
 
 ```
 template<class T, size_t = sizeof(T) / sizeof(size_t)>
