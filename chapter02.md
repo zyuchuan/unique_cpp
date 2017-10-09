@@ -75,6 +75,8 @@ struct hash<char> : pubic unary_function<char, size_t> {
 template<class Size, size_t = sizeof(Size) * __CHAR_BIT__>  // __CHAR_BIT_ = 8
 struct murmur2_or_cityhash;
 
+// use murmur2 on 32-bit system, 
+// because size_t is 32 bits on 32-bit system
 template<class Size>
 struct murmur2_or_cityhash<Size, 32> {
     Size operator()(const void* key, Size len) {
@@ -83,6 +85,8 @@ struct murmur2_or_cityhash<Size, 32> {
     }
 };
 
+// use cityhash64 on 64-bit system,
+// because size_t is 64 bits on 64-bit system
 template<class Size>
 struct murmur2_or_cityhash<Size, 64> {
     Size operator()(const void* key, Size len) {
