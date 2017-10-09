@@ -87,19 +87,14 @@ struct scalar_hash<T, 0> : public unary_function<T, size_t> {
 };
 
 template <class T>
-struct scalar_hash<_Tp, 1>
-    : public unary_function<_Tp, size_t>
-{
-    _LIBCPP_INLINE_VISIBILITY
-    size_t operator()(_Tp __v) const _NOEXCEPT
-    {
-        union
-        {
-            _Tp    __t;
-            size_t __a;
-        } __u;
-        __u.__t = __v;
-        return __u.__a;
+struct scalar_hash<T, 1> : public unary_function<T, size_t> {
+    size_t operator()(T value) const {
+        union{
+            T        t;
+            size_t   a;
+        } _u;
+        _u.t = value;
+        return _u.a;
     }
 };
 
