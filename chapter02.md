@@ -147,3 +147,4 @@ struct scalar_hash<T, 4> : public unary_function<T, size_t> {
     }
 };
 ```
+
