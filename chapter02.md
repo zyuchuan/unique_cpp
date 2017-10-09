@@ -12,7 +12,7 @@ unordered容器是C++11标准库中新增的类型，包括`unordered_set`和`un
 
 ## 2.1 hash
 
-C++11标准库中的`hash`是一个模板类，声明如下：
+C++11标准库提供了比较完备的hash支持，对于
 
 ```
 template<class T> struct hash;
