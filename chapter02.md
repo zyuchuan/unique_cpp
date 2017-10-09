@@ -29,32 +29,37 @@ struct hash {
 
 2. 对于类型为`T`的参数`t1`和`t2`，如果`t1 != t2`，则`hash<T>()(t1) == hash<T>()(t2)`的概率应近似于`1.0/std::numeric_limits<size_t>::max()`（在我的MacBook Pro上，这个值为0.00000000000000000005.421，小数点后面19个`0`）。
 
-不过，C++标准只是规定了hash方程的形式和必须满足的条件，具体到如何计算hash值，则没有要求，所以不同的标准库实现其hash计算方法也不同。就libc++而言，针对不同的类型，其计算方法也不尽相同。
+不过，C++标准只是规定了hash方程的形式和必须满足的条件，具体到如何计算hash值，则没有要求。就libc++而言，针对不同的类型，其计算方法也不尽相同。
 
 ### 2.1.1 简单数值类型
 
-C++标准库针对简单数值类型，如`bool`、`int`、`char`等，hash的计算很简单，就是返回数值本身：
+对于简单数值类型，如`bool`、`int`、`char`等，libc++的hash算法也很简单：直接返回数值本身：
 
 ```
 // header: <functional>
 
+template<class T> struct hash; // forward declaration
+
+// specialization for bool
 template<>
 struct hash<bool> : pubic unary_function<bool, size_t> {
-    size_t operator()(bool value) const {
+    size_t operator()(bool value) const noexcept {
         return static_cast<size_t>)(value);
     }
 };
 
+// specialization for int
 template<>
 struct hash<int> : public unary_function<int, size_t> {
-    size_t operator()(int value) const {
+    size_t operator()(int value) const noexcept {
         return static_cast<size_t>(value);
     }
 };
 
+// specialization for char
 template<>
 struct hash<char> : pubic unary_function<char, size_t> {
-    size_t operator(char value) const {
+    size_t operator(char value) const noexcept {
         return static_cast<size_t>(value);
     }
 };
@@ -62,7 +67,7 @@ struct hash<char> : pubic unary_function<char, size_t> {
 
 ### 2.1.2 复杂数值类型
 
-针对复杂数值类型，如`float`、`double`等，标准库提供了两种hash算法可供选择[murmur2](https://en.wikipedia.org/wiki/MurmurHash)和[cityhash64](https://github.com/google/cityhash)：
+针对复杂数值类型，如`float`、`double`等，libc++提供了两种hash算法：[murmur2](https://en.wikipedia.org/wiki/MurmurHash)和[cityhash64](https://github.com/google/cityhash)：
 
 ```
 // header: <memory>
