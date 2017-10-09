@@ -12,15 +12,32 @@ unordered容器是C++11标准库中新增的类型，包括`unordered_set`和`un
 
 ## 2.1 hash
 
-C++11标准库提供了比较完备的hash支持，对于
+C++11标准库提供了比较完备的hash支持，对于简单数值类型，可以直接计算hash值，对于复杂数值类型，也可以直接计算hash值，对于常用类型，比如`std::string`，也提供了计算hash值的方法，另外，还提供了方法，方便计算自定义类型的hash值。
+
+C++11标准库的hash计算方法有点特别，首先hash是一个类，模板类，这个类定义了`operator()`，然后针对不同类型做了特化。从这也可以看到C++发展的一个特点：使用模板做任何事情。
+
+最基本的`hash`类只有声明，没有定义：
 
 ```
 template<class T> struct hash;
+```
 
+### 2.1.1 简单数值类型
+
+C++标准库针对简单数值类型，如`bool`、`int`、`char`等，hash的计算很简单，就是返回数值本身：
+
+```
 template<>
 struct hash<bool> : pubic unary_function<bool, size_t> {
     size_t operator()(bool value) const {
         return static_cast<size_t>)(value);
+    }
+};
+
+template<>
+struct hash<int> : public unary_function<int, size_t> {
+    size_t operator()(int value) const {
+        return static_cast<size_t>(value);
     }
 };
 
@@ -32,25 +49,16 @@ struct hash<char> : pubic unary_function<char, size_t> {
 };
 ```
 
-可以看到，对于简单类型，C++标准库的hash算法很简单，就是数值本身，所以你可以这样使用hash
+### 2.1.2 复杂数值类型
 
-```
-hash<int> int_hash;
-cout << int_hash(3) << endl; // 3
-```
-
-标准库还提供了另外两种hash算法：[murmur2](https://en.wikipedia.org/wiki/MurmurHash)和[cityhash64](https://github.com/google/cityhash)。本书不是算法书，所以不打算详细介绍这两个算法，
+针对复杂数值类型，如`float`、`double`等，标准库提供了两种hash算法可供选择[murmur2](https://en.wikipedia.org/wiki/MurmurHash)和[cityhash64](https://github.com/google/cityhash)：
 
 ```
 // header: <memory>
 
 template<class Size, size_t = sizeof(Size) * __CHAR_BIT__>
 struct murmur2_or_cityhash;
-```
 
-上面的模板中，第二个参数用来指定使用哪种hash算法：
-
-```
 template<class Size>
 struct murmur2_or_cityhash<Size, 32> {
     Size operator()(const void* key, Size len) {
