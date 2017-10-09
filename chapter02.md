@@ -56,7 +56,7 @@ struct hash<char> : pubic unary_function<char, size_t> {
 ```
 // header: <memory>
 
-template<class Size, size_t = sizeof(Size) * __CHAR_BIT__>
+template<class Size, size_t = sizeof(Size) * __CHAR_BIT__>  // __CHAR_BIT_ = 8
 struct murmur2_or_cityhash;
 
 template<class Size>
