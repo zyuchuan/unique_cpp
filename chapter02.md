@@ -192,7 +192,11 @@ hash<basic_string<_CharT, _Traits, _Allocator> >::operator()(
         const basic_string<_CharT, _Traits, _Allocator>& __val) const {
     return __do_string_hash(__val.data(), __val.data() + __val.size());
 }
+```
 
+`__do_string_hash`定义在文件`<__string>`中：
+
+```
 // header: <__string>
 
 template<class _Ptr>
