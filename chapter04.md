@@ -1,304 +1,266 @@
-# 4. tuple
+# 2 无序关联容器
 
-## 4.1 tuple简史
+unordered容器是C++11标准库中新增的类型，包括`unordered_set`和`unordered_map`。我们知道C++标准库中已经有了`set`和`map`，他们的区别是什么呢？
 
-[C++ Reference](http://en.cppreference.com/w/)对[tuple](http://en.cppreference.com/w/cpp/utility/tuple)的解释是“fixed-size collection of heterogeneous values”，也就是有固定长度的异构数据的集合。每一个C++代码仔都很熟悉的`std::pair`就是一种`tuple`。但是`std::pair`只能容纳两个数据，而C++11标准库中定义的`tuple`可以容纳任意多个、任意类型的数据。
+1. `set`和`map`是有序的，而*unordered*容器，顾名思义，元素是没有序的
+2. `set`和`map`的底层数据结构是红黑树，而`undered`容器的底层数据结构是`hash table`
+3. 一个的复杂度为O(log(n))，一个是O(1)
 
-## 4.2 tuple的用法
+所以undered容器的效率更高一些，如果你对数据的顺序没有要求，建议使用新的unordered容器。
 
-C++ 11标准库中的`tuple`是一个模板类，使用时需要包含头文件`<tuple>`：
+要了解unordered_set和unordered_map的工作原理，先要了解hash table的原理，要了解hash table，先要知道C++11标准库中的hash算法。
 
-```
-#include <tuple>
+## 2.1 hash
 
-using tuple_type = std::tuple<int, double, char>;
-tuple_type t1(1, 2.0, 'a');
-```
-
-不过我们一般都用`std::make_tuple`函数来创建一个`tuple`，使用`std::make_tuple`的好处是不需要指定`tuple`参数的类型，编译器会自己推断：
+C++11标准中明确指出：hash方程应该是一个*function object*，也就是重载了`operator()`的对象：
 
 ```
-#include <iostream>
-#include <tuple>
-
-auto t1 = std::make_tuple(1, 2.0, 'a');
-std::cout << typeid(t1).name() << std::endl
-```
-
-可以使用`std::get`函数取出`tuple`中的数据：
-
-```
-auto t = std::make_tuple(1, 2.0, 'a');
-std::cout << std::get<0>(t) << ", " << std::get<1>(t) << ", " << std::get<2>(t) << std::endl; // 1, 2.0, a
-```
-
-C++ 11标准库中还定义了一些辅助类，方便我们取得一个`tuple`类的信息：
-
-```
-using tuple_type = std::tuple<int, double, char>;
-
-// tuple_size: 在编译期获得tuple元素个数
-cout << std::tuple_size<tuple_type>::value << endl; // 3
-
-// tuple_element: 在编译期获得tuple的元素类型
-cout << typeid(std::tuple_element<2, tuple_type>::type).name() << endl; // c
-```
-
-关于`tuple`的用法就简要介绍到这里，C++ Reference上有关于[`std::tuple`](http://en.cppreference.com/w/cpp/utility/tuple)的详细介绍，感兴趣的同学可以去看看。下面我们着重讲一下`tuple`的实现原理。
-
-## 4.3 tuple的实现原理
-
-如果你对`boost::tuple`有所了解的话，应该知道`boost::tuple`是使用递归嵌套实现的，这也是大多数类库--比如Loki和 MS VC--实现`tuple`的方法。而`libc++`另辟蹊径，采用了多重继承的手法实现。`libc++`的`tuple`的源代码极其复杂，大量使用了元编程技巧，如果我一行行解读这些源代码，那本章就会变成C++模板元编程入门。为了让你有继续看下去的勇气，我将`libc++ tuple`的源代码简化，实现了一个极简版`tuple`，希望能帮助你理解`tuple`的工作原理。
-
-### 4.3.1 tuple_size
-
-我们先从辅助类开始：
-
-```
-// forward declaration
-template<class ...T> class tuple;
-
-template<class ...T> class tuple_size;
-
-// 针对tuple类型的特化
-template<class ...T>
-class tuple_size<tuple<T...> > : public std::integral_constant<size_t, sizeof...(T)> {};
-```
-
-这个比较好理解，如果`tuple_size`作用于一个`tuple`，则`tuple_size`的值就是`sizeof...(T)`的值。所以你可以这样写：
-
-```
-cout << tuple_size<tuple<int, double, char> >::value << endl;    // 3
-```
-
-### 4.3.2 tuple_types
-
-下一个辅助类就是`tuple_types`：
-
-```
-template<class ...T> struct tuple_types{};
-
-template<class T, size_t End = tuple_size<T>::value, size_t Start = 0>
-struct make_tuple_types {};
-
-template<class ...T, size_t End>
-struct make_tuple_types<tuple<T...>, End, 0> {
-    typedef tuple_types<T...> type;
-};
-
-template<class ...T, size_t End>
-struct make_tuple_types<tuple_types<T...>, End, 0> {
-        typedef tuple_types<T...> type;
-};
-    
-```
-
-这个简化版的`typle_types`并不做具体的事，就是纯粹的类型定义。需要说明的是，如果你要使用这个简化版的`tuple_types`，最好保证`End == sizeof...(T) - 1`，否则有可能编译器会报错。
-
-
-### 4.3.3 type_indices
-
-下面这个有点复杂：
-
-```
-template<size_t ...value> struct tuple_indices {};
-
-template<class IndexType, IndexType ...values>
-struct integer_sequence {
-    template<size_t Start>
-    using to_tuple_indices = tuple_indices<(values + Start)...>;
-};
-
-template<size_t End, size_t Start>
-using make_indices_imp = typename __make_integer_seq<integer_sequence, size_t, End - Start>::template to_tuple_indices<Start>;
-
-template<size_t End, size_t Start = 0>
-struct make_tuple_indices {
-    typedef make_indices_imp<End, Start> type;
+template<T>
+struct hash {
+    size_t operator()(T key) const noexcept;
 };
 ```
 
-`__make_integer_seq`是LLVM编译器的一个内置的函数，它的作用--顾名思义--是在编译期生成一个序列，如果你写下这样的代码：
+可以看到，`hash<T>::operator()`接收一个`T`类型的参数，并返回一个`size_t`类型的值，这个值就是输入参数的hash值。注意关键字`noexcept`，C++标准不允许hash方程抛出异常。
+
+另外，C++标准还对hash方程的计算结果有明确要求：
+
+1. 对于类型为`T`的参数`t1`和`t2`，如果`t1 == t2`，则`hash<T>()(t1) == hash<T>()(t2)`;
+
+2. 对于类型为`T`的参数`t1`和`t2`，如果`t1 != t2`，则`hash<T>()(t1) == hash<T>()(t2)`的概率应近似于`1.0/std::numeric_limits<size_t>::max()`（在我的MacBook Pro上，这个值为0.00000000000000000005.421，小数点后面19个`0`）。
+
+不过，C++标准只是规定了hash方程的形式和必须满足的条件，具体到如何计算hash值，则没有要求。就libc++而言，针对不同的类型，其计算方法也不尽相同。
+
+### 2.1.1 简单数值类型
+
+对于简单数值类型，如`bool`、`int`、`char`等，libc++的hash算法也很简单：直接返回数值本身：
 
 ```
-__mkae_integer_seq<integer_sequence, size_t, 3>
-```
+// header: <functional>
 
-则编译器会将它展开成：
+template<class T> struct hash; // forward declaration
 
-```
-integer_sequence<0>, integer_sequence<1>, integer_sequence<2>
-```
-
-所以，对于下面的代码：
-
-```
-make_tuple_indices<3>
-```
-
-编译器最终会展开成：
-
-```
-tuple_indices<0>, tuple_indices<1>, tuple_indices<2>
-```
-
-这样就定义了一个`tuple`的索引。
-
-
-### 4.3.4 tuple_element
-
-最后一个辅助类是`tuple_element`：
-
-```
-namespace indexer_detail {
-    template<size_t Index, class T>
-    struct indexed {
-        using type = T;
-    };
-        
-    template<class Types, class Indexes> struct indexer;
-        
-    template<class ...Types, size_t ...Index>
-    struct indexer<tuple_types<Types...>, tuple_indices<Index...> > : public indexed<Index, Types>... {};
-        
-    template<size_t Index, class T>
-    indexed<Index, T> at_index(indexed<Index, T> const&);
-} // namespace indexer_detail
-    
-template<size_t Index, class ...Types>
-using type_pack_element = typename decltype(indexer_detail::at_index<Index>(
-    indexer_detail::indexer<tuple_types<Types...>,
-    typename make_tuple_indices<sizeof...(Types)>::type>{}))::type;
-    
-template<size_t Index, class ...T>
-struct tuple_element<Index, tuple_types<T...> > {
-    typedef type_pack_element<Index, T...> type;
+// specialization for bool
+template<>
+struct hash<bool> : pubic unary_function<bool, size_t> {
+    size_t operator()(bool value) const noexcept {
+        return static_cast<size_t>)(value);
+    }
 };
-    
-template<size_t Index, class ...T>
-struct tuple_element<Index, tuple<T...> > {
-    typedef type_pack_element<Index, T...> type;
+
+// specialization for int
+template<>
+struct hash<int> : public unary_function<int, size_t> {
+    size_t operator()(int value) const noexcept {
+        return static_cast<size_t>(value);
+    }
+};
+
+// specialization for char
+template<>
+struct hash<char> : pubic unary_function<char, size_t> {
+    size_t operator(char value) const noexcept {
+        return static_cast<size_t>(value);
+    }
 };
 ```
 
-我知道上面的代码又让你头晕目眩，所以我会详细解释一下。如果你写下这样的代码：
+### 2.1.2 浮点数值类型
+
+针对复杂数值类型，如`float`、`double`等，libc++提供了两种hash算法：[murmur2](https://en.wikipedia.org/wiki/MurmurHash)和[cityhash64](https://github.com/google/cityhash)：
 
 ```
-tuple_element<1, tuple<int, double, char> >::type
-```
+// header: <memory>
 
-编译器会展开成（省略那些烦人的namespace限定符后）：`tuple_pack_element<1, int, double, char>`，进而展开成
+template<class Size, size_t = sizeof(Size) * 8>
+struct murmur2_or_cityhash;
 
-```
-decltype(
-    at_index<1>(indexer<tuple_types<int, double, char>, tuple_indices<3>>{})
-)
-```
+// use murmur2 on 32-bit system, 
+// because size_t is 32 bits on 32-bit system
+template<class Size>
+struct murmur2_or_cityhash<Size, 32> {
+    Size operator()(const void* key, Size len) {
+        // murmur2 hash算法
+        ...
+    }
+};
 
-注意，上面的代码中定义了类`indexer`作为函数`at_index`的参数，而函数`at_index`只接受`at_index`类型的参数，于是编译器会来个向上转型，将`indexer`向上转型成`indexed<1,double>`（仔细想想为什么？），而`indexed<1, double>::type`就是`double`。
-
-看似很复杂，其实无非就是文字代换而已。
-
-
-### 4.3.5 tuple
-
-好了，酒水备齐了，下面上主菜：
-
-```
-template<size_t Index, class Head>
-class tuple_leaf {
-    Head value;
-
-public:
-    tuple_leaf() : vlaue(){}
-    
-    template<class T>
-    explicit tuple_leaf(cosnt T& t) : value(t){}
-    
-    Head& get(){return value;}
-    const Head& get() const {return value;}
+// use cityhash64 on 64-bit system,
+// because size_t is 64 bits on 64-bit system
+template<class Size>
+struct murmur2_or_cityhash<Size, 64> {
+    Size operator()(const void* key, Size len) {
+        // cityhash64 hash算法
+        ...
+    }
 };
 ```
 
-`tuple_leaf`是`tuple`的基本组成单位，每一个`tuple_leaf`都保存了一个索引（就是第一个模板参数），同时还有值。
-
-继续看：
+`murmur2_or_cityhash::operator()`接受两个参数，并不满足C++标准的要求，为了方便使用，libc++又定义了一个外敷类`scalar_hash`：
 
 ```
-template<class Index, class ...T> struct tuple_imp;
-
-template<size_t ...Index, class ...T>
-struct tuple_imp<tuple_indices<Index...>, T...> : 
-    public tuple_leaf<Index, T>... {
-    
-    tuple_imp(){}
-    
-    template<size_t ...Uf, class ...Tf, class ...U>
-    tuple_imp(tuple_indices<Uf...>, tuple_types<Tf...>, U&& ...u) 
-        : tuple_leaf<Uf, Tf>(std::forward<U>(u))... {}
-};
-
-template<class ...T>
-struct tuple {
-    typedef tuple_imp<typename make_tuple_indices<sizeof...(T)>::type, T...> base;
-    
-    base base_;
-    
-    tuple(const T& ...t)
-        : base(typename make_tuple_indices<sizeof...(T)>::type(),
-               typename make_tuple_types<tuple, sizeof...(T)>::type(),
-               t...){}
-};
-```
-
-看到了吧，每一个`tuple`都继承自数个`tuple_leaf`。而前面说过，每个`tuple_leaf`都有索引和值，所以定义一个`tuple`所需要的信息都保存在这些`tuple_leaf`中。如果有这样的代码
-
-```
-tuple(1, 2.0, 'a')
-```
-
-编译器会展开成
-
-```
-struct tuple_imp : public tuple_leaf<0, int>,       // value = 1
-                   public tuple_leaf<1, double>     // value = 2.0
-                   public tuple_leaf<2, char>       // value = 'a'
-```
-
-是不是有种脑洞大开的感觉？
-
-### 4.3.6 make_tuple 和 get
-
-为了方便使用，标准库还定义了函数`make_tuple`和`get`
-
-```
-// make_tuple
+template<class T, size_t = sizeof(T) / sizeof(size_t)>
+struct scalar_hash;
 
 template<class T>
-struct make_tuple_return_imp {
-    typedef T type;
+struct scalar_hash<T, 0> : public unary_function<T, size_t> {
+    size_t operator()(T value) const {
+        union {
+            T      t;
+            size_t a;
+        } _u;
+        _u.a = 0;
+        _u.t = value;
+        return _u.a;
+    }
 };
 
-template<class T>
-struct make_tuple_return {
-    typedef typename make_tuple_return_imp<typename std::decay<T>::type>::type type;
+template <class T>
+struct scalar_hash<T, 1> : public unary_function<T, size_t> {
+    size_t operator()(T value) const {
+        union{
+            T        t;
+            size_t   a;
+        } _u;
+        _u.t = value;
+        return _u.a;
+    }
 };
 
-template<class ...T>
-inline tuple<typename make_tuple_return<T>::type...> make_tuple<T&& ...t) {
-    return tuple<typename make_tuple_return<T>::type...>(std::forward<T>(t)...);
+template <class T>
+struct scalar_hash<T, 2> : public unary_function<T, size_t> {
+    size_t operator()(Tp value) const {
+        union {
+            Tp t;
+            struct {
+                size_t a;
+                size_t b;
+            } s;
+        } _u;
+        _u.t = value;
+        return murmur2_or_cityhash<size_t>()(&_u, sizeof(_u));
+    }
+};
+
+template <class T>
+struct scalar_hash<T, 3> : public unary_function<T, size_t> {
+    size_t operator()(T value) const {
+        union {
+            T t;
+            struct {
+                size_t _a;
+                size_t _b;
+                size_t _c;
+            } s;
+        } _u;
+        _u.t = value;
+        return murmur2_or_cityhash<size_t>()(&_u, sizeof(_u));
+    }
+};
+
+template <class T>
+struct scalar_hash<T, 4> : public unary_function<T, size_t> {
+    size_t operator()(T value) const {
+        union {
+            T t;
+            struct {
+                size_t a;
+                size_t b;
+                size_t c;
+                size_t d;
+            } s;
+        } _u;
+        _u.t = value;
+        return murmur2_or_cityhash<size_t>()(&_u, sizeof(_u));
+    }
+};
+```
+
+浮点数值类型最终的hash计算方法如下：
+
+```
+template <>
+struct hash<float> : public scalar_hash<float> {
+    size_t operator()(float value) const
+    {
+        // -0.0 and 0.0 should return same hash
+       if (value == 0)
+           return 0;
+        return scalar_hash<float>::operator()(value);
+    }
+};
+
+template <>
+struct hash<double> : public scalar_hash<double> {
+    size_t operator()(double value) const
+    {
+        // -0.0 and 0.0 should return same hash
+       if (value == 0)
+           return 0;
+        return scalar_hash<double>::operator()(value);
+    }
+};
+```
+
+### 2.1.3 内置非数值类型
+
+对于标准库中的非数值类型，比如`string`等，标准库也提供了hash方程：
+
+```
+// header: <string>
+
+template<class CharT, class Traits, class Allocator>
+struct hash<basic_string<CharT, Traits, Allocator> >
+    : public unary_function<basic_string<CharT, Traits, Allocator>, size_t> {
+    
+    size_t operator()(const basic_string<CharT, Traits, Allocator>& val) const noexcept;
+};
+
+template<class CharT, class Traits, class Allocator>
+size_t hash<basic_string<CharT, Traits, Allocator> >::operator()(
+        const basic_string<CharT, Traits, Allocator>& val) const noexcept {
+    return __do_string_hash(val.data(), val.data() + val.size());
 }
-
-// get
-
-template<size_t Index, class ...T>
-inline typename tuple_element<Index, tuple<T...> >::type& get(tuple<T...>& t) {
-    typedef typename tuple_element<Index, tuple<T...> >::type type;
-    return static_cast<tuple_leaf<Index, type>&>(t.base_).get();
 ```
 
-这些代码我就不解释了，留给你自己消化。
+`__do_string_hash`定义在文件`<__string>`中：
 
-## 4.4 总结
+```
+// header: <__string>
 
-本章展示的`tuple`只是个简化版的示例而已，要实现工业强度的`tuple`，要做的工作还很多。有兴趣的同学可以去看看`libc++`的[源代码](https://llvm.org/svn/llvm-project/libcxx/trunk/include/tuple)。
+template<class Ptr>
+inline size_t __do_string_hash(Ptr p, Ptr e) {
+    typedef typename iterator_traits<Ptr>::value_type value_type;
+    return murmur2_or_cityhash<size_t>()(p, (e-p)*sizeof(value_type));
+}
+```
+
+### 2.1.4 自定义类型
+
+如果你有一个类，
+
+```
+struct Foo {
+    int         _i;
+    double      _d;
+    std::string _s;
+
+    Foo(int i, double d, const std::string &s)
+        : _i(i), _d(d), _s(s) {}
+};
+```
+
+你可以这样计算hash：
+
+```
+template<>
+struct hash<Foo> : public unary_function<Foo, size_t> {
+    size_t operator()（const Foo& foo）const noexcept {
+        return murmur2_or_cityhash<size_t>()
+            (static_cast<const void*>(&foo), sizeof(Foo));
+    }
+};
+
+```
+
+## 3 hash_table
