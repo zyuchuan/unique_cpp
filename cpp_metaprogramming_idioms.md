@@ -54,3 +54,33 @@ static_assert(two_type::value * 2 == four_type::value);
 typedef std::integral_constant<bool, true>  true_type;
 typedef std::integral constant<bool, false> false_type;
 ```
+
+## 3. 递归
+
+在模板元编程中，常用递归的手法定义，一个经典的例子是计算阶乘，比如
+
+```
+5! = 5 * 4 * 3 * 2 * 1
+```
+
+用模板元来表示
+
+```
+template<size_t N>
+struct factorial {
+    static constexpr size_t value = N * factorial<N-1>;
+};
+
+template<>
+struct factorial<1> {
+    static constexpr size_t value = 1;
+};
+
+int main() {
+    std::cout << factorial<5>::value << std::endl; // 20
+}
+
+```
+
+我们知道递归必须要有结束条件，在模板元编程中，通常都用一个特化来作为结束条件，比如上面代码中的`struct factorial<1>`就是递归的结束。
+
