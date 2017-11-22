@@ -31,6 +31,7 @@ struct my_meta_class {
     static constexpr int value = 0;
     typedef T            type;
 };
+```
 
 这不是强制要求，但是是一个惯例，你写代码的时候，建议也遵守这个惯例。
 
@@ -44,6 +45,8 @@ static_assert(two_type::value * 2 == four_type::value);
 ```
 
 ### 2.2 布尔型常数
+
+标准库还定义`true_type`和`false_type`，这两个类的作用和布尔型常量`true`和`false`一样
 
 ```
 // file: type_traits
