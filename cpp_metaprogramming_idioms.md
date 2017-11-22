@@ -8,6 +8,8 @@
 
 我们知道，在使用模板元编程时，是不能使用`true`, `false`这类的布尔型常量的，因为这是运行时常量。同样，`1`, `2`也是运行时常数，也不能在编译器使用。所以我们必需想办法，把整形和布尔型常量绑定到一个`type`上面，这样编译器才有可能在编译器使用这些常量完成计算。我们来看怎么做：
 
+### 2.1 整形常数
+
 ```
 // file: type_traits
 
@@ -17,8 +19,15 @@ struct integral_constant {
     typedef T                     value_type;
     typedef integral_constant     type;
     constexpr operator value_type() const noexcept {return value;}
-    constexpr value_type operator()() const noexcept {
-        return value;
-    } //since c++14
+    constexpr value_type operator()() const noexcept {return value;} //since C++14
 };
+```
+
+### 2.2 布尔型常数
+
+```
+// file: type_traits
+
+typedef std::integral_constant<bool, true>  true_type;
+typedef std::integral constant<bool, false> false_type;
 ```
