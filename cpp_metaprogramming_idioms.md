@@ -13,7 +13,7 @@
 ```
 // file: type_traits
 
-template <class T, T v>
+template <typename T, T v>
 struct integral_constant {
     static constexpr T value =    v;
     typedef T                     value_type;
@@ -21,6 +21,26 @@ struct integral_constant {
     constexpr operator value_type() const noexcept {return value;}
     constexpr value_type operator()() const noexcept {return value;} //since C++14
 };
+```
+
+上面的代码定义了一个`const integer`类型，它有一个静态类成员常量`value`，还有一个`typedef`的`type`。这是C++标准库的一个管理：如果一个模板类有静态常量，则用`value`表示，如果有type的，则用`type`表示，例如：
+
+```
+template<typename T>
+struct my_meta_class {
+    static constexpr int value = 0;
+    typedef T            type;
+};
+
+这不是强制要求，但是是一个惯例，你写代码的时候，建议也遵守这个惯例。
+
+`integral_const`的用法比较简单
+
+```
+typedef integral_const<int, 2> two_type;
+typedef integral_const<int, 4> four_type;
+
+static_assert(two_type::value * 2 == four_type::value);
 ```
 
 ### 2.2 布尔型常数
