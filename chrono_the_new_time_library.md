@@ -56,14 +56,28 @@ typedef duration<     long, ratio<3600> > hours;
 ```
 // file: ratio
 
+// _Num代表 'numerator'（分子）
+// _Den代表 'denominator'（分母）
 template<intmax_t _Num, intmax_t _Den = 1>
 class ration {
+    // 求__Num的绝对值
     static constexpr const intmax_t __na = __static_abs<_Num>::value;
+    
+    // 求_Den的绝对值
     static constexpr const intmax_t __da = __static_abs<_Den>::value;
+    
+    // __static_sign的作用是求符号运算
     static constexpr const intmax_t __s = __static_sign<_Num>::value * __static_sign<_Den>::value;
+    
+    // 求分子、分母的最大公约数
     static constexpr const intmax_t __gcd = __static_gcd<__na, __da>::value;
+    
 public:
+    
+    // num是化简后的_Num
     static constexpr const intmax_t num = __s * __na / __gcd;
+    
+    // den是化简后的_Den
     static constexpr const intmax_t den = __da / __gcd;
 };
 ```
