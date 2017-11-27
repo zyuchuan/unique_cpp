@@ -114,9 +114,8 @@ typedef ratio<            1000000LL, 1LL> mega;
  
 int main()
 {
-    auto two_seconds = std::chrono::seconds = 2;
-     
-    std::cout << "Hello waiter" << std::endl;
+    auto two_seconds = std::chrono::seconds = 2; 
+    std::cout << "Start waiting..." << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
     std::this_thread::sleep_for(two_seconds);
     auto end = std::chrono::high_resolution_clock::now();
