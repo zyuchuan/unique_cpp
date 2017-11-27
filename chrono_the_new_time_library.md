@@ -1,4 +1,4 @@
-# 3. std::chrono
+
 
 长久以来，C++标准库都缺了一样重要的工具：Time library，这种情况终于在C++标准委员会指定C++11时得到了改变。那就是`chrono`，`chrono`是一个优雅的，轻量级，功能强大，强类型的时间库。
 
@@ -14,7 +14,7 @@ chrono的特点如下
 2. time point
 3. clock
 
-## 3.1 Duration
+## 1. std::duration
 
 
 ```
@@ -44,3 +44,10 @@ typedef duration<long long              > seconds;
 typedef duration<     long, ratio<  60> > minutes;
 typedef duration<     long, ratio<3600> > hours;
 ```
+
+这下明白了，`_Rep`就是C++支持的数据类型，这就是为什么我们说chrono是个轻量级的库，它本身只包含一个`long`或`long long`类型的数据成员。
+
+那`nano`，`micro`又是什么呢，你可能已经猜到了，是`ration`，那`ration`又是什么呢？
+
+## 2 std::ration
+
