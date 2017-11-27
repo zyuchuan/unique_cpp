@@ -49,7 +49,7 @@ typedef duration<     long, ratio<3600> > hours;
 
 那`nano`，`micro`又是什么呢，你可能已经猜到了，是`ration`，那`ration`又是什么呢？
 
-## 2 std::ration
+### 1.1 std::ration
 
 `std::ration`通过类模板的方式定义个一个编译期有理数。我们知道C++只支持编译期整数，那编译期有理数怎么实现呢？
 
@@ -102,3 +102,25 @@ typedef ratio<            1000000LL, 1LL> mega;
 ```
 
 `milli`表示千分之一，用`ratio`表示就是`ratio<1, 1000>`，很优雅，也很直观。
+
+### 1.2 std::duration的用法
+
+我们已经知道了什么是`duration`，下面我们来看如何使用
+
+```
+#include <iostream>
+#include <chrono>
+#include <thread>
+ 
+int main()
+{
+    auto two_seconds = std::chrono::seconds = 2;
+     
+    std::cout << "Hello waiter" << std::endl;
+    auto start = std::chrono::high_resolution_clock::now();
+    std::this_thread::sleep_for(two_seconds);
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> elapsed = end-start;
+    std::cout << "Waited " << elapsed.count() << " ms\n";
+}
+```
