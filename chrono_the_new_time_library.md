@@ -114,7 +114,7 @@ typedef ratio<            1000000LL, 1LL> mega;
  
 int main()
 {
-    auto two_seconds = std::chrono::seconds = 2; 
+    std::chrono::seconds two_seconds{2}; 
     std::cout << "Start waiting..." << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
     std::this_thread::sleep_for(two_seconds);
@@ -122,4 +122,8 @@ int main()
     std::chrono::duration<double, std::milli> elapsed = end-start;
     std::cout << "Waited " << elapsed.count() << " ms\n";
 }
+
+// output
+Start waiting...
+Waited 2002.58 ms
 ```
