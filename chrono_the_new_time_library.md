@@ -82,3 +82,23 @@ public:
 };
 ```
 
+可以看到`ratio`用两个整数分别代表分子和分母来表示一个有理数。
+
+标准库还定义了常见的量纲
+
+```
+// file: ratio
+
+...
+
+typedef ratio<1LL,          1000000000LL> nano;
+typedef ratio<1LL,             1000000LL> micro;
+typedef ratio<1LL,                1000LL> milli;
+typedef ratio<1LL,                 100LL> centi;
+typedef ratio<               1000LL, 1LL> kilo;
+typedef ratio<            1000000LL, 1LL> mega;
+
+...
+```
+
+`milli`表示千分之一，用`ratio`表示就是`ratio<1, 1000>`，很优雅，也很直观。
