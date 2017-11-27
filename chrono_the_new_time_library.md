@@ -51,3 +51,20 @@ typedef duration<     long, ratio<3600> > hours;
 
 ## 2 std::ration
 
+`std::ration`通过类模板的方式定义个一个编译期有理数。我们知道C++只支持编译期整数，那编译期有理数怎么实现呢？
+
+```
+// file: ratio
+
+template<intmax_t _Num, intmax_t _Den = 1>
+class ration {
+    static constexpr const intmax_t __na = __static_abs<_Num>::value;
+    static constexpr const intmax_t __da = __static_abs<_Den>::value;
+    static constexpr const intmax_t __s = __static_sign<_Num>::value * __static_sign<_Den>::value;
+    static constexpr const intmax_t __gcd = __static_gcd<__na, __da>::value;
+public:
+    static constexpr const intmax_t num = __s * __na / __gcd;
+    static constexpr const intmax_t den = __da / __gcd;
+};
+```
+
