@@ -1,16 +1,11 @@
 长久以来，C++程序员在处理和时间相关的任务时，都只能使用`<ctime>`提供的有限的几个C函数，这不得不说是标准库的一个巨大缺失。标准委员会也发现了这个问题，在C++ 11中引入了一个优雅而强大的*time library*: `chrono`。
 
-chrono的特点如下
+## 1. std::chrono library
 
-* 轻量级，比如`chrono::duration`实际就是一个`long long`类型的整数而已。
-* 强类型，比如`seconds`就是`seconds`
-* 支持自定义
+`std::chrono`是一个基于模板的，面向对象的，设计优雅，功能强大的*time library*，它主要包括一下三个type:
 
-`std::chrono`包括以下三个部件
-
-1. duration
-2. time point
-3. clock
+* **Clocks**: `clock`表达了我们日常的时间概念，一个`clock`对象包括一个时间起始点(epoch)和一个`tick rate`。标准库中定义了三种clock：
+`system_clock`: 
 
 ## 1. std::duration
 
