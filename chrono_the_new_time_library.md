@@ -49,7 +49,7 @@ typedef duration<     long, ratio<3600> > hours;
 
 那`nano`，`micro`又是什么呢，你可能已经猜到了，是`ration`，那`ration`又是什么呢？
 
-### 1.1 std::ration
+### 1.1 std::ratio
 
 `std::ration`通过类模板的方式定义个一个编译期有理数。我们知道C++只支持编译期整数，那编译期有理数怎么实现呢？
 
