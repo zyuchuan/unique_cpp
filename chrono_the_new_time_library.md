@@ -28,12 +28,6 @@ private:
     
 // ...
 };
-```
-
-`duration`的定义很简单，它有两个类模板参数`_Rep`和`_Period`，而它本身只有一个成员`__rep_`。你肯定很好奇`_Rep`和`_Period`是什么，看到下面的定义你就会明白：
-
-```
-// file: chrono
 
 typedef duration<long long,         nano> nanoseconds;
 typedef duration<long long,        micro> microseconds;
@@ -42,6 +36,7 @@ typedef duration<long long              > seconds;
 typedef duration<     long, ratio<  60> > minutes;
 typedef duration<     long, ratio<3600> > hours;
 ```
+
 
 这下明白了，`_Rep`就是C++支持的数据类型，这就是为什么我们说chrono是个轻量级的库，它本身只包含一个`long`或`long long`类型的数据成员。
 
