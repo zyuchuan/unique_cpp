@@ -4,9 +4,12 @@
 
 `chrono`是一个基于模板的，面向对象的，设计优雅且功能强大的*time library*。`chrono`内部定义了三种和时间相关的类型：
 
-* **Clock**: *clock*的作用就相当于我们日常使用的手表：显示时间。`chrono`内部定义了三种*clock*：`system clock`、`steady clock`和`high-resolution-clock`，我们会在后面一一介绍。
+* **duration**：一个*duration*就代表了一个时间段，比如2分钟，4小时等等。
 
-* **duration**：
+* **clock**: *clock*的作用就相当于我们日常使用的手表：显示时间。`chrono`内部定义了三种*clock*：`system clock`、`steady clock`和`high-resolution-clock`。
+
+* **time point**：*time point*表示某个特定的时间点。
+
 
 ## 1. std::duration
 
