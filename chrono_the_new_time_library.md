@@ -2,9 +2,9 @@
 
 ## 1. chrono简介
 
-`chrono`是一个基于模板的，面向对象的，设计优雅且功能强大的*time library*，`chrono`内部定义了三个和时间相关的类型：
+`chrono`是一个基于模板的，面向对象的，设计优雅且功能强大的*time library*。`chrono`内部定义了三种和时间相关的类型：
 
-* **Clocks**: `clock`表达了我们日常的时间概念，一个`clock`对象包括一个时间起始点(epoch)和一个`tick rate`。
+* **Clock**: *clock*的作用就相当于我们日常使用的手表：显示时间。`chrono`内部定义了三种*clock*：`system clock`、`steady clock`和`high-resolution-clock`，我们会在后面一一介绍。
 
 * **duration**：
 
