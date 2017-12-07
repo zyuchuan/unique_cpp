@@ -13,6 +13,7 @@
 
 ## 1. std::duration
 
+前面说过`duration`代表了一段时间，比如2分钟，4小时等。注意这里的duration不仅有数量，还有单位。也就是说一个`duration`不仅要有数量，还要有单位。
 
 ```
 // file: chrono
