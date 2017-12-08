@@ -41,11 +41,8 @@ typedef duration<     long, ratio<3600> > hours;
 
 * 第一个模板参数是C++的原生数值类型`long`, `long long`等，代表了`duration`的数值部分。
 
-* 第二个模板参数表达了量纲的概念，其实一个以秒为基本单位表达的率，比如`milli`是“千分之一”秒
+* 第二个模板参数`_Period`表达了量纲的概念，比如上面代码中的`milli`就表示*“千分之一秒”*的意思，它的类型是`std::ratio`。
 
-这下明白了，`_Rep`就是C++支持的数据类型，这就是为什么我们说chrono是个轻量级的库，它本身只包含一个`long`或`long long`类型的数据成员。
-
-那`nano`，`micro`又是什么呢，你可能已经猜到了，是`ratio`，那`ratio`又是什么呢？
 
 ### 1.1 std::ratio
 
