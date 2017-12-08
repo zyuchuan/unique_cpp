@@ -100,7 +100,7 @@ typedef ratio<1LL, 100LL> centi;
 typedef ratio<1000LL, 1LL> kilo;
 
 // 1mega = 1,000,000秒
-typedef ratio<            1000000LL, 1LL> mega;
+typedef ratio<1000000LL, 1LL> mega;
 
 ```
 
