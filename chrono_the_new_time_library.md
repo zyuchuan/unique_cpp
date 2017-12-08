@@ -46,7 +46,7 @@ typedef duration<     long, ratio<3600> > hours;
 
 ### 1.1 std::ratio
 
-`std::ratio`通过类模板的方式定义个一个编译期有理数。我们知道C++只支持编译期整数，那编译期有理数怎么实现呢？
+`std::ratio`也是模板类，一个`ratio`就是一个编译期有理数，它的值表示的是*“1秒的倍数”*。
 
 ```
 // file: ratio
