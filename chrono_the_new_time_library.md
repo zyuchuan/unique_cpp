@@ -35,8 +35,22 @@ typedef duration<long long,        milli> milliseconds;
 typedef duration<long long              > seconds;
 typedef duration<     long, ratio<  60> > minutes;
 typedef duration<     long, ratio<3600> > hours;
+
+//...
+
+typedef ratio<1LL,          1000000000LL> nano;
+typedef ratio<1LL,             1000000LL> micro;
+typedef ratio<1LL,                1000LL> milli;
+typedef ratio<1LL,                 100LL> centi;
+typedef ratio<               1000LL, 1LL> kilo;
+typedef ratio<            1000000LL, 1LL> mega;
 ```
 
+可以看到，`duration`的声明包含两个模板参数：
+
+* 第一个模板参数是C++的原生数值类型`long`, `long long`等，代表了`duration`的数值部分。
+
+* 第二个模板参数是一个对象，如`micro`
 
 这下明白了，`_Rep`就是C++支持的数据类型，这就是为什么我们说chrono是个轻量级的库，它本身只包含一个`long`或`long long`类型的数据成员。
 
