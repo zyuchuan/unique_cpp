@@ -77,26 +77,33 @@ public:
 };
 ```
 
-可以看到`ratio`用两个整数分别代表分子和分母来表示一个有理数。
-
-标准库还定义了常见的量纲
+可以看到`ratio`用两个整数分别代表分子和分母来表示一个有理数，理解了这一点，下面代码的意思就很清楚了：
 
 ```
 // file: ratio
 
 ...
 
-typedef ratio<1LL,          1000000000LL> nano;
-typedef ratio<1LL,             1000000LL> micro;
-typedef ratio<1LL,                1000LL> milli;
-typedef ratio<1LL,                 100LL> centi;
-typedef ratio<               1000LL, 1LL> kilo;
+// 1nano = 1/1,000,000,000 秒
+typedef ratio<1LL, 1000000000LL> nano;
+
+// 1micro = 1/1,000,000秒
+typedef ratio<1LL, 1000000LL> micro;
+
+// 1milli = 1/1,000秒
+typedef ratio<1LL, 1000LL> milli;
+
+// 1centi = 1/100秒
+typedef ratio<1LL, 100LL> centi;
+
+// 1kilo = 1,000秒
+typedef ratio<1000LL, 1LL> kilo;
+
+// 1mega = 1,000,000秒
 typedef ratio<            1000000LL, 1LL> mega;
 
-...
 ```
 
-`milli`表示千分之一，用`ratio`表示就是`ratio<1, 1000>`，很优雅，也很直观。
 
 ### 1.2 std::duration的用法
 
