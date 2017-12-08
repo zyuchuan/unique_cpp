@@ -35,15 +35,6 @@ typedef duration<long long,        milli> milliseconds;
 typedef duration<long long              > seconds;
 typedef duration<     long, ratio<  60> > minutes;
 typedef duration<     long, ratio<3600> > hours;
-
-//...
-
-typedef ratio<1LL,          1000000000LL> nano;
-typedef ratio<1LL,             1000000LL> micro;
-typedef ratio<1LL,                1000LL> milli;
-typedef ratio<1LL,                 100LL> centi;
-typedef ratio<               1000LL, 1LL> kilo;
-typedef ratio<            1000000LL, 1LL> mega;
 ```
 
 可以看到，`duration`的声明包含两个模板参数：
