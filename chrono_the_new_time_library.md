@@ -144,3 +144,7 @@ int main()
 Start waiting...
 Waited 2002.58 ms
 ```
+
+### 1.2 为什么你应该使用duration
+
+1. `duration`是轻量级的，在前面的源代码中我们已经看到了，`duration`内
