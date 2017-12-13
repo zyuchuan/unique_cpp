@@ -83,7 +83,7 @@ namespace chrono {
 template<class _Rep, class _Period = ratio<1> > class duration 
 ```
 
-`ratio`在这里的确切含义为：以秒为单位的放大倍率，比如`ratio<60, 1>`表示一个`1秒的60倍，也就是1分钟`，而`ratio<1, 1000>`表示`1秒的千分之一倍，也就是1毫秒`。它的“放大倍率”为`60`。
+`ratio`在这里的确切含义为：以秒为单位的放大倍率，比如`ratio<60, 1>`表示一个`1秒的60倍，也就是1分钟`，而`ratio<1, 1000>`表示`1秒的千分之一倍，也就是1毫秒`。所以`duration<long, ratio<60, 1>>`就定义了一个类型为`long`的`duration`，而这个`duration`的单位为“分钟”。
 
 
 
