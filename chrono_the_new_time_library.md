@@ -112,11 +112,11 @@ namespace chrono {
     
     // ...
 }
+```
 
+### 1.1 duration的用法
 
-### 1.2 std::duration的用法
-
-我们已经知道了什么是`duration`，下面我们来看如何使用
+标准委员会重写了标准库中全部和时间有关的函数，使之可以和`duration`协同工作，这使得`duration`的使用非常简单直观：
 
 ```
 #include <iostream>
