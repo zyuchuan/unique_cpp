@@ -30,13 +30,6 @@ namespace chrono {
     
     // ...
     };
-
-    typedef duration<long long,         nano> nanoseconds;
-    typedef duration<long long,        micro> microseconds;
-    typedef duration<long long,        milli> milliseconds;
-    typedef duration<long long              > seconds;
-    typedef duration<     long, ratio<  60> > minutes;
-    typedef duration<     long, ratio<3600> > hours;
 }
 ```
 
@@ -83,35 +76,42 @@ namespace chrono {
 template<class _Rep, class _Period = ratio<1> > class duration 
 ```
 
-`ratio`在这里的确切含义为：以秒为单位的放大倍率，比如`ratio<60, 1>`表示一个`1秒的60倍，也就是1分钟`，而`ratio<1, 1000>`表示`1秒的千分之一倍，也就是1毫秒`。所以`duration<long, ratio<60, 1>>`就定义了一个类型为`long`的`duration`，而这个`duration`的单位为“分钟”。
+`ratio`在这里的确切含义为：以秒为单位的放大倍率，比如`ratio<60, 1>`表示一个`1秒的60倍，也就是1分钟`，而`ratio<1, 1000>`表示`1秒的千分之一倍，也就是1毫秒`。所以`duration<long, ratio<60, 1>>`就定义了一个类型为`long`的`duration`，而这个`duration`的单位为“分钟”。很巧妙的定义，是不是？
 
-
-
-
+为了方便我们使用，对常用的时间单位，标准库都已经替我们定义好了：
 
 ```
-// file: ratio
+namespace chrono {
 
-...
+    // 1nano = 1/1,000,000,000 秒
+    typedef ratio<1LL, 1000000000LL> nano;
 
-// 1nano = 1/1,000,000,000 秒
-typedef ratio<1LL, 1000000000LL> nano;
+    // 1micro = 1/1,000,000秒
+    typedef ratio<1LL, 1000000LL> micro;
 
-// 1micro = 1/1,000,000秒
-typedef ratio<1LL, 1000000LL> micro;
+    // 1milli = 1/1,000秒
+    typedef ratio<1LL, 1000LL> milli;
 
-// 1milli = 1/1,000秒
-typedef ratio<1LL, 1000LL> milli;
+    // 1centi = 1/100秒
+    typedef ratio<1LL, 100LL> centi;
 
-// 1centi = 1/100秒
-typedef ratio<1LL, 100LL> centi;
+    // 1kilo = 1,000秒
+    typedef ratio<1000LL, 1LL> kilo;
 
-// 1kilo = 1,000秒
-typedef ratio<1000LL, 1LL> kilo;
-
-// 1mega = 1,000,000秒
-typedef ratio<1000000LL, 1LL> mega;
-
+    // 1mega = 1,000,000秒
+    typedef ratio<1000000LL, 1LL> mega;
+    
+    // ...
+    
+    typedef duration<long long,         nano> nanoseconds;
+    typedef duration<long long,        micro> microseconds;
+    typedef duration<long long,        milli> milliseconds;
+    typedef duration<long long              > seconds;
+    typedef duration<     long, ratio<  60> > minutes;
+    typedef duration<     long, ratio<3600> > hours;
+    
+    // ...
+}
 ```
 
 
