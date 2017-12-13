@@ -116,7 +116,7 @@ namespace chrono {
 
 ### 1.1 duration的用法
 
-标准委员会重写了标准库中全部和时间有关的函数，使之可以和`duration`协同工作，这使得`duration`的使用非常简单直观：
+标准委员会重写了标准库中全部和时间有关的函数，使之可以和`duration`协同工作，这使得`duration`的使用非常简单直观，举个例子：
 
 ```
 #include <iostream>
@@ -125,11 +125,17 @@ namespace chrono {
  
 int main()
 {
+    // 定义一个"chrono::seconds"
     std::chrono::seconds two_seconds{2}; 
     std::cout << "Start waiting..." << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
+    
+    // sleep_for函数现在接受一个`duration`类型的参数
     std::this_thread::sleep_for(two_seconds);
+    
     auto end = std::chrono::high_resolution_clock::now();
+    
+    // duration支持算术运算
     std::chrono::duration<double, std::milli> elapsed = end-start;
     std::cout << "Waited " << elapsed.count() << " ms\n";
 }
