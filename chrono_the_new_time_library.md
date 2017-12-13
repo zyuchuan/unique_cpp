@@ -77,7 +77,17 @@ namespace chrono {
 }
 ```
 
-可以看到`ratio`用两个整数分别代表分子和分母来表示一个有理数，理解了这一点，下面代码的意思就很清楚了：
+`ratio`用两个模板参数来表示一个有理数的分子和分母部分，比如`ratio<1, 1000>`就表示有理数`0.001`。理解了这一点，我们再来看`duration`的定义：
+
+```
+template<class _Rep, class _Period = ratio<1> > class duration 
+```
+
+`ratio`在这里的作用类似于一个系数，比如说，`duration<int, ratio<1, 1>>
+
+
+
+
 
 ```
 // file: ratio
