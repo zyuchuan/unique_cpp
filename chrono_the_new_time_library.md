@@ -112,7 +112,6 @@ namespace chrono {
     
     // ...
 }
-```
 
 
 ### 1.2 std::duration的用法
