@@ -5,6 +5,7 @@
 * chrono library
 * ***std::swap***
 * ***std::function***
+* ***smart pointers***
 * ***unordered containers*** 
-
+* ***concurrency***
 
