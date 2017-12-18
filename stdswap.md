@@ -30,3 +30,26 @@ swap(T& x, T& y) noexcept(
   y = std::move(t);
 }
 ```
+
+这个泛化的版本可以工作，但是不能高效地工作，标准库为每一种类型都重载了`swap()`函数，而这些个重载版本的写法也大有讲究，比如说，`std::vector`的重载版本如下：
+
+```
+// file: vector
+
+template<class T, class Allocator>
+class vector {
+public:
+
+    // define a member function swpa(vector&)
+    void swap(vector& x) {
+        // doing swap here 
+    }    
+};
+
+// overload swap for vector<T, Allocator>
+template<class T, class Allocator>
+inline void swap(vector<T, Allocator>& x, vector<T, Allocator>& y) {
+    x.swap(y);
+}
+```
+
