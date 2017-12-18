@@ -53,3 +53,14 @@ inline void swap(vector<T, Allocator>& x, vector<T, Allocator>& y) {
 }
 ```
 
+首先，`vector`定义了一个成员函数`swap`，然后再重载函数`std::swap`，这个重载的版本会调用`vector::swap`。
+
+注意，根据《Effective C++》，在重载的版本中，应该
+
+```
+template<class T, class Allocator>
+inline void swap(vector<T, Allocator>& x, vector<T, Allocator>& y) {
+    using std::swap;
+    x.swap(y);
+}
+```
