@@ -77,3 +77,23 @@ inline void swap(vector<T, Allocator>& x, vector<T, Allocator>& y) {
 
 我们希望所有函数都提供“no throw”保证，但这是不可能的。我们最低也要做到基本承诺。而且，你会看到，在一定条件下，我们可以做到强烈保证。而swap`函数可以很容易地做到这一点。
 
+## 3 copy-and-swap
+
+```
+class Widget {
+public:
+    Widget(const Widget& other);
+    // ...
+};
+
+Widget::Widget(const Widget& other) {
+    // construction of temp could throw,
+    // if it throw, this object would change
+    // status
+    Widget temp(other);
+    
+    // swap never throw, so we provide
+    // strong exception guarent
+    swap(*this, temp);
+}
+```
