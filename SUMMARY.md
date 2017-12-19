@@ -1,6 +1,5 @@
 # Summary
 
-* [Introduction](README.md)
 * type\_traits
 * std::tupple
 * chrono library
@@ -9,4 +8,5 @@
 * smart pointers
 * unordered containers 
 * concurrency
+* std::bind
 
