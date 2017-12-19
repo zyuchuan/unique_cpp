@@ -3,8 +3,8 @@
 * type\_traits
 * std::tupple
 * chrono library
-* [std::swap](stdswap.md)
-* [std::function](stdfunction.md)
+* std::swap
+* std::function]
 * smart pointers
 * unordered containers 
 * concurrency
