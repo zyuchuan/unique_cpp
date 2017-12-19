@@ -5,7 +5,7 @@
 * std::tupple
 * chrono library
 * [std::swap](stdswap.md)
-* std::function
+* [std::function](stdfunction.md)
 * smart pointers
 * unordered containers 
 * concurrency
