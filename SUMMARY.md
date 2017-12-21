@@ -9,4 +9,5 @@
 * unordered containers 
 * concurrency
 * std::bind
+* decval() & decltype
 
