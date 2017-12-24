@@ -1,5 +1,3 @@
-# Summary
-
 # Unique C++: C++ 11 源代码剖析
 
 * [前言](prefix.md)
