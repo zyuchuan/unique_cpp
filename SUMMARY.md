@@ -7,8 +7,7 @@
 * [**std::swap**](std_swap.md)
 * [std::function](stdfunction.md)
 * smart pointers
-* unordered containers 
+* [unordered containers](unordered_containers.md)
 * concurrency
 * std::bind
-* decval\(\) & decltype
 
