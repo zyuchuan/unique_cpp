@@ -1,7 +1,7 @@
 
 `std::function`是一个泛化的模板类，可以保存、拷贝和调用任何`callable`对象-- 如函数，lambda表达式，`bind expression`、函数对象（functor），甚至类成员函数指针等等。
 
-`std::function`的用法非常灵活，下面的例子摘自[cppreference.com](http://en.cppreference.com/w/cpp/utility/functional/function)
+`std::function`的用法非常灵活，下面的例子摘自[cppreference.com](http://en.cppreference.com/w/cpp/utility/functional/function)：
 
 ```
 #include <functional>
