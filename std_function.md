@@ -146,6 +146,7 @@ public:
     virtual void destroy() noexcept;
     virtual _Rp operator()(_ArgTypes&& ... __arg);
 };
+```
 
 template<class _Fp, class _Alloc, class _Rp, class ..._ArgType>
 __base<_Rp(_ArgTypes...)>* 
@@ -154,10 +155,12 @@ __func<_Fp, _Alloc, _Rp(_ArgTypes...)>::__clone() const {
     typedef typename __rebind_alloc_helper<__alloc_traits, __func>::type _Ap;
     _Ap __a(__f_.second());
     typedef __allocator_destroy<_Ap> _Dp;
+    
+    // create a pointer which can exactly hold myself
     unique_ptr<__func, _Dp> __hold(__a.allocate(1), _Dp(__a, 1));
+    
     ::new (__hold.get()) __func(__f_.first(), _Alloc(__a));
     return __hold.release();
 }
 
-```
 
