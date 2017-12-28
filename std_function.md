@@ -124,3 +124,28 @@ class __func<_Fp, _Alloc, _Rp(_ArgTypes...)> : public __base<_Rp(_ArgTypes...)> 
 
 2. `__compressed_pair`是个优化了内部存储的`pair`，功能和`std::pair`完全相同。
 
+`std::function`实际就是个wrapper，真正的数据都存储在`std::__function::__func`中：
+
+```
+// file: functional
+
+
+template<class Fp, class _Alloc, class _Rp, class ..._ArgTypes>
+class __func<_Fp, _Alloc, _Rp(_ArgTypes...)> : public __base<_Rp(_ArgTypes...)> {
+
+    __compressed_pair<_Fp, _Alloc> __f_;
+    
+public:
+    explicit __func(_Fp&& __f)
+        : __f_(piecewise_construct, 
+               std::forward_as_tuple(std::move(__f)),
+               std::forward_as_tuple()){}
+         
+    virtual __base<_Rp(_ArgTypes...)>* __clone() const;
+    virtual void __clone(__base<_Rp(_ArgTypes...)>*) const;
+    virtual void destroy() noexcept;
+    virtual _Rp operator()(_ArgTypes&& ... __arg);
+};
+
+```
+
