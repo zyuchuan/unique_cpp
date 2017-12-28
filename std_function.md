@@ -72,5 +72,12 @@ template<class _Fp> class function;
 // specialization for callable types
 template<class _Rp, class ..._ArgTypes>
 class function<_Rp(_ArgTypes...)> {
+    typedef __function::__base<_Rp(_ArgTypes...)> __base;
+    typename aligned_storage<3 * sizeof(void*)>::type __buf_;
+    __base* __f_;
+    // ...
 };
 ```
+
+`std::function`内部有两个成员，一个可以容纳三个指针的缓冲区和一个`__base`类型的指针`__f_`。下面我们将看到，这个`__f_`才是真正存储数据的地方。
+
