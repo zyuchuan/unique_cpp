@@ -156,7 +156,6 @@ __func<_Fp, _Alloc, _Rp(_ArgTypes...)>::__clone() const {
     _Ap __a(__f_.second());
     typedef __allocator_destroy<_Ap> _Dp;
     
-    // create a pointer which can exactly hold myself
     unique_ptr<__func, _Dp> __hold(__a.allocate(1), _Dp(__a, 1));
     
     ::new (__hold.get()) __func(__f_.first(), _Alloc(__a));
