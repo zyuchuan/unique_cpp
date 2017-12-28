@@ -60,3 +60,17 @@ int main() {
     f_display_obj(18);
 }
 ```
+
+看来`std::function`还真是个神奇的东西，什么东西都可以往里装，那它是怎样实现的呢？`std::function`的源代码在文件`functional`中：
+
+```
+// file: functional
+
+// general declaration, undefined
+template<class _Fp> class function;
+
+// specialization for callable types
+template<class _Rp, class ..._ArgTypes>
+class function<_Rp(_ArgTypes...)> {
+};
+```
