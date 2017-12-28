@@ -170,8 +170,7 @@ __func<_Fp, _Alloc, _Rp(_ArgTypes...)>::__clone() const {
 }
 
 template<class _Fp, class _Alloc, class _Rp, class ..._ArgTypes>
-void __func<_Fp, _Alloc, _Rp(_ArgTypes...)>::__clone(__base<_Rp(_ArgTypes...)>* __p) const
-{
+void __func<_Fp, _Alloc, _Rp(_ArgTypes...)>::__clone(__base<_Rp(_ArgTypes...)>* __p) const {
     // placement new
     ::new (__p) __func(__f_.first(), __f_.second());
 }
@@ -179,5 +178,22 @@ void __func<_Fp, _Alloc, _Rp(_ArgTypes...)>::__clone(__base<_Rp(_ArgTypes...)>* 
 
 两个`__clone`函数的实现方式本质上是一样的，都是借助`placement new`，在指定的地址上构造一个新的`__func`对象，只不过第一个`__clone`因为没有参数，所以需要自行分配内存。
 
+剩下的两个函数：`destroy`和`operator()`比较简单，就不多解释了。
+
+```
+template<class _Fp, class _Alloc, class _Rp, class ..._ArgTypes>
+void __func<_Fp, _Alloc, _Rp(_ArgTypes...)>::destroy() noexcept {
+    __f_.~__compressed_pair<_Fp, _Alloc>();
+}
+
+
+template<class _Fp, class _Alloc, class _Rp, class ..._ArgTypes>
+_Rp
+__func<_Fp, _Alloc, _Rp(_ArgTypes...)>::operator()(_ArgTypes&& ... __arg)
+{
+    typedef __invoke_void_return_wrapper<_Rp> _Invoker;
+    return _Invoker::__call(__f_.first(), _VSTD::forward<_ArgTypes>(__arg)...);
+}
+```
 
 
