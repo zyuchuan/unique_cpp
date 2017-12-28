@@ -150,8 +150,9 @@ public:
 
 注意上面代码中的`__f_(piecewise_construct...`，这表明调用的“piecewise construct”版本的构造函数。关于`piecewise_construct`的含义可以参考[cppreference.com](http://en.cppreference.com/w/cpp/utility/piecewise_construct)。
 
+下面我们来看`__func`中函数的实现：
 
-
+```
 template<class _Fp, class _Alloc, class _Rp, class ..._ArgType>
 __base<_Rp(_ArgTypes...)>* 
 __func<_Fp, _Alloc, _Rp(_ArgTypes...)>::__clone() const {
@@ -160,10 +161,23 @@ __func<_Fp, _Alloc, _Rp(_ArgTypes...)>::__clone() const {
     _Ap __a(__f_.second());
     typedef __allocator_destroy<_Ap> _Dp;
     
+    // allocate memory
     unique_ptr<__func, _Dp> __hold(__a.allocate(1), _Dp(__a, 1));
-    
+    // placement new
     ::new (__hold.get()) __func(__f_.first(), _Alloc(__a));
+    
     return __hold.release();
 }
+
+template<class _Fp, class _Alloc, class _Rp, class ..._ArgTypes>
+void __func<_Fp, _Alloc, _Rp(_ArgTypes...)>::__clone(__base<_Rp(_ArgTypes...)>* __p) const
+{
+    // placement new
+    ::new (__p) __func(__f_.first(), __f_.second());
+}
+```
+
+两个`__clone`函数的实现方式本质上是一样的，都是借助`placement new`，在指定的地址上构造一个新的`__func`对象，只不过第一个`__clone`因为没有参数，所以需要自行分配内存。
+
 
 
