@@ -81,3 +81,46 @@ class function<_Rp(_ArgTypes...)> {
 
 `std::function`内部有两个成员，一个可以容纳三个指针的缓冲区和一个`__base`类型的指针`__f_`。下面我们将看到，这个`__f_`才是真正存储数据的地方。
 
+```
+// file: functional
+
+namespace __function {
+
+template<class _Fp> class __base;
+
+// __base is an interface
+template<class _Rp, class ..._ArgTypes>
+class __base<_Rp(_ArgTypes...)> {
+    // not copy constructible, not assignable
+    __base(const __base&);
+    __base& operator=(const __base&);
+    
+public:
+    __base(){}
+    virtual ~__base(){}
+    virtual __base* __clone() const = 0;
+    virtual void __clone(__base*) const = 0;
+    virtual void destroy() noexcept = 0;
+    virtual _Rp operator()(_ArgTypes&& ...) = 0;
+};
+
+// __func implements __base
+
+template<class _FD, class _Alloc, class _FB> class __func;
+
+template<class Fp, class _Alloc, class _Rp, class ..._ArgTypes>
+class __func<_Fp, _Alloc, _Rp(_ArgTypes...)> : public __base<_Rp(_ArgTypes...)> {
+    __compressed_pair<_Fp, _Alloc> __f_;
+    
+    // ...
+};
+
+}
+```
+
+几点说明：
+
+1. 在`__function::__func`的定义中出现了一个模板参数`_Alloc`，这是个`allocator`。C++标准对这个`allocator`并没有做出详细的说明，这导致了不同的标准库实现在使用这个`allocator`使出现了一些混乱，标准委员会已经决定将`_Alloc`移出C++17，所以在后面的讨论中，我们会假装这个参数不存在。
+
+2. `__compressed_pair`是个优化了内部存储的`pair`，功能和`std::pair`完全相同。
+
