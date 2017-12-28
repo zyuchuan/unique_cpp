@@ -147,5 +147,17 @@ public:
     virtual _Rp operator()(_ArgTypes&& ... __arg);
 };
 
+template<class _Fp, class _Alloc, class _Rp, class ..._ArgType>
+__base<_Rp(_ArgTypes...)>* 
+__func<_Fp, _Alloc, _Rp(_ArgTypes...)>::__clone() const {
+    typedef allocator_traits<_Alloc> _alloc_traits;
+    typedef typename __rebind_alloc_helper<__alloc_traits, __func>::type _Ap;
+    _Ap __a(__f_.second());
+    typedef __allocator_destroy<_Ap> _Dp;
+    unique_ptr<__func, _Dp> __hold(__a.allocate(1), _Dp(__a, 1));
+    ::new (__hold.get()) __func(__f_.first(), _Alloc(__a));
+    return __hold.release();
+}
+
 ```
 
