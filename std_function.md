@@ -225,5 +225,41 @@ function<_Rp<_ArgTypes...>::function(const function& __f) {
     }
 }
 
+template<class _Rp, class ..._ArgTypes>
+function<_Rp(_ArgTypes...>::function(function&& __f) noexcept {
+    if (__f.__f_ == 0)
+        __f_ = 0;
+    else if ((void*)__f.__f_ == &__f.__buf_) {
+        __f_ = __as_base(&__buf);
+        __f.__f_->clone(__f_);
+    }
+    else {
+        __f_ = __f.__f_;
+        __f.__f_ = 0;
+    }
+}
+
+template<class _Rp, class ..._ArgTypes>
+template <class _Fp, class>
+function<_Rp(_ArgTypes...)>::function(_Fp __f)
+    : __f_(0) {
+    if (__function::__not_null(__f)) {
+        typedef __function::__func<_Fp, allocator<_Fp>, _Rp(_ArgTypes...)> _FF;
+        if (sizeof(_FF) <= sizeof(__buf_) && is_nothrow_copy_constructible<_Fp>::value)
+        {
+            __f_ = ::new((void*)&__buf_) _FF(_VSTD::move(__f));
+        }
+        else
+        {
+            typedef allocator<_FF> _Ap;
+            _Ap __a;
+            typedef __allocator_destructor<_Ap> _Dp;
+            unique_ptr<__base, _Dp> __hold(__a.allocate(1), _Dp(__a, 1));
+            ::new (__hold.get()) _FF(_VSTD::move(__f), allocator<_Fp>(__a));
+            __f_ = __hold.release();
+        }
+    }
+}
+
 ```
 
