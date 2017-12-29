@@ -196,4 +196,34 @@ __func<_Fp, _Alloc, _Rp(_ArgTypes...)>::operator()(_ArgTypes&& ... __arg)
 }
 ```
 
+前面的例子我们也看到了，`std::function`都构造方式多种多样，你一定很好奇这些构造函数是怎么写出来的，下面我们就来一探究竟：
+
+```
+template<class _Rp, class ..._ArgTypes>
+class _LIBCPP_TEMPLATE_VIS function<_Rp(_ArgTypes...)> {
+    // ...
+    
+public:
+    function() noexcept: __f_(0) {}
+    function(nullptr_t) noexcept : __f_(0){}
+    function(const function&);
+    function(function&&) noexcept;
+    template<class _Fp, class = _EnableIfCallable<_Fp>>
+    function(_Fp);
+};
+
+template<class _Rp, class ..._ArgTypes>
+function<_Rp<_ArgTypes...>::function(const function& __f) {
+    if (__f.__f_ == 0)
+        __f_ = 0;
+    else if ((void*)__f.__f_ == &__f.__buf_) {
+        __f_ = __as_base(&__buf_);
+        __f.__f_ ->__clone(__f_);
+    }
+    else {
+        __f_ = __f.__f_->__clone();
+    }
+}
+
+```
 
