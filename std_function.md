@@ -117,10 +117,14 @@ namespace __function {
 ```
 template<class _Rp, class ..._ArgTypes>
 class function<_Rp(_ArgTypes...)> {
+
     // ...
+    
     template<class _Fp, class = _EnableIfCallable<_Fp>>
     function(_Fp);
 };
+```
+
 ```
 // __func implements __base
 
@@ -132,7 +136,6 @@ class __func<_Fp, _Alloc, _Rp(_ArgTypes...)> : public __base<_Rp(_ArgTypes...)> 
     
     // ...
 };
-
 }
 ```
 
