@@ -1,5 +1,5 @@
 
-`std::function`是一个泛化的“function wrapper”，一个`std::function`的实例可以保存、拷贝和调用函数，lambda表达式，`bind expression`、函数对象（functor），甚至类成员函数指针和类成员变量指针等等。
+`std::function`是一个泛化的“function wrapper”，可以保存、拷贝和调用函数，lambda表达式，`bind expression`、函数对象（functor），甚至类成员函数指针和类成员变量指针等等。
 
 `std::function`的用法非常灵活，下面的例子摘自[cppreference.com](http://en.cppreference.com/w/cpp/utility/functional/function)：
 
