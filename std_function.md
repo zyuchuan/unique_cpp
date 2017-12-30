@@ -112,9 +112,15 @@ namespace __function {
 }
 ```
 
-`__base`其实是一个interface。我们应该能猜到，`std::function`一定是把“callable object”的信息存放在一个实现了`__base`接口的对象中。我们暂且不去理会这个实现了`__base`接口的对象，回到`std::function`的声明中来，你可能要问：“这个缓冲区有什么用呢？毕竟有一个`__base* __f_`就足够了
+`__base`其实是一个接口。我们应该能猜到，`std::function`一定是把“callable object”的信息存放在一个实现了`__base`接口的对象中。我们暂且不去理会这个实现了`__base`接口的对象，回到`std::function`的声明中来：
 
-
+```
+template<class _Rp, class ..._ArgTypes>
+class function<_Rp(_ArgTypes...)> {
+    // ...
+    template<class _Fp, class = _EnableIfCallable<_Fp>>
+    function(_Fp);
+};
 ```
 // __func implements __base
 
