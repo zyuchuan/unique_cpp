@@ -84,14 +84,14 @@ class function<_Rp(_ArgTypes...)> {
 };
 ```
 
-`std::function`内部有两个成员：一个可以容纳三个指针的缓冲区和一个`__base`类型的指针`__f_`。那这个`__base`又是啥呢？
+`std::function`内部有两个成员：一个可以容纳三个指针的缓冲区`__buf_`和一个`__base`类型的指针`__f_`。那这个`__base`又是啥呢？
 
 ```
 // file: functional
 
 namespace __function {
 
-template<class _Fp> class __base;
+    template<class _Fp> class __base;
 
     template<class _Rp, class ..._ArgTypes>
     class __base<_Rp(_ArgTypes...)> {
@@ -110,8 +110,9 @@ template<class _Fp> class __base;
 
     // ...
 }
-
 ```
+
+`__base`其实是一个interface。我们应该能猜到，`std::function`一定是把“callable object”的信息存放在一个实现了`__base`接口的对象中。我们暂且不去理会这个实现了`__base`接口的对象，回到`std::function`的声明中来，你可能要问：“这个缓冲区有什么用呢？毕竟有一个`__base* __f_`就足够了
 
 
 ```
