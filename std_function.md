@@ -160,6 +160,12 @@ class function<_Rp(_ArgTypes...)> {
 };
 ```
 
+简单来说，一个`callable object`必须
+
+1. 不能是`std::function`自身；
+2. 可以被“invoke”（好像是废话）；
+3. 返回类型是`void`或者可以转换成类型`_Rp`。
+
 
 
 ```
