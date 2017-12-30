@@ -169,7 +169,7 @@ class function<_Rp(_ArgTypes...)> {
 知道了什么是`callable object`，我们再来看如何通过这个`callable object`构造一个`function`对象：
 
 ```
-// file: functional
+// file: functional
 
 template<class _Rp, class ..._ArgTypes>
 template<class _Fp, class>
@@ -214,3 +214,4 @@ class __func<_Fp, _Alloc, _Rp(_ArgTypes...)> : public __base<_Rp(_ArgTypes...)> 
 2. `__compressed_pair`是个优化了内部存储的`pair`，功能和`std::pair`完全相同。
 
 理解上面两点，上面代码的意思就很清楚了：如果缓冲区`__buf_`可以容纳`__function::__func`，则通过`placement new`在`__buf`里，用参数`__f_`构造出一个`__function::__func`，并且让`__f_`指向`__buf`；否则就新开辟一块内存，构造出`__function::__func`，再让`__f_`指向新开辟的内存。
+
