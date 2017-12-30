@@ -166,7 +166,8 @@ class function<_Rp(_ArgTypes...)> {
 2. 可以被“invoke”（好像是废话）；
 3. 返回类型是`void`或者可以转换成类型`_Rp`。
 
-```
+
+
 template<class _Rp, class ..._ArgTypes>
 template<class _Fp, class>
 function<_Rp(_ArgTypes...)>::function(_Fp __f)
@@ -188,7 +189,7 @@ function<_Rp(_ArgTypes...)>::function(_Fp __f)
         }
     }
 }
-```
+
 
 sssss
 
