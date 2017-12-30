@@ -66,7 +66,7 @@ int main() {
 
 ## 2. std::function源代码分析
 
-看来`std::function`还真是个神奇的东西，什么东西都可以往里装，那它是怎样实现的呢？`std::function`的源代码在文件`functional`中：
+`std::function`的源代码在文件`functional`中：
 
 ```
 // file: functional
@@ -84,7 +84,7 @@ class function<_Rp(_ArgTypes...)> {
 };
 ```
 
-`std::function`内部有两个成员，一个可以容纳三个指针的缓冲区和一个`__base`类型的指针`__f_`。下面我们将看到，这个`__f_`才是真正存储数据的地方。
+`std::function`内部有两个成员：一个可以容纳三个指针的缓冲区和一个`__function::__base`类型的指针`__f_`。那这个`__base`又是啥呢？
 
 ```
 // file: functional
