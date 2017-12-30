@@ -234,7 +234,7 @@ public:
     virtual void destroy() noexcept;
     virtual _Rp operator()(_ArgTypes&& ... __arg);
 };
-```
+
 
 注意上面代码中的`__f_(piecewise_construct...`，这表明调用的“piecewise construct”版本的构造函数。关于`piecewise_construct`的含义可以参考[cppreference.com](http://en.cppreference.com/w/cpp/utility/piecewise_construct)。
 
