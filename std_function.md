@@ -127,7 +127,7 @@ class function<_Rp(_ArgTypes...)> {
 };
 ```
 
-`std::function`的构造函数是个模板函数，它的第二个模板参数有个默认值`_EnableIfCallable<_Fp>`，这个参数很重要，它决定了什么样的参数可以用于构造一个`std::function`：
+`std::function`的构造函数是个模板函数，它的第二个模板参数有个默认值`_EnableIfCallable<_Fp>`，这个参数很重要，它决定了什么样的数据可以用于构造一个`std::function`：
 
 ```
 // file: functional
