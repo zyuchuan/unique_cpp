@@ -160,7 +160,7 @@ class function<_Rp(_ArgTypes...)> {
 };
 ```
 
-简单来说，一个`callable object`必须
+简单来说，一个`callable object`必须：
 
 1. 不能是`std::function`自身；
 2. 可以被“invoke”（好像是废话）；
@@ -168,15 +168,13 @@ class function<_Rp(_ArgTypes...)> {
 
 
 
-
+```
 template<class _Rp, class ..._ArgTypes>
 template<class _Fp, class>
 function<_Rp(_ArgTypes...)>::function(_Fp __f)
     : __f_(0) {
-
     if (__function::__not_null(__f)) {
         typedef __function::__func<_Fp, allocator<_Fp>, _Rp(_ArgTypes...)> _FF;
-
         if (sizeof(_FF) <= sizeof(__buf_) && is_nothrow_copy_constructible<_Fp>::value) {
             __f_ = ::new((void*)&__buf_) _FF(std::move(__f));
         }
@@ -190,7 +188,7 @@ function<_Rp(_ArgTypes...)>::function(_Fp __f)
         }
     }
 }
-
+```
 sssss
 
 ```
