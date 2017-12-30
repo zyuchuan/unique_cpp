@@ -24,25 +24,25 @@ struct PrintNum() {
 };
 
 int main() {
-    // 1. 保存普通函数
+    // 1. 用于普通函数
     std::function<void(int)> f_display = print_num;
     f_display(9);
     
-    // store a lambda
+    // 2. 用于lambda表达式
     std::function<void()> f_display_42 = [](){print_num(42);};
     f_display_42();
     
-    // store the result of a call to std::bind
+    // 3. 用于std::bind
     std::function<void()> f_display_31337 = std::bind(print_num, 31337);
     f_display_31337();
  
-    // store a call to a member function
+    // 4. 用于类成员函数
     std::function<void(const Foo&, int)> f_add_display = &Foo::print_add;
     const Foo foo(314159);
     f_add_display(foo, 1);
     f_add_display(314159, 1);
  
-    // store a call to a data member accessor
+    // 5. 用于类成员变量
     std::function<int(Foo const&)> f_num = &Foo::num_;
     std::cout << "num_: " << f_num(foo) << '\n';
  
