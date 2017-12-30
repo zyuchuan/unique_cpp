@@ -207,7 +207,7 @@ class __func<_Fp, _Alloc, _Rp(_ArgTypes...)> : public __base<_Rp(_ArgTypes...)> 
 }
 ```
 
-真正的主角终于登场了，那就是`__function::__func`，这个类实现了`__base`接口，而且有一个成员变量`__f`，类型为`__compressed_pair<_Fp, _Alloc>`。需要说明的是：
+真正的主角终于登场了，那就是`__function::__func`，这个类实现了`__base`接口，而且有一个成员变量`__f_`，类型为`__compressed_pair<_Fp, _Alloc>`。需要说明的是：
 
  1. `__function::__func`的定义中出现了一个模板参数`_Alloc`，这是个`allocator`。C++标准对这个`allocator`并没有做出详细的说明，这导致了不同的标准库实现在使用这个`allocator`使出现了一些混乱，标准委员会已经决定将`_Alloc`移出C++17，所以你可以忽略这个参数。
 
