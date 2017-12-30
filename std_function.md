@@ -1,5 +1,7 @@
 # std::function
 
+## 1. std::function的用法
+
 `std::function`是一个泛化的“function wrapper”，可以保存、拷贝和调用函数，lambda表达式，`bind expression`、函数对象（functor），甚至类成员函数指针和类成员变量指针等等。
 
 `std::function`的用法非常灵活，[cppreference.com](http://en.cppreference.com/w/cpp/utility/functional/function)列出了它的八大用法：
@@ -61,6 +63,8 @@ int main() {
     f_display_obj(18);
 }
 ```
+
+## 2. std::function源代码分析
 
 看来`std::function`还真是个神奇的东西，什么东西都可以往里装，那它是怎样实现的呢？`std::function`的源代码在文件`functional`中：
 
