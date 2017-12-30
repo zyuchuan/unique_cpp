@@ -115,6 +115,8 @@ namespace __function {
 `__base`其实是一个接口。我们应该能猜到，`std::function`一定是把“callable object”的信息存放在一个实现了`__base`接口的对象中。我们暂且不去理会这个实现了`__base`接口的对象，回到`std::function`的声明中来：
 
 ```
+// file: functional 
+
 template<class _Rp, class ..._ArgTypes>
 class function<_Rp(_ArgTypes...)> {
 
@@ -124,6 +126,41 @@ class function<_Rp(_ArgTypes...)> {
     function(_Fp);
 };
 ```
+
+`std::function`的构造函数是个模板函数，它的第二个模板参数有个默认值`_EnableIfCallable<_Fp>`，这个参数很重要，它决定了什么样的参数可以用于构造一个`std::function`：
+
+```
+// file: functional
+
+template<class _Rp, class ..._ArgTypes>
+class function<_Rp(_ArgTypes...)> {
+    
+    // ...
+
+    template<class _Fp, bool = __lazy_and<
+        integral_constant<bool, !is_same<__uncvref_t<_Fp>, function>::value>, __invokable<_Fp&, _ArgTypes...>
+    >::value>
+    struct __callable;
+
+    template<class _Fp>
+    struct __callable<_Fp, true> {
+        static const bool value = is_same<void, _Rp>::value ||
+            is_convertible<typename __invoke_of<Fp&, _ArgTypes...>::type, _Rp>::value;
+    };
+
+    template<class _Fp>
+    struct __callable<_Fp, false> {
+        static const bool value = false;
+    };
+
+    template<class _Fp>
+    using _EnableIfCallable = typename enable_if<__callable<_Fp>::value>::type;
+
+    // ...
+};
+```
+
+
 
 ```
 // __func implements __base
