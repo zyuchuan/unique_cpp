@@ -1,3 +1,4 @@
+# std::function
 
 `std::function`是一个泛化的“function wrapper”，可以保存、拷贝和调用函数，lambda表达式，`bind expression`、函数对象（functor），甚至类成员函数指针和类成员变量指针等等。
 
