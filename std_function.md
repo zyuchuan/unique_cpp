@@ -166,6 +166,30 @@ class function<_Rp(_ArgTypes...)> {
 2. 可以被“invoke”（好像是废话）；
 3. 返回类型是`void`或者可以转换成类型`_Rp`。
 
+```
+template<class _Rp, class ..._ArgTypes>
+template<class _Fp, class>
+function<_Rp(_ArgTypes...)>::function(_Fp __f)
+    : __f_(0) {
+
+    if (__function::__not_null(__f)) {
+        typedef __function::__func<_Fp, allocator<_Fp>, _Rp(_ArgTypes...)> _FF;
+
+        if (sizeof(_FF) <= sizeof(__buf_) && is_nothrow_copy_constructible<_Fp>::value) {
+            __f_ = ::new((void*)&__buf_) _FF(std::move(__f));
+        }
+        else {
+            typedef allocator<_FF> _Ap;
+            _Ap __a;
+            typedef __allocator_destructor<_Ap> _Dp;
+            unique_ptr<__base, _Dp> __hold(__a.allocate(1), _Dp(__a, 1));
+            ::new (__hold.get()) _FF(std::move(__f), allocator<_Fp>(__a));
+            __f_ = __hold.release();
+        }
+    }
+}
+```
+
 
 
 ```
