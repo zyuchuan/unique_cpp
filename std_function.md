@@ -166,16 +166,18 @@ class function<_Rp(_ArgTypes...)> {
 2. 可以被“invoke”（好像是废话）；
 3. 返回类型是`void`或者可以转换成类型`_Rp`。
 
-
+知道了什么是`callable object`，我们再来看如何通过这个`callable object`构造一个`function`对象：
 
 ```
+// file: functional
+
 template<class _Rp, class ..._ArgTypes>
 template<class _Fp, class>
 function<_Rp(_ArgTypes...)>::function(_Fp __f)
     : __f_(0) {
 
     if (__function::__not_null(__f)) {
-        
+
         typedef __function::__func<_Fp, allocator<_Fp>, _Rp(_ArgTypes...)> _FF;
 
         if (sizeof(_FF) <= sizeof(__buf_) && is_nothrow_copy_constructible<_Fp>::value) {
