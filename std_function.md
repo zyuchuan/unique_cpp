@@ -84,7 +84,7 @@ class function<_Rp(_ArgTypes...)> {
 };
 ```
 
-`std::function`内部有两个成员：一个可以容纳三个指针的缓冲区和一个`__function::__base`类型的指针`__f_`。那这个`__base`又是啥呢？
+`std::function`内部有两个成员：一个可以容纳三个指针的缓冲区和一个`__base`类型的指针`__f_`。那这个`__base`又是啥呢？
 
 ```
 // file: functional
@@ -93,22 +93,28 @@ namespace __function {
 
 template<class _Fp> class __base;
 
-// __base is an interface
-template<class _Rp, class ..._ArgTypes>
-class __base<_Rp(_ArgTypes...)> {
-    // not copy constructible, not assignable
-    __base(const __base&);
-    __base& operator=(const __base&);
-    
-public:
-    __base(){}
-    virtual ~__base(){}
-    virtual __base* __clone() const = 0;
-    virtual void __clone(__base*) const = 0;
-    virtual void destroy() noexcept = 0;
-    virtual _Rp operator()(_ArgTypes&& ...) = 0;
-};
+    template<class _Rp, class ..._ArgTypes>
+    class __base<_Rp(_ArgTypes...)> {
+        // not copy constructible, not assignable
+        __base(const __base&);
+        __base& operator=(const __base&);
+        
+    public:
+        __base(){}
+        virtual ~__base(){}
+        virtual __base* __clone() const = 0;
+        virtual void __clone(__base*) const = 0;
+        virtual void destroy() noexcept = 0;
+        virtual _Rp operator()(_ArgTypes&& ...) = 0;
+    };
 
+    // ...
+}
+
+```
+
+
+```
 // __func implements __base
 
 template<class _FD, class _Alloc, class _FB> class __func;
