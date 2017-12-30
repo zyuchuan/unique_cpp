@@ -46,16 +46,16 @@ int main() {
     std::function<int(Foo const&)> f_num = &Foo::num_;
     std::cout << "num_: " << f_num(foo) << '\n';
  
-    // store a call to a member function and object
+    // 6. 用于对象和它的成员函数
     using std::placeholders::_1;
     std::function<void(int)> f_add_display2 = std::bind( &Foo::print_add, foo, _1 );
     f_add_display2(2);
  
-    // store a call to a member function and object ptr
+    // 7. 用于对象指针和它的成员函数store a call to a member function and object ptr
     std::function<void(int)> f_add_display3 = std::bind( &Foo::print_add, &foo, _1 );
     f_add_display3(3);
  
-    // store a call to a function object
+    // 8. 用于函数对象store a call to a function object
     std::function<void(int)> f_display_obj = PrintNum();
     f_display_obj(18);
 }
