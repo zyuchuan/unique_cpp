@@ -29,9 +29,15 @@ swap(T& x, T& y) noexcept(
 }
 ```
 
-这个泛化的版本可以工作，但是不能高效地工作，标准库为每一种类型都重载了`swap()`函数，而这些个重载版本的写法也大有讲究，比如说，`std::vector`的重载版本如下：
+从定义可以看出：
 
-```
+1. 一个“swappable”的类型必须满足“move constructible”和“move assignable”两个前提条件，这是C++11的新要求。
+
+2. 如果类型`T`的“move constructor”和“move assignment operator”不抛出异常，则`swap`也不能抛出异常。
+
+虽然标准并没有强制规定`swap()`不能抛出异常，但是实际使用中，我们都要确保`swap()`不抛出异常，这是为什么呢？要回答这个问题，就要从**C++异常安全保证**说起。
+
+
 // file: vector
 
 template<class T, class Allocator>
