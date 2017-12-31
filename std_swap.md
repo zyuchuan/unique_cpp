@@ -9,6 +9,9 @@
 要回答这两个问题，就要从`std::swap`的实现说起。
 
 ## 1. std::swap()的实现
+
+libc++中，`swap()`定义在文件“type_traits”中：
+
 ```
 // file: type_traits
 
