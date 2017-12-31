@@ -219,3 +219,19 @@ class __func<_Fp, _Alloc, _Rp(_ArgTypes...)> : public __base<_Rp(_ArgTypes...)> 
 
 前面已经说了，`std::function`只是一个wrapper，真正的内容都在`__function::__func`类中，下面我们就来一窥这个`__function::__func`的真面目。
 
+```
+// file: functional
+
+namespace __function {
+    // ...
+
+    template<class _FD， class _Alloc, class _FB> class __func;
+
+    template<class _Fp, _Alloc, class _Rp, class ..._ArgTypes>
+    class __func<_Fp, _Alloc, _Rp(_ArgTypes...)> 
+        : public __base<_Rp(_ArgTypes...)> {
+
+    
+    };
+}
+```
