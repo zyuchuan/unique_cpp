@@ -37,7 +37,7 @@ swap(T& x, T& y) noexcept(
 
 虽然标准并没有强制规定`swap()`不能抛出异常，但是实际使用中，我们都要确保`swap()`不抛出异常，这是为什么呢？要回答这个问题，就要从**C++异常安全保证**说起。
 
-## 2 异常安全保证
+## 2. 异常安全保证
 
 维基百科对[异常安全保证](https://en.wikipedia.org/wiki/Exception_safety)（Exception Safety Guarantees）的解释是“***类的设计者和使用者在使用任何一门程序设计语言，特别是C++时可以遵守的一系列异常处理准则***”。
 
