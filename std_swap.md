@@ -39,7 +39,7 @@ swap(T& x, T& y) noexcept(
 
 ## 2 异常安全保证
 
-[维基百科](https://en.wikipedia.org/wiki/Exception_safety)对一场安全保证（Exception Safety Guarantees）的解释是“***类的设计者和使用者在使用任何一门程序设计语言，特别是C++时可以遵守的一系列异常处理准则***”。
+维基百科对[异常安全保证](https://en.wikipedia.org/wiki/Exception_safety)（Exception Safety Guarantees）的解释是“***类的设计者和使用者在使用任何一门程序设计语言，特别是C++时可以遵守的一系列异常处理准则***”。
 
 
 
