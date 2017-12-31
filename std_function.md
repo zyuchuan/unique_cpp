@@ -228,8 +228,7 @@ namespace __function {
     template<class _FD， class _Alloc, class _FB> class __func;
 
     template<class _Fp, _Alloc, class _Rp, class ..._ArgTypes>
-    class __func<_Fp, _Alloc, _Rp(_ArgTypes...)> 
-        : public __base<_Rp(_ArgTypes...)> {
+    class __func<_Fp, _Alloc, _Rp(_ArgTypes...)> : public __base<_Rp(_ArgTypes...)> {
 
     
     };
