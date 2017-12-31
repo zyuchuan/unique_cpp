@@ -215,3 +215,7 @@ class __func<_Fp, _Alloc, _Rp(_ArgTypes...)> : public __base<_Rp(_ArgTypes...)> 
 
 理解上面两点，上面代码的意思就很清楚了：如果缓冲区`__buf_`可以容纳`__function::__func`，则通过`placement new`在`__buf`里，用参数`__f_`构造出一个`__function::__func`，并且让`__f_`指向`__buf`；否则就新开辟一块内存，构造出`__function::__func`，再让`__f_`指向新开辟的内存。
 
+### 2.1 __function::__func
+
+前面已经说了，`std::function`只是一个wrapper，真正的内容都在`__function::__func`类中，下面我们就来一窥这个`__function::__func`的真面目。
+
