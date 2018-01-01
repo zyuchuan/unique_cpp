@@ -106,13 +106,41 @@ void insert_and_print(const list &l) {
         // log error here
     }
     
-    std::cout << "There are " << l.length() << " element in list";
+    std::cout << "There are " << l.length() << " element(s) in list";
 }
 
 list l;
 insert_and_print(l);
+```
+
+如果`l.insert(1)`失败，你可能认为上面的代码会输出
 
 ```
+There are 0 element(s) in list
+```
+
+**错！大错特错！**这才是你会看到的：
+
+```
+There are 1 element(s) in list
+```
+
+我们再来看一下`insert()`的代码：
+
+```
+template<typename T>
+void list<T>::insert(T&& val) {
+    ++_length;
+    node<T>* n = new node<T>(std::forward<T>(val));
+    n->next = _head;
+    _head = n;
+    
+}
+```
+
+注意在调用`new`之前，`_length`的值已经被改变了，也就是说新元素并没有被插入，但是`list`的内部状态已经被改变了。
+
+在这里，函数`insert_and_print`提供了基本异常保证，当异常发生了，程序可以继续执行，不会有资源泄露，但是`list`内部的状态已经被改变，而且变成了非法的状态，这是很危险的。
 
 
 我们希望所有函数都提供“no throw”保证，但这是不可能的。我们最低也要做到基本承诺。而且，你会看到，在一定条件下，我们可以做到强烈保证。而swap`函数可以很容易地做到这一点。
