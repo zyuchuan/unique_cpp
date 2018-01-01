@@ -97,6 +97,20 @@ node<T>* n = new node<T>(std::forward<T>(val));
 
 假如这行代码抛出异常，因为`insert`并没有捕捉异常，所以异常会向上传播，达到`insert`的调用者，进一步假设`insert`的调用者捕捉到了这个异常，并决定忽略这个错误，就像这样：
 
+```
+void insert_and_print(const list &l) {
+    try {
+        l.insert(1);
+        l.insert(2);
+    }
+    catch(...) {
+        // log error here
+    }
+    
+    std::cout << "There are " << l.length() << " element in list";
+}
+```
+
 
 我们希望所有函数都提供“no throw”保证，但这是不可能的。我们最低也要做到基本承诺。而且，你会看到，在一定条件下，我们可以做到强烈保证。而swap`函数可以很容易地做到这一点。
 
