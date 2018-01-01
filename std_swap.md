@@ -162,7 +162,8 @@ void list<T>::insert(T&& val) {
 
 ## 3. std::swap和异常安全保证
 
-简而言之，一个不抛出异常的`swap()`可以让我们很方便地提供强烈异常安全保证。加入有一个类`Wdiget`，你可以很方便地写出强烈异常安全保证的拷贝构造函数，拷贝赋值函数等：
+简而言之，一个不抛出异常的`swap()`可以让我们很方便地提供强烈异常安全保证。标准库中有很多算法和函数都依赖`swap()`实现强烈异常安全保证。
+
 
 ```
 Widget& Widget::operator=(const Widget &other) {
@@ -209,33 +210,3 @@ inline void swap(vector<T, Allocator>& x, vector<T, Allocator>& y) {
 
 如此大费周折，只是为了实现一个平淡无奇的函数，看上去得不偿失。其实不然，`swap`函数已经成为C++异常安全编程的很重要的组成部分。
 
-## 2 异常安全保证
-
-* **基本承诺**: 如果抛出异常，程序内的任何事物仍然保持在有效状态下，没有对象或数据结构会因此而破坏，所有对象都处于有效的状态，但是处于哪个状态不可预知。
-
-* **强烈保证**：如果抛出异常，程序状态不改变。也就是说函数是一种transaction，要么成功，如果不成功，则程序回到调用之前的状态。
-
-* **不抛出异常保证**：承诺绝不抛出异常。
-
-我们希望所有函数都提供“no throw”保证，但这是不可能的。我们最低也要做到基本承诺。而且，你会看到，在一定条件下，我们可以做到强烈保证。而swap`函数可以很容易地做到这一点。
-
-## 3 copy-and-swap
-
-```
-class Widget {
-public:
-    Widget(const Widget& other);
-    // ...
-};
-
-Widget::Widget(const Widget& other) {
-    // construction of temp could throw,
-    // if it throw, this object would change
-    // status
-    Widget temp(other);
-    
-    // swap never throw, so we provide
-    // strong exception guarent
-    swap(*this, temp);
-}
-```
