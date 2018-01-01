@@ -60,7 +60,7 @@ private:
         U value;
         node* next;
         
-        node(U&& val) : value(val) {}
+        node(U&& val) : value(std::move(val)) {}
     };
     
     node<T>*   _head;
