@@ -190,4 +190,8 @@ public:
 
 这个技巧在C++中是如此常见，以至于已经成为了一种“idiom”，也就是我们常说的“copy-and-swap idom”。Stack Overflow上有一篇很好的关于[swap-and-copy idiom](https://stackoverflow.com/questions/3279543/what-is-the-copy-and-swap-idiom)的文章，有兴趣的可以去看看。
 
+现在我们知道了为什么一个不抛出异常的`swap()`很重要，但是还有一个重要的问题：如何才能让`swap()`能够高效地作用于我们自定义的类？
+
+## 4. 实现你自己的swap()
+
 
