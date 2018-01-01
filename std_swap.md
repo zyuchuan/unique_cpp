@@ -101,7 +101,6 @@ node<T>* n = new node<T>(std::forward<T>(val));
 void insert_and_print(const list &l) {
     try {
         l.insert(1);
-        l.insert(2);
     }
     catch(...) {
         // log error here
