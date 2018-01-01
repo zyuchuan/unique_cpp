@@ -56,7 +56,7 @@ template<typename T>
 class list {
 private:
     template<typename U>
-    struct _node {
+    struct node {
         U value;
         node* next;
         
