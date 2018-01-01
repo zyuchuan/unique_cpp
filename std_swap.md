@@ -190,36 +190,4 @@ public:
 
 这个技巧在C++中是如此常见，以至于已经成为了一种“idiom”，也就是我们常说的“copy-and-swap idom”。Stack Overflow上有一篇很好的关于[swap-and-copy idiom](https://stackoverflow.com/questions/3279543/what-is-the-copy-and-swap-idiom)的文章，有兴趣的可以去看看。
 
-// file: vector
-
-template<class T, class Allocator>
-class vector {
-public:
-
-    // define a member function swpa(vector&)
-    void swap(vector& x) {
-        // doing swap here 
-    }    
-};
-
-// overload swap for vector<T, Allocator>
-template<class T, class Allocator>
-inline void swap(vector<T, Allocator>& x, vector<T, Allocator>& y) {
-    x.swap(y);
-}
-```
-
-首先，`vector`定义了一个成员函数`swap`，然后再重载函数`std::swap`，这个重载的版本会调用`vector::swap`。
-
-注意，根据《Effective C++》，在重载的版本中，应该
-
-```
-template<class T, class Allocator>
-inline void swap(vector<T, Allocator>& x, vector<T, Allocator>& y) {
-    using std::swap;
-    x.swap(y);
-}
-```
-
-如此大费周折，只是为了实现一个平淡无奇的函数，看上去得不偿失。其实不然，`swap`函数已经成为C++异常安全编程的很重要的组成部分。
 
