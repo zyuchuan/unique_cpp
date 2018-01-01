@@ -56,7 +56,7 @@ template<typename T>
 class list {
 private:
     template<typename U>
-    struct node {
+    struct _node {
         U value;
         node* next;
         
@@ -64,16 +64,28 @@ private:
     };
     
     note<T>*   _head;
-    size_t     _size;
+    size_t     _length; // length of list
     
 public:
     // ...
     
-    void add(const T& val);
-    inline size_t length() { return _size;}
+    void insert(const T& val);
+    inline size_t length() { return _length;}
     
     //...
 };
+```
+
+因为查询`list`的长度是一个常用的操作，所以你将`list`的长度保存在`_length`中。`list`还应该支持从头部插入新元素：
+
+```
+template<typename T>
+void list<T>::insert(const T& val) {
+    ++_length;
+    node<T> n = new node(val);
+    _head = node;
+    
+}
 ```
 
 我们希望所有函数都提供“no throw”保证，但这是不可能的。我们最低也要做到基本承诺。而且，你会看到，在一定条件下，我们可以做到强烈保证。而swap`函数可以很容易地做到这一点。
