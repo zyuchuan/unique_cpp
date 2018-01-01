@@ -63,7 +63,7 @@ private:
         // ...
     };
     
-    note<T>*   _head;
+    node<T>*   _head;
     size_t     _length; // length of list
     
 public:
