@@ -51,6 +51,29 @@ swap(T& x, T& y) noexcept(
 
 **不抛出异常保证**还比较好理解，不过另外两个**保证**可能会让你有点摸不着头脑，下面我就举个例子来说明。假设你要实现一个`list`数据结构，你打算用一系列相互连接的节点来实现这个`list`：
 
+```
+template<typename T>
+class list {
+private:
+    template<typename U>
+    struct node {
+        U value;
+        node* next;
+    };
+    
+    note<T>*   _head;
+    size_t     _size;
+    
+public:
+    // ...
+    
+    void add(const T& val);
+    inline size_t length() { return _size;}
+    
+    //...
+};
+```
+
 我们希望所有函数都提供“no throw”保证，但这是不可能的。我们最低也要做到基本承诺。而且，你会看到，在一定条件下，我们可以做到强烈保证。而swap`函数可以很容易地做到这一点。
 
 
