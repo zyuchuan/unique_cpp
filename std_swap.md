@@ -186,8 +186,9 @@ public:
         swap(*this, other);       
     }
 };
+```
 
-这个技巧在C++中是如此常见，以至于已经成为了一种“idiom”，也就是我们常说的“copy-and-swap”。Stack Overflow上有一篇很好的关于[swap-and-copy idiom](https://stackoverflow.com/questions/3279543/what-is-the-copy-and-swap-idiom)的文章，有兴趣的可以去看看。
+这个技巧在C++中是如此常见，以至于已经成为了一种“idiom”，也就是我们常说的“copy-and-swap idom”。Stack Overflow上有一篇很好的关于[swap-and-copy idiom](https://stackoverflow.com/questions/3279543/what-is-the-copy-and-swap-idiom)的文章，有兴趣的可以去看看。
 
 // file: vector
 
