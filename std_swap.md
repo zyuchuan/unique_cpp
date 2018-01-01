@@ -208,9 +208,9 @@ public:
 };
 
 // 2. 重载swap
-inline void swap(ResourceManager &lhs, ResourceManager &rhs) noexcept {
+inline void swap(ResourceManager &x, ResourceManager &y) noexcept {
     using std::swap; // 保证有机会调用std::swap
-    lhs.swap(rhs);
+    x.swap(y);
 }
 ```
 
