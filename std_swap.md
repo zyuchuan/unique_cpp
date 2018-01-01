@@ -162,7 +162,30 @@ void list<T>::insert(T&& val) {
 
 ## 3. std::swap和异常安全保证
 
-如果你有一个管理资源的类，比如智能指针， 那么一个不抛出异常的`swap()`将会非常有用。对于管理资源的类，你通常都需要定义析构函数、拷贝构造函数，拷贝赋值函数、移动构造函数和移动赋值操作。有了`swap()`，拷贝赋值函数和移动赋值函数将会变得很简单，而且提供强烈异常安全保证。
+如果你有一个管理资源的类，比如智能指针，那么一个不抛出异常的`swap()`将会非常有用。对于管理资源的类，你通常都需要定义析构函数、拷贝构造函数，拷贝赋值函数、移动构造函数和移动赋值操作。有了`swap()`，拷贝赋值函数和移动构造函数将会变得很简单，而且提供强烈异常安全保证。
+
+假如你有一个类`ResourceManager`，你可以这样实现上面
+
+```
+class ResourceManager {
+    // ....
+public:
+    ResourceManager(const ResourceManager &other);
+    
+    // 拷贝赋值函数，注意参数是pass-by-value
+    ResourceManager& operator=(ResourceManager other) {
+        // 因为是pass-by-value，“other”相当于一个临时变量，
+        // 函数退出后会被析构掉，避免了资源泄露
+        swap(*this, other);
+        return *this;
+    }
+    
+    ResourceManager(ResourceManager &&other)
+        : /* 初始化成员变量 */ {
+        
+        swap(*this, other);       
+    }
+};
 
 
 // file: vector
