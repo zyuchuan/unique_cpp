@@ -69,7 +69,7 @@ private:
 public:
     // ...
     
-    void insert(const T& val);
+    void insert(T&& val);
     inline size_t length() { return _length;}
     
     //...
@@ -82,6 +82,7 @@ public:
 template<typename T>
 void list<T>::insert(const T& val) {
     ++_length;
+    
     node<T> n = new node(val);
     _head = node;
     
