@@ -194,5 +194,23 @@ public:
 
 ## 4. 实现你自己的swap()
 
-前面我们已经看到了`std::swap()`的源代码，三行简单的代码居然调用了一次拷贝构造函数，两次拷贝赋值函数，很多时候这样的构造行为都包含着资源的分配和释放，而资源的分配和释放是非常低效率的，这对于为效率而生的C++而言是不可接受的，这就是为什么标准库中的几乎每个类都重载了`swap()`的原因。
+前面我们已经看到了`std::swap()`的源代码，三行简单的代码居然调用了一次拷贝构造函数，两次拷贝赋值函数，很多时候这样的行为都包含着资源的分配和释放，而资源的分配和释放是非常低效率的，这对于为效率而生的C++而言是不可接受的，这就是为什么标准库中的几乎每个类都重载了`swap()`的原因。如果你有一个管理资源的类，你几乎总是需要重载`swap()`，那该怎样做呢？很简单，定义两个`swap()`：一个类成员`swap`和一个重载的`std::swap`：
+
+```
+class ResourceManager {
+    // ...
+    
+public:
+    // 1. 定义类成员函数
+    void swap(ResourceManager &other) noexcept {
+        // do swap here
+    }
+};
+
+// 2. 重载swap
+inline void swap(ResourceManager &lhs, ResourceManager &rhs) noexcept {
+    using std::swap; // 保证有机会调用std::swap
+    lhs.swap(rhs);
+}
+```
 
