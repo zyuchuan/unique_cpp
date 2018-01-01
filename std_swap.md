@@ -59,6 +59,8 @@ private:
     struct node {
         U value;
         node* next;
+        
+        // ...
     };
     
     note<T>*   _head;
