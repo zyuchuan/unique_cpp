@@ -80,11 +80,11 @@ public:
 
 ```
 template<typename T>
-void list<T>::insert(const T& val) {
+void list<T>::insert(T&& val) {
     ++_length;
-    
-    node<T> n = new node(val);
-    _head = node;
+    node<T>* n = new node<T>(std::forward<T>(val));
+    n->next = _head;
+    _head = n;
     
 }
 ```
