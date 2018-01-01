@@ -60,7 +60,7 @@ private:
         U value;
         node* next;
         
-        ndoe(const U& val) : value(val) {}
+        node(const U& val) : value(val) {}
     };
     
     node<T>*   _head;
