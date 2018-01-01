@@ -108,6 +108,10 @@ void insert_and_print(const list &l) {
     
     std::cout << "There are " << l.length() << " element in list";
 }
+
+list l;
+insert_and_print(l);
+
 ```
 
 
