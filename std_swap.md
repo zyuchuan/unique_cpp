@@ -180,9 +180,9 @@ public:
         return *this;
     }
     
+    // 移动构造函数    
     ResourceManager(ResourceManager &&other)
         : /* 初始化成员变量 */ {
-        
         swap(*this, other);       
     }
 };
