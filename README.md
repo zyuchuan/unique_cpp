@@ -7,7 +7,7 @@
 * [chrono library](chrono_library.md)
 * [std::swap](std_swap.md)
 * [std::function](std_function.md)
-* smart pointers
+* [smart pointers](smart_pointers.md)
 * [unordered containers](unordered_containers.md)
 * concurrency
 * std::bind
