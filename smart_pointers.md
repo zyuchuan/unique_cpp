@@ -161,6 +161,8 @@ private:
 };
 ```
 
+可见`shared_ptr`内部除了维护原生指针`__ptr_`，还用一个类型为`__shared_weak_count*`的变量`__cntrl_`，不难想象，这一定是维护引用计数的对象：
+
 ```
 file: memory
 
@@ -193,3 +195,5 @@ public:
 };
 
 ```
+
+很难理解为什么要用`__shared_weak_count`，因为只需要`__shared_count`就够用了嘛。
