@@ -65,9 +65,58 @@ class unique_ptr {
     // ...
 
 public:
-    explicit unique_ptr(pointer __p) noexcept 
+    inline constexpr unique_ptr() noexcept {
+        : __ptr_(pointer()) {
+    }
+    
+    inline constexpr unique_ptr(nullptr_t) noexcept 
+        : __ptr_(pointer()) {
+    }
+    
+    inline explicit unique_ptr(pointer __p) noexcept 
         : __ptr_(std::move(__p)){ 
     
-    }    
+    }
+    
+    inline unique_ptr<unique_ptr&& __u) noexcept
+        : __ptr_(__u.release(), 
+        std::forward<deleter_type>(__u.get_deleter())) {}
+        
+    inline unique_ptr& operator=(unique_ptr&& __u) noexcept {
+        reset(__u.release());
+        __ptr_.second() = std::forward<deleter_type>(__u.get_deleter());
+        return *this;
+    }
+    
+    inline ~unique_ptr(){reset();}
+    
+    // ...
+};
+```
 
+指针的释放操作都在函数`reset()`和`release()`中。
+
+C++标准明确规定`release()`的返回原生指针并且放弃所有权。`reset()`的功能是替换`managed object`：
+
+```
+// file: memory
+
+template<class _Tp, class _Dp = default_delete<_Tp> >
+class unique_ptr {
+    // ...
+    
+public:
+    inline pointer release() noexcept {
+        pointer __t = __ptr_.first();
+        __ptr_.first() = pointer();
+        return __t;
+    }
+    
+    inline void reset(pointer __p = pointer()) noexcept {
+        pointer __tmp = __ptr_.first();
+        __ptr_.first() = __p;
+        if (__tmp)
+            __ptr_.second()(__tmp);
+    }
+```
 
