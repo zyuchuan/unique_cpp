@@ -144,4 +144,21 @@ public:
 
 ## 2. shared_ptr
 
+`shared_ptr`的实现比`unique_ptr`的实现要复杂很多，不过也不是很复杂。我们还是先从声明入手：
+
+```
+// file: memory
+
+template<class _Tp>
+class shared_ptr {
+public:
+    typedef _Tp element_type;
+    
+private:
+    element_type *__ptr_;
+    __shared_weak_count* __cntrl_;
+    
+    // ...
+};
+```
 
