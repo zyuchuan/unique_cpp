@@ -123,7 +123,6 @@ public:
 这几乎就是`unique_ptr`的全部源代码了，除了一点，目前为止，`unique_ptr`还不像个指针，因为缺少两个最主要的方法：
 
 ```
-```
 // file: memory
 
 template<class _Tp, class _Dp = default_delete<_Tp> >
