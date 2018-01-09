@@ -162,3 +162,35 @@ private:
 };
 ```
 
+```
+file: memory
+
+class __shared_count {
+    // not copy constructible and not assignable
+    __shared_count(const __shared_count&);
+    __shared_count& operator=(const __shared_count&);
+    
+protected:
+    long __shared_owners_; // how many owners do I have?
+    virtual ~__shared_count();
+    
+public:
+    explicit __shared_count(long __refs = 0) noexcept 
+        : __shared_owners(__refs){}
+        
+        void __add_shared() noexcept;
+        bool __release_shared() noexcept;
+};
+
+class __shared_weak_count : private __shared_count {
+    long __shared_weak_owners_;
+    
+public:
+    explicit __shared_weak_count(long __refs = 0) noexcept {
+        : __shared_count(__refs), 
+          __shared_weak_owners(__refs) {}
+          
+      // ...
+};
+
+```
