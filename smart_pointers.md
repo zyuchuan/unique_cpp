@@ -55,3 +55,19 @@ struct default_delete {
 
 `unique_ptr`将参数保存在一个`__compressed_pair`中，前面已经说过，`__compressed_pair`是一个针对空基类优化的`pair`，大家将它当做一个`std::pair`就好。
 
+下面我们来看如何构造一个`unique_ptr`，其实`unique_ptr`的构造函数比较简单，比如说
+
+```
+// file: memory
+
+template<class _Tp, class _Dp = default_delete<_Tp> >
+class unique_ptr {
+    // ...
+
+public:
+    explicit unique_ptr(pointer __p) noexcept 
+        : __ptr_(std::move(__p)){ 
+    
+    }    
+
+
