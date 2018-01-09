@@ -140,3 +140,8 @@ public:
     }
 ```
 
+`unique_ptr`的源代码分析就到此为止，标准库中还有一个针对指针数组的`unique_ptr`，实现方式大同小异。
+
+## 2. shared_ptr
+
+
