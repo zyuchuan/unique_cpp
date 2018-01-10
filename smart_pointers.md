@@ -287,7 +287,15 @@ shared_ptr<_Tp>::~shared_ptr(){
 }
 ```
 
-除了这些，我们知道标准委员会建议不要直接构造，应该使用`make_shared`函数
+我们已经看到了，`shared_ptr`内部维护了两个指针，如果你直接调用构造函数，
+
+```
+class Widget;
+
+auto sp = shared_ptr<Widget>(new Widget());
+```
+
+这里实际分配了两次内存，第一次是`new Widget()`，在构造`shared_ptr`的时候，还会分配一次。所以标准库还提供了`make_shared()`函数，让你一次分配全部所需的内存：
 
 ```
 template<class _Tp, class ..._Args>
@@ -309,7 +317,7 @@ shared_ptr<_Tp> shared_ptr<_Tp>::make_shared(_Args&& ...__args) {
     ::new(__hold2.get()) _CntrlBlk(__a2, std::forward<_Args>(_args)...);
     shared_ptr<_Tp> __r;
     __r.__ptr_ = __hold2.get()->get();
-    __r.__cntrl = __hold2.release();
+    __r.__cntrl_ = __hold2.release();
     return __r;
 }
 ```
