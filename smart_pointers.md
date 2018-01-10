@@ -280,4 +280,36 @@ inline shared_ptr<T>::shared_ptr(shared_ptr&& __r) noexcept
         __r.__cntrl_ = 0;
 }
 
+template<class _Tp>
+shared_ptr<_Tp>::~shared_ptr(){
+    if (__cntrl_)
+        __cntrl_->__release_shared();
+}
+```
+
+除了这些，我们知道标准委员会建议不要直接构造，应该使用`make_shared`函数
+
+```
+template<class _Tp, class ..._Args>
+inline
+typename enable_if<!is_array<_Tp>::value, shared_ptr<_Tp>>::type
+make_shared(_Args&& ...__args) {
+    return shared_ptr<_Tp>::make_shared(std::forward<_Args>(__args)...);
+}
+
+template<class _Tp>
+template<class ...Args>
+shared_ptr<_Tp> shared_ptr<_Tp>::make_shared(_Args&& ...__args) {
+    typedef __shared_ptr_emplace<_Tp, allocator<_Tp>>_CntrlBlk;
+    typedef allocator<_CntrlBlk> _A2;
+    typedef __alocator_destructor<_A2> _D2;
+    
+    _A2 __a2;
+    unique_ptr<_CntrlBlk, _D2> __hold2(__a2.allocate(1), _D2(__a2, 1));
+    ::new(__hold2.get()) _CntrlBlk(__a2, std::forward<_Args>(_args)...);
+    shared_ptr<_Tp> __r;
+    __r.__ptr_ = __hold2.get()->get();
+    __r.__cntrl = __hold2.release();
+    return __r;
+}
 ```
