@@ -225,4 +225,24 @@ public:
 };
 ```
 
-很难理解为什么要用`__shared_weak_count`，因为只需要`__shared_count`就够用了嘛。
+到此为止，辅助工作已经差不多了，主角该登场了
+
+
+```
+// file: memory
+
+template<class _Tp>>
+class shared_ptr {
+public:
+    typedef _Tp element_type;
+    
+private:
+    element_type*           __ptr;
+    __shared_weak_count*    __cntrl_;
+    
+    struct __nat{int __for_bool_;}; // placeholder
+    
+    // ...
+};
+```
+
