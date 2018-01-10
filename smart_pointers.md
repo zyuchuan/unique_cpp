@@ -264,6 +264,7 @@ shared_ptr<_Tp>::shared_ptr(_Yp* __p,
 我们知道`shared_ptr`的特性就是`share`，我们来看share是怎样工作的
 
 ```
+// copy constructor, increment reference count
 template<class _Tp>
 inline shared_ptr<Tp>::shared_ptr(const shared_ptr& __r) noexcept
     : __ptr(__r.__ptr_), __cntrl_(__r.__cntrl_) {
@@ -271,5 +272,12 @@ inline shared_ptr<Tp>::shared_ptr(const shared_ptr& __r) noexcept
         __cntrl_->__add_shared();
 }
 
+// move constructor, does't increment reference count
+template<class _Tp>
+inline shared_ptr<T>::shared_ptr(shared_ptr&& __r) noexcept
+    : __ptr_(__r.__ptr_), __cntrl_(__r.__cntrl) {
+        __r.__ptr_ = 0;
+        __r.__cntrl_ = 0;
+}
 
 ```
