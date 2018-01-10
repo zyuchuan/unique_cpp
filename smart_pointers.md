@@ -191,9 +191,22 @@ public:
         : __shared_count(__refs), 
           __shared_weak_owners(__refs) {}
           
-      // ...
+protected:
+    virtual ~__shared_weak_count();
+    
+public:
+    void __add_shared() noexcept;
+    void __add_weak() noexcept;
+    void __release_shared() noexcept;
+    void __release_weak() noexcept;
+    long use_count() const noexcept { return __shared_count::use_count();}
+    
+private:
+    virtual void __on_zero_shared_weak() noexcept = 0;
 };
 
 ```
+
+ 显然，`__shared_weak_count`是个虚基类，从标准库的源代码中我们可以看到，这个虚基类同时用于`shared_ptr`和`weak_ptr`，所以我们它声明了`xxx_shared()`函数和`xxx_weak()`函数，这种做法值得商榷。
 
 很难理解为什么要用`__shared_weak_count`，因为只需要`__shared_count`就够用了嘛。
