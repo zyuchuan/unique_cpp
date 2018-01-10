@@ -321,3 +321,18 @@ shared_ptr<_Tp> shared_ptr<_Tp>::make_shared(_Args&& ...__args) {
     return __r;
 }
 ```
+
+```
+template<class _Tp, class _Alloc>
+class __shared_ptr_emplace : public __shared_weak_count {
+    __compressed_pair<_Alloc, _Tp> __data_;
+    
+public:
+    template<class ..._Args>
+    __shared_ptr_emplace(_Alloc __a, _Args&& ...__args)
+        : __data_(piecewise_construct, std::forward_as_typle(__a),
+        std::forward_as_tuple(std::forward<_Args>(__args)...)){}
+        
+    // ...
+};
+```
