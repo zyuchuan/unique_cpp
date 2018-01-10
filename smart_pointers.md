@@ -209,4 +209,20 @@ private:
 
  显然，`__shared_weak_count`是个虚基类，从标准库的源代码中我们可以看到，这个虚基类同时用于`shared_ptr`和`weak_ptr`，所以我们它声明了`xxx_shared()`函数和`xxx_weak()`函数，这种做法值得商榷。
 
+虚基类的作用类似于接口，是没法直接使用的，所以还必须定义一个实在类：
+
+```
+template<class _Tp, class _Dp, class _Alloc>
+class __shared_ptr_pointer : public __shared_weak_count {
+    __compressed_pair<__compressed_par<_Tp, _Dp>, _Alloc> __data_;
+    
+public:
+    inline __shared_ptr_pointer(_Tp __P, _Dp __d, _Alloc __a)
+        : __data_(__compressed_pair<_Tp, _Dp>(__p, std::move(__d)), std::move(__a)) {}
+        
+    // ...
+
+};
+```
+
 很难理解为什么要用`__shared_weak_count`，因为只需要`__shared_count`就够用了嘛。
