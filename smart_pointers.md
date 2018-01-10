@@ -237,7 +237,7 @@ public:
     typedef _Tp element_type;
     
 private:
-    element_type*           __ptr;
+    element_type*           __ptr_;
     __shared_weak_count*    __cntrl_;
     
     struct __nat{int __for_bool_;}; // placeholder
@@ -246,3 +246,17 @@ private:
 };
 ```
 
+`shared_ptr`内部维护了两个变量，一个原生指针`__ptr_`和一个操控引用计数的变量`__cntrl_`。我们来看这两个变量是如何被使用的
+
+```
+template<class _Tp>
+template<class _Yp>
+shared_ptr<_Tp>::shared_ptr(_Yp* __p,
+        typename enable_if<is_convertible<_Yp*, element_type*>::value, __nat>::type)
+        : __ptr_(__p) {
+        unique_ptr<_Yp> __hold(__p);
+        typedef __shared_ptr_pointer<_Yp*, default_delete<_Yp>, allocator<_Yp> >_CntrBlk;
+        __cntrl_ = new _CntrBlk(__p, default_delete<_Yp>(), allocator<_Yp>());
+        __hold.release();
+}
+```
