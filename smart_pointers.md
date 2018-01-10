@@ -260,3 +260,16 @@ shared_ptr<_Tp>::shared_ptr(_Yp* __p,
         __hold.release();
 }
 ```
+
+我们知道`shared_ptr`的特性就是`share`，我们来看share是怎样工作的
+
+```
+template<class _Tp>
+inline shared_ptr<Tp>::shared_ptr(const shared_ptr& __r) noexcept
+    : __ptr(__r.__ptr_), __cntrl_(__r.__cntrl_) {
+    if (__cntrl_)
+        __cntrl_->__add_shared();
+}
+
+
+```
