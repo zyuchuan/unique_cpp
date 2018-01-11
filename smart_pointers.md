@@ -4,24 +4,23 @@ Smart pointer，也就是所谓的“智能指针”，是指那些能够自我�
 
 C++ 11标准库提供了四种智能指针：
 
-* unique_ptr
-* shared_ptr
-* weak_ptr
-* auto_ptr
+* `unique_ptr`
+* `shared_ptr`
+* `weak_ptr`
+* `auto_ptr`
 
 `auto_ptr`因为功能有限，用处也有限，所以就不讲了。至于`weak_ptr`，它的实现方式和`shared_ptr`很像，甚至大部分代码是通用的，所以也不专门讲了。下面我们重点分析一下`unique_ptr`和`shared_ptr`。
 
 ## 1. unique_ptr
 
-顾名思义，`unique_ptr`就是独有一份，在两种情况下，其管理的指针会被处理掉：
-
-1. 指针被摧毁
-2. 调用`operator=`或`reset()`的时候。
+顾名思义，`unique_ptr`就是一个原生指针独一无二的拥有者和管理者。当一个`unique_ptr`离开其作用域时，其管理的原生指针会被自动销毁。
 
 标准库中定义了两种类型的`unique_ptr`：
 
-1. 管理单个指针，指针通过`new`获得
-2. 管理指针数组，指针通过`new[]`获得。
+1. `unique_ptr<T>`，管理通过`new`获得的原生指针。
+2. `unique_ptr<T[]>`，管理通过`new[]`获得的指针数组。
+
+这两种智能指针的实现方式大同小异，我们主要分析`unique_ptr<T>`的源码。理解了`unique_ptr<T>`的实现原理，`unique_ptr<T[]>`的实现原理也就不难了。
 
 ### 1.1 unique_ptr的源代码
 
