@@ -11,7 +11,7 @@ C++ 11标准库提供了四种智能指针：
 
 `auto_ptr`因为功能有限，用处也有限，所以就不讲了。至于`weak_ptr`，它的实现方式和`shared_ptr`很像，甚至大部分代码是通用的，所以也不专门讲了。下面我们重点分析一下`unique_ptr`和`shared_ptr`。
 
-## 1. unique_ptr
+## 1. unique\_ptr
 
 顾名思义，`unique_ptr`就是一个原生指针独一无二的拥有者和管理者。当一个`unique_ptr`离开其作用域时，其管理的原生指针会被自动销毁。
 
@@ -22,7 +22,7 @@ C++ 11标准库提供了四种智能指针：
 
 这两种智能指针的实现方式大同小异，我们主要分析`unique_ptr<T>`的源码。理解了`unique_ptr<T>`的实现原理，`unique_ptr<T[]>`的实现原理自然也就明了了。
 
-### 1.1 unique_ptr的源代码
+### 1.1 unique\_ptr的源代码
 
 ```
 // file: <memory>
@@ -33,10 +33,10 @@ public:
     typedef _Tp element_type;
     typedef _Dp deleter_type;
     typedef typename __pointer_type<_Tp, deleter_type>::type pointer;
-    
+
 private:
     __compressed_pair<pointer, deleter_type> __ptr_;
-    
+
     // ...
 };
 ```
@@ -67,28 +67,28 @@ public:
     inline constexpr unique_ptr() noexcept {
         : __ptr_(pointer()) {
     }
-    
+
     inline constexpr unique_ptr(nullptr_t) noexcept 
         : __ptr_(pointer()) {
     }
-    
+
     inline explicit unique_ptr(pointer __p) noexcept 
         : __ptr_(std::move(__p)){ 
-    
+
     }
-    
+
     inline unique_ptr<unique_ptr&& __u) noexcept
         : __ptr_(__u.release(), 
         std::forward<deleter_type>(__u.get_deleter())) {}
-        
+
     inline unique_ptr& operator=(unique_ptr&& __u) noexcept {
         reset(__u.release());
         __ptr_.second() = std::forward<deleter_type>(__u.get_deleter());
         return *this;
     }
-    
+
     inline ~unique_ptr(){reset();}
-    
+
     // ...
 };
 ```
@@ -103,14 +103,14 @@ C++标准明确规定`release()`的返回原生指针并且放弃所有权。`re
 template<class _Tp, class _Dp = default_delete<_Tp> >
 class unique_ptr {
     // ...
-    
+
 public:
     inline pointer release() noexcept {
         pointer __t = __ptr_.first();
         __ptr_.first() = pointer();
         return __t;
     }
-    
+
     inline void reset(pointer __p = pointer()) noexcept {
         pointer __tmp = __ptr_.first();
         __ptr_.first() = __p;
@@ -127,12 +127,12 @@ public:
 template<class _Tp, class _Dp = default_delete<_Tp> >
 class unique_ptr {
     // ...
-    
+
 public:
     inline add_lvalue_reference<_Tp>::type operator*() const {
         return *__ptr_.first();
     }
-    
+
     inline pointer operator->() const noexcept {
         return __ptr_.first();
     }
@@ -140,7 +140,7 @@ public:
 
 `unique_ptr`的源代码分析就到此为止，标准库中还有一个针对指针数组的`unique_ptr`，实现方式大同小异。
 
-## 2. shared_ptr
+## 2. shared\_ptr
 
 `shared_ptr`的实现比`unique_ptr`的实现要复杂很多，不过也不是很复杂。我们还是先从声明入手：
 
@@ -151,11 +151,11 @@ template<class _Tp>
 class shared_ptr {
 public:
     typedef _Tp element_type;
-    
+
 private:
     element_type *__ptr_;
     __shared_weak_count* __cntrl_;
-    
+
     // ...
 };
 ```
@@ -169,44 +169,43 @@ class __shared_count {
     // not copy constructible and not assignable
     __shared_count(const __shared_count&);
     __shared_count& operator=(const __shared_count&);
-    
+
 protected:
     long __shared_owners_; // how many owners do I have?
     virtual ~__shared_count();
-    
+
 public:
     explicit __shared_count(long __refs = 0) noexcept 
         : __shared_owners(__refs){}
-        
+
         void __add_shared() noexcept;
         bool __release_shared() noexcept;
 };
 
 class __shared_weak_count : private __shared_count {
     long __shared_weak_owners_;
-    
+
 public:
     explicit __shared_weak_count(long __refs = 0) noexcept {
         : __shared_count(__refs), 
           __shared_weak_owners(__refs) {}
-          
+
 protected:
     virtual ~__shared_weak_count();
-    
+
 public:
     void __add_shared() noexcept;
     void __add_weak() noexcept;
     void __release_shared() noexcept;
     void __release_weak() noexcept;
     long use_count() const noexcept { return __shared_count::use_count();}
-    
+
 private:
     virtual void __on_zero_shared_weak() noexcept = 0;
 };
-
 ```
 
- 显然，`__shared_weak_count`是个虚基类，从标准库的源代码中我们可以看到，这个虚基类同时用于`shared_ptr`和`weak_ptr`，所以我们它声明了`xxx_shared()`函数和`xxx_weak()`函数，这种做法值得商榷。
+显然，`__shared_weak_count`是个虚基类，从标准库的源代码中我们可以看到，这个虚基类同时用于`shared_ptr`和`weak_ptr`，所以我们它声明了`xxx_shared()`函数和`xxx_weak()`函数，这种做法值得商榷。
 
 虚基类的作用类似于接口，是没法直接使用的，所以还必须定义一个实在类：
 
@@ -214,18 +213,17 @@ private:
 template<class _Tp, class _Dp, class _Alloc>
 class __shared_ptr_pointer : public __shared_weak_count {
     __compressed_pair<__compressed_par<_Tp, _Dp>, _Alloc> __data_;
-    
+
 public:
     inline __shared_ptr_pointer(_Tp __P, _Dp __d, _Alloc __a)
         : __data_(__compressed_pair<_Tp, _Dp>(__p, std::move(__d)), std::move(__a)) {}
-        
+
     // ...
 
 };
 ```
 
 到此为止，辅助工作已经差不多了，主角该登场了
-
 
 ```
 // file: memory
@@ -234,13 +232,13 @@ template<class _Tp>>
 class shared_ptr {
 public:
     typedef _Tp element_type;
-    
+
 private:
     element_type*           __ptr_;
     __shared_weak_count*    __cntrl_;
-    
+
     struct __nat{int __for_bool_;}; // placeholder
-    
+
     // ...
 };
 ```
@@ -310,7 +308,7 @@ shared_ptr<_Tp> shared_ptr<_Tp>::make_shared(_Args&& ...__args) {
     typedef __shared_ptr_emplace<_Tp, allocator<_Tp>>_CntrlBlk;
     typedef allocator<_CntrlBlk> _A2;
     typedef __alocator_destructor<_A2> _D2;
-    
+
     _A2 __a2;
     unique_ptr<_CntrlBlk, _D2> __hold2(__a2.allocate(1), _D2(__a2, 1));
     ::new(__hold2.get()) _CntrlBlk(__a2, std::forward<_Args>(_args)...);
@@ -325,13 +323,16 @@ shared_ptr<_Tp> shared_ptr<_Tp>::make_shared(_Args&& ...__args) {
 template<class _Tp, class _Alloc>
 class __shared_ptr_emplace : public __shared_weak_count {
     __compressed_pair<_Alloc, _Tp> __data_;
-    
+
 public:
     template<class ..._Args>
     __shared_ptr_emplace(_Alloc __a, _Args&& ...__args)
         : __data_(piecewise_construct, std::forward_as_typle(__a),
         std::forward_as_tuple(std::forward<_Args>(__args)...)){}
-        
+
     // ...
 };
 ```
+
+
+
