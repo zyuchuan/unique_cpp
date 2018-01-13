@@ -54,7 +54,7 @@ struct default_delete {
 };
 ```
 
-`unique_ptr`将参数保存在一个`__compressed_pair`中，前面已经说过，`__compressed_pair`是一个针对空基类优化的`pair`，大家将它当做一个`std::pair`就好。
+`unique_ptr`内部用`__compressed_pair`保存数据，`__compressed_pair`是一个“空基类优化”的`pair`，阅读源代码时，完全可以将它当做一个`std::pair`来对待。
 
 下面我们来看如何构造一个`unique_ptr`，其实`unique_ptr`的构造函数比较简单，比如说
 
