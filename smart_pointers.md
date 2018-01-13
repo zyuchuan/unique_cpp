@@ -164,7 +164,7 @@ public:
 
 ## 2. shared\_ptr
 
-`shared_ptr`的实现比`unique_ptr`的实现要复杂很多，不过也不是很复杂。我们还是先从声明入手：
+还是先从声明入手：
 
 ```
 // file: memory
@@ -182,7 +182,7 @@ private:
 };
 ```
 
-可见`shared_ptr`内部除了维护原生指针`__ptr_`，还用一个类型为`__shared_weak_count*`的变量`__cntrl_`，不难想象，这一定是维护引用计数的对象：
+`shared_ptr`内部除了维护了两个指针：一个是被其管理原生指针`__ptr_`，还用一个类型为`__shared_weak_count*`的变量`__cntrl_`，不难想象，这一定是维护引用计数的对象：
 
 ```
 file: memory
