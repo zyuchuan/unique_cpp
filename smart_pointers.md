@@ -79,24 +79,28 @@ class unique_ptr {
     // ...
 
 public:
-    // 默认构造函数，调用
+    // 默认构造函数，调用pointer的默认构造函数
     inline constexpr unique_ptr() noexcept {
         : __ptr_(pointer()) {
     }
 
+    // 将一个nullptr转换为一个unique_ptr
     inline constexpr unique_ptr(nullptr_t) noexcept 
         : __ptr_(pointer()) {
     }
 
+    // 拷贝构造函数，注意参数类型为pointer，而不是const point&
     inline explicit unique_ptr(pointer __p) noexcept 
         : __ptr_(std::move(__p)){ 
-
     }
 
+    // 移动构造函数
     inline unique_ptr<unique_ptr&& __u) noexcept
         : __ptr_(__u.release(), 
-        std::forward<deleter_type>(__u.get_deleter())) {}
+          std::forward<deleter_type>(__u.get_deleter())) {
+    }
 
+    // 移动赋值
     inline unique_ptr& operator=(unique_ptr&& __u) noexcept {
         reset(__u.release());
         __ptr_.second() = std::forward<deleter_type>(__u.get_deleter());
@@ -109,9 +113,7 @@ public:
 };
 ```
 
-指针的释放操作都在函数`reset()`和`release()`中。
-
-C++标准明确规定`release()`的返回原生指针并且放弃所有权。`reset()`的功能是替换`managed object`：
+`unqiue_ptr`还定义了两个很重要的函数：`reset(pointer)`和`release()`。`reset(pointer)`的功能是用一个新指针替换原来的指针，而`release()`则是是放弃原生指针的所有权。
 
 ```
 // file: memory
@@ -121,12 +123,15 @@ class unique_ptr {
     // ...
 
 public:
+
+    // 放弃对原生指针的所有权，并返回原生指针
     inline pointer release() noexcept {
         pointer __t = __ptr_.first();
         __ptr_.first() = pointer();
         return __t;
     }
 
+    // 用__p替换原生指针，被替换的指针最终被销毁
     inline void reset(pointer __p = pointer()) noexcept {
         pointer __tmp = __ptr_.first();
         __ptr_.first() = __p;
@@ -349,6 +354,3 @@ public:
     // ...
 };
 ```
-
-
-
