@@ -140,7 +140,7 @@ public:
     }
 ```
 
-这几乎就是`unique_ptr`的全部源代码了，除了一点，目前为止，`unique_ptr`还不像个指针，因为缺少两个最主要的方法：
+到目前为止，`unique_ptr`还不像个指针，因为还缺少两个方法：`operator*`和`operator->`：
 
 ```
 // file: memory
@@ -159,7 +159,8 @@ public:
     }
 ```
 
-`unique_ptr`的源代码分析就到此为止，标准库中还有一个针对指针数组的`unique_ptr`，实现方式大同小异。
+这几乎就是`unique_ptr`的全部源代码了，总的来说比较容易理解。下面我们来分析一个稍微复杂一些的智能指针：`shared_ptr`。
+
 
 ## 2. shared\_ptr
 
