@@ -41,9 +41,11 @@ private:
 };
 ```
 
-`unique_ptr`可以指定一个`deleter`，如果没有指定，则用默认的`default_delete`，`default_delete`就是针对`delete`的一个函数对象
+`unique_ptr`的声明包含两个模板参数，第一个参数`_Tp`显然就是原生指针的类型。第二个模板参数`_Dp`是一个`deleter`，默认值为`default_delete<_Tp>`。`default_delete<T>`是一个针对`delete operator`的函数对象：
 
 ```
+// file: memory
+
 template<class T>
 struct default_delete {
     void operator()(T* ptr) const noexcept {
