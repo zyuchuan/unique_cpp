@@ -41,7 +41,7 @@ private:
 };
 ```
 
-`unique_ptr`的声明包含两个模板参数，第一个参数`_Tp`显然就是原生指针的类型。第二个模板参数`_Dp`是一个`deleter`，默认值为`default_delete<_Tp>`。`default_delete<T>`是一个针对`delete operator`的函数对象：
+`unique_ptr`的声明包含两个模板参数，第一个参数`_Tp`显然就是原生指针的类型。第二个模板参数`_Dp`是一个`deleter`，默认值为`default_delete<_Tp>`。`default_delete`是一个针对`delete operator`的函数对象：
 
 ```
 // file: memory
@@ -54,9 +54,22 @@ struct default_delete {
 };
 ```
 
+注意这行代码：
+
+```
+typedef typename __pointer_type<_Tp, deleter_type>::type pointer;
+```
+
+`__pointer_type`是一个type trait，用来“萃取”出正确的指针类型。为了方便理解，大可以认为它和下面的代码是等价的：
+
+```
+typedef _Tp* pointer;
+```
+
+
 `unique_ptr`内部用`__compressed_pair`保存数据，`__compressed_pair`是一个“空基类优化”的`pair`，阅读源代码时，完全可以将它当做一个`std::pair`来对待。
 
-下面我们来看如何构造一个`unique_ptr`，其实`unique_ptr`的构造函数比较简单，比如说
+这基本就是`unique_ptr`的全部声明，下面我们来看如何构造一个`unique_ptr`：
 
 ```
 // file: memory
@@ -66,6 +79,7 @@ class unique_ptr {
     // ...
 
 public:
+    // 默认构造函数，调用
     inline constexpr unique_ptr() noexcept {
         : __ptr_(pointer()) {
     }
