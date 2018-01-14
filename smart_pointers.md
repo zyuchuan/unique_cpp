@@ -310,7 +310,7 @@ shared_ptr<_Tp>::~shared_ptr(){
 }
 ```
 
-`shared_ptr`的实现虽然比`unique_ptr`复杂了一些，但是如果你能读懂`unique_ptr`的源代码，那`shared_ptr`的源代码对你来说也不算个事。因为篇幅的关系，对`shared_ptr`的分析就到这里。最后顺便说说一个关于效率的话题，我们已经看到了，`shared_ptr`内部维护了两个指针，如果你直接调用构造函数，
+`shared_ptr`的实现虽然比`unique_ptr`复杂了一些，但是如果你能读懂`unique_ptr`的源代码，那`shared_ptr`的源代码对你来说也不算个事。因为篇幅的关系，对`shared_ptr`的分析就到这里。最后顺便说说一个关于效率的话题，我们已经看到了，`shared_ptr`内部维护了两个指针，如果你直接调用构造函数，就想这样：
 
 ```
 class Widget;
@@ -318,7 +318,7 @@ class Widget;
 auto sp = shared_ptr<Widget>(new Widget());
 ```
 
-这里实际分配了两次内存，第一次是`new Widget()`，在构造`shared_ptr`的时候，还会分配一次。所以标准库还提供了`make_shared()`函数，让你一次分配全部所需的内存：
+这里实际分配了两次内存，第一次是调用`new Widget()`的时候，第二次则是在`shared_ptr`构造函数的内部构造`__cntrl_`的时候。分配内存是很昂贵的操作，所以标准库提供了`make_shared()`函数，让你一次分配全部所需的内存：
 
 ```
 template<class _Tp, class ..._Args>
