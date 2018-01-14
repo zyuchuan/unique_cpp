@@ -286,13 +286,7 @@ shared_ptr<_Tp>::shared_ptr(_Yp* __p,
         __cntrl_ = new _CntrBlk(__p, default_delete<_Yp>(), allocator<_Yp>());
         __hold.release();
 }
-```
 
-
-
-我们知道`shared_ptr`的特性就是`share`，我们来看share是怎样工作的
-
-```
 // copy constructor, increment reference count
 template<class _Tp>
 inline shared_ptr<Tp>::shared_ptr(const shared_ptr& __r) noexcept
@@ -316,7 +310,7 @@ shared_ptr<_Tp>::~shared_ptr(){
 }
 ```
 
-我们已经看到了，`shared_ptr`内部维护了两个指针，如果你直接调用构造函数，
+`shared_ptr`的实现虽然比`unique_ptr`复杂了一些，但是如果你能读懂`unique_ptr`的源代码，那`shared_ptr`的源代码对你来说也不算个事。因为篇幅的关系，对`shared_ptr`的分析就到这里。最后顺便说说一个关于效率的话题，我们已经看到了，`shared_ptr`内部维护了两个指针，如果你直接调用构造函数，
 
 ```
 class Widget;
