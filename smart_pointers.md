@@ -247,7 +247,13 @@ public:
 };
 ```
 
-到此为止，辅助工作已经差不多了，主角该登场了
+后面我们会看到，`__shared_ptr_pointer`正是`shared_ptr`的大内总管，不仅要记录`shared_ptr`的`shared owner`，还要负责分配内存和销毁指针等工作。所以`__shared_ptr_pointer`类实际上有三个成员：
+
+```
+long __shared_owners_;
+long __shared_weak_owners_;
+__compressed_pair<__compressed_pair<_Tp, _Dp>, _Alloc> __data_;
+```
 
 ```
 // file: memory
