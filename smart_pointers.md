@@ -182,7 +182,7 @@ private:
 };
 ```
 
-`shared_ptr`内部除了维护了两个指针：一个是被其管理原生指针`__ptr_`，还用一个类型为`__shared_weak_count*`的变量`__cntrl_`，不难想象，这一定是维护引用计数的对象：
+`shared_ptr`内部维护了两个指针：一个是被其管理原生指针`__ptr_`，还用一个类型为`__shared_weak_count*`的变量`__cntrl_`，不难想象，这一定是维护引用计数的对象：
 
 ```
 file: memory
