@@ -321,6 +321,8 @@ auto sp = shared_ptr<Widget>(new Widget());
 这里实际分配了两次内存，第一次是调用`new Widget()`的时候，第二次则是在`shared_ptr`构造函数的内部构造`__cntrl_`的时候。分配内存是很昂贵的操作，所以标准库提供了`make_shared()`函数，让你一次分配全部所需的内存：
 
 ```
+// file: memory
+
 template<class _Tp, class ..._Args>
 inline
 typename enable_if<!is_array<_Tp>::value, shared_ptr<_Tp>>::type
@@ -344,6 +346,20 @@ shared_ptr<_Tp> shared_ptr<_Tp>::make_shared(_Args&& ...__args) {
     return __r;
 }
 ```
+
+我们可以看到，确实只分配了一次内存。注意内存的分配是在：
+
+```
+unique_ptr<_CntrlBlk, _D2> __hold2(__a2.allocate(1), _D2(__a2, 1));
+```
+
+而不是
+```
+::new(__hold2.get()) _CntrlBlk(__a2, std::forward<_Args>(_args)...);
+```
+
+
+
 
 ```
 template<class _Tp, class _Alloc>
