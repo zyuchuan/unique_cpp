@@ -376,4 +376,4 @@ public:
 };
 ```
 
-可见`make_shared()`将`shared_ptr`的成员打包到一个`__shared_ptr_emplace`中，一次性在堆中构造出一个`__shared_ptr_emplace`，然后再将之分配给`shared_ptr`的成员变量。
+可见`make_shared()`将`shared_ptr`的成员打包到一个`__shared_ptr_emplace`中，一次性在堆中构造出一个`__shared_ptr_emplace`，然后再拆包分配给`shared_ptr`的成员变量。
