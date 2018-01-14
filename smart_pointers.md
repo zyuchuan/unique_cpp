@@ -255,6 +255,8 @@ long __shared_weak_owners_;
 __compressed_pair<__compressed_pair<_Tp, _Dp>, _Alloc> __data_;
 ```
 
+理解了`__shatrf_ptr_pointer`，`shared_ptr`的源代码就容易读了：
+
 ```
 // file: memory
 
@@ -271,11 +273,9 @@ private:
 
     // ...
 };
-```
 
-`shared_ptr`内部维护了两个变量，一个原生指针`__ptr_`和一个操控引用计数的变量`__cntrl_`。我们来看这两个变量是如何被使用的
 
-```
+// 如果 Yp* 能够转换成 _Tp*，则可以由 _Yp* 构造一个shared_ptr<_Tp>
 template<class _Tp>
 template<class _Yp>
 shared_ptr<_Tp>::shared_ptr(_Yp* __p,
@@ -287,6 +287,8 @@ shared_ptr<_Tp>::shared_ptr(_Yp* __p,
         __hold.release();
 }
 ```
+
+
 
 我们知道`shared_ptr`的特性就是`share`，我们来看share是怎样工作的
 
