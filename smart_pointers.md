@@ -182,7 +182,7 @@ private:
 };
 ```
 
-`shared_ptr`内部维护了两个指针：一个是被其管理原生指针`__ptr_`，还用一个类型为`__shared_weak_count*`的变量`__cntrl_`，不难想象，这一定是维护引用计数的对象：
+`shared_ptr`内部维护了两个指针：一个是被其管理原生指针`__ptr_`，还有一个类型为`__shared_weak_count`的指针`__cntrl_`。那么这个`__shared_weak_count`又是什么呢？
 
 ```
 file: memory
@@ -227,7 +227,7 @@ private:
 };
 ```
 
-显然，`__shared_weak_count`是个虚基类，从标准库的源代码中我们可以看到，这个虚基类同时用于`shared_ptr`和`weak_ptr`，所以我们它声明了`xxx_shared()`函数和`xxx_weak()`函数，这种做法值得商榷。
+`__shared_weak_count`是个虚基类，从它声明的类成员可以看出，这个类的作用应该是管理引用计数。实际上，`shared_ptr`和`weak_ptr`内部都声明了`__shared_weak_count*`类型的成员变量，也就是说，`__shared_weak_count`同时管理`shared owner`和`shared weak owner`，我个人认为这种做法值得商榷。
 
 虚基类的作用类似于接口，是没法直接使用的，所以还必须定义一个实在类：
 
