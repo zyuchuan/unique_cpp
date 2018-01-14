@@ -353,15 +353,15 @@ shared_ptr<_Tp> shared_ptr<_Tp>::make_shared(_Args&& ...__args) {
 unique_ptr<_CntrlBlk, _D2> __hold2(__a2.allocate(1), _D2(__a2, 1));
 ```
 
-而不是
+而不是：
 ```
 ::new(__hold2.get()) _CntrlBlk(__a2, std::forward<_Args>(_args)...);
 ```
-这里是调用`placement new`, 在`__hold2`的地址上构造一个`__CntrBlk`。
-
-
+这里是调用`placement new`, 在`__hold2`的地址上构造一个`__CntrBlk`。`__CntrBlk`的类型是`__shared_ptr_emplace<T, Alloc>`，它的定义如下：
 
 ```
+// file: memory
+
 template<class _Tp, class _Alloc>
 class __shared_ptr_emplace : public __shared_weak_count {
     __compressed_pair<_Alloc, _Tp> __data_;
@@ -375,3 +375,5 @@ public:
     // ...
 };
 ```
+
+可见`make_shared()`将`shared_ptr`的成员打包到一个`__shared_ptr_emplace`中，一次性在堆中构造出一个`__shared_ptr_emplace`，然后再将之分配给`shared_ptr`的成员变量。
