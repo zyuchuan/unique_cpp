@@ -229,12 +229,14 @@ private:
 
 `__shared_weak_count`是个虚基类，从它声明的类成员可以看出，这个类的作用应该是管理引用计数。实际上，`shared_ptr`和`weak_ptr`内部都声明了`__shared_weak_count*`类型的成员变量，也就是说，`__shared_weak_count`同时管理`shared owner`和`shared weak owner`，我个人认为这种做法值得商榷。
 
-虚基类的作用类似于接口，是没法直接使用的，所以还必须定义一个实在类：
+虚基类的作用类似于接口，是没法直接使用的，所以还必须定义一个“实在”类：
 
 ```
+// file: memory
+
 template<class _Tp, class _Dp, class _Alloc>
 class __shared_ptr_pointer : public __shared_weak_count {
-    __compressed_pair<__compressed_par<_Tp, _Dp>, _Alloc> __data_;
+    __compressed_pair<__compressed_pair<_Tp, _Dp>, _Alloc> __data_;
 
 public:
     inline __shared_ptr_pointer(_Tp __P, _Dp __d, _Alloc __a)
