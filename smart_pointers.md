@@ -347,7 +347,7 @@ shared_ptr<_Tp> shared_ptr<_Tp>::make_shared(_Args&& ...__args) {
 }
 ```
 
-我们可以看到，确实只分配了一次内存。注意内存的分配是在：
+我们可以看到，确实只分配了一次内存。注意内存的分配是在这里：
 
 ```
 unique_ptr<_CntrlBlk, _D2> __hold2(__a2.allocate(1), _D2(__a2, 1));
@@ -357,7 +357,7 @@ unique_ptr<_CntrlBlk, _D2> __hold2(__a2.allocate(1), _D2(__a2, 1));
 ```
 ::new(__hold2.get()) _CntrlBlk(__a2, std::forward<_Args>(_args)...);
 ```
-
+这里是调用`placement new`, 在`__hold2`的地址上构造一个`__CntrBlk`。
 
 
 
