@@ -240,7 +240,7 @@ inline size_t __do_string_hash(Ptr p, Ptr e) {
 }
 ```
 
-### 2.1.4 自定义类型
+### 1.4 自定义类型
 
 如果你有一个类，
 
@@ -268,6 +268,3 @@ struct hash<Foo> : public unary_function<Foo, size_t> {
 ```
 
 ## 3 hash\_table
-
-
-
