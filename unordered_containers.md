@@ -1,12 +1,19 @@
 # 2 无序关联容器
 
-unordered容器是C++11标准库中新增的类型，包括`unordered_set`和`unordered_map`。我们知道C++标准库中已经有了`set`和`map`，他们的区别是什么呢？
+无序关联容器（Unordered associative container）是C++11标准库中新增的类型，包括
 
-1. `set`和`map`是有序的，而*unordered*容器，顾名思义，元素是没有序的
-2. `set`和`map`的底层数据结构是红黑树，而`undered`容器的底层数据结构是`hash table`
-3. 一个的复杂度为O(log(n))，一个是O(1)
+* unordered_set
+* unordered_multiset
+* unordered_map
+* unordered_multimap
 
-所以undered容器的效率更高一些，如果你对数据的顺序没有要求，建议使用新的unordered容器。
+共四种类型，它们的共同特点是
+
+1. 在容器内部，元素的排列是没有特定顺序的，这也正是它们被叫做“unordered container”的原因。
+
+2. 都是通过hast table实现的。这点我们稍后会详细介绍。
+
+标准库中已经有了`map`和`set`，为什么还要定义`unordered`的`map`和`set`呢？所以undered容器的效率更高一些，如果你对数据的顺序没有要求，建议使用新的unordered容器。
 
 要了解unordered_set和unordered_map的工作原理，先要了解hash table的原理，要了解hash table，先要知道C++11标准库中的hash算法。
 
