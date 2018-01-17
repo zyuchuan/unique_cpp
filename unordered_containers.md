@@ -19,9 +19,9 @@
 
 ## 1. C++ 11中的hash算法
 
-C++ 11对如何计算hash值有明确的要求：
+C++ 11标准对如何计算hash有明确的要求：
 
-1. hash方程应该是一个`function object`，声明如下：
+1. hash方程应该是一个`function object`，声明如下所示：
 
 ```
 template<T>
@@ -36,9 +36,9 @@ struct hash {
 
 不过，C++标准只是规定了hash方程的形式和必须满足的条件，具体到如何计算hash值，则没有要求。就libc++而言，针对不同的类型，其计算方法也不尽相同。
 
-### 2.1.1 简单数值类型
+### 1.1 简单数值类型
 
-对于简单数值类型，如`bool`、`int`、`char`等，libc++的hash算法也很简单：直接返回数值本身：
+对于简单数值类型，如`bool`、`int`、`char`等，libc++的hash算法也很简单：直接返回数值本身。
 
 ```
 // header: <functional>
@@ -207,7 +207,7 @@ struct hash<double> : public scalar_hash<double> {
 };
 ```
 
-### 2.1.3 内置非数值类型
+### 1.3 内置非数值类型
 
 对于标准库中的非数值类型，比如`string`等，标准库也提供了hash方程：
 
