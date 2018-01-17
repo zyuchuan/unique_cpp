@@ -1,4 +1,4 @@
-# 2 无序关联容器
+# 无序关联容器
 
 无序关联容器（Unordered associative container）是C++11标准库中新增的类型，包括
 
