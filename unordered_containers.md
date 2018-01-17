@@ -13,7 +13,7 @@
 
 2. 都是通过hast table实现的。这点我们稍后会详细介绍。
 
-标准库中已经有了`map`和`set`，为什么还要定义`unordered`的`map`和`set`呢？答案还是那两个字：**效率**。我们知道，`map`和`set`的底层数据结构是红黑树，执行查找、插入，删除等操作的时间复杂度为O(logn)；而`unordered map`和`unordered set`的底层数据
+标准库中已经有了`map`和`set`，为什么还要定义`unordered`的`map`和`set`呢？答案还是那两个字：**效率**。我们知道，`map`和`set`的底层数据结构是红黑树，执行查找、插入，删除等操作的时间复杂度为O(logn)；而`unordered map`和`unordered set`的底层数据为`hash table`，执行查找、插入和删除等操作的时间复杂度为O(1)，明显要快很多，所以如果对元素的排列顺序没有要求，建议使用无序关联容器。
 
 要了解unordered\_set和unordered\_map的工作原理，先要了解hash table的原理，要了解hash table，先要知道C++11标准库中的hash算法。
 
