@@ -2,10 +2,10 @@
 
 无序关联容器（Unordered associative container）是C++11标准库中新增的类型，包括
 
-* unordered_set
-* unordered_multiset
-* unordered_map
-* unordered_multimap
+* unordered\_set
+* unordered\_multiset
+* unordered\_map
+* unordered\_multimap
 
 共四种类型，它们的共同特点是
 
@@ -15,11 +15,11 @@
 
 标准库中已经有了`map`和`set`，为什么还要定义`unordered`的`map`和`set`呢？答案还是那两个字：**效率**。所以undered容器的效率更高一些，如果你对数据的顺序没有要求，建议使用新的unordered容器。
 
-要了解unordered_set和unordered_map的工作原理，先要了解hash table的原理，要了解hash table，先要知道C++11标准库中的hash算法。
+要了解unordered\_set和unordered\_map的工作原理，先要了解hash table的原理，要了解hash table，先要知道C++11标准库中的hash算法。
 
 ## 2.1 hash
 
-C++11标准中明确指出：hash方程应该是一个*function object*，也就是重载了`operator()`的对象：
+C++11标准中明确指出：hash方程应该是一个_function object_，也就是重载了`operator()`的对象：
 
 ```
 template<T>
@@ -219,7 +219,7 @@ struct hash<double> : public scalar_hash<double> {
 template<class CharT, class Traits, class Allocator>
 struct hash<basic_string<CharT, Traits, Allocator> >
     : public unary_function<basic_string<CharT, Traits, Allocator>, size_t> {
-    
+
     size_t operator()(const basic_string<CharT, Traits, Allocator>& val) const noexcept;
 };
 
@@ -267,7 +267,9 @@ struct hash<Foo> : public unary_function<Foo, size_t> {
             (static_cast<const void*>(&foo), sizeof(Foo));
     }
 };
-
 ```
 
-## 3 hash_table
+## 3 hash\_table
+
+
+
