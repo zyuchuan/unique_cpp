@@ -70,7 +70,7 @@ struct hash<char> : pubic unary_function<char, size_t> {
 };
 ```
 
-### 2.1.2 浮点数值类型
+### 1.2 浮点数值类型
 
 针对复杂数值类型，如`float`、`double`等，libc++提供了两种hash算法：[murmur2](https://en.wikipedia.org/wiki/MurmurHash)和[cityhash64](https://github.com/google/cityhash)：
 
@@ -267,4 +267,5 @@ struct hash<Foo> : public unary_function<Foo, size_t> {
 };
 ```
 
-## 3 hash\_table
+## 2 hash\_table
+
