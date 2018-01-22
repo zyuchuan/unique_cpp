@@ -310,7 +310,7 @@ struct __hash_node_base {
 
     __next_pointer __next_;
 };
-    
+
     template<class _Tp, class _VoidPtr>
     struct __hash_node : public __hash_node_base<typename std::__rebind_pointer<_VoidPtr, __hash_node<_Tp, _VoidPtr> >::type> {
         typedef _Tp __node_value_type;
