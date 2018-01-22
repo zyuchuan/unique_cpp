@@ -298,16 +298,18 @@ private:
 可以看到`unordered_map`的实现采用了`Pimp`手法，`unordered_map`只是个`wrapper`，真正的实现是在`__hash_table`中，我们就来看看它的真面目。不过在这之前，请深吸一口气，因为`__hash_table`的源代码很抽象
 
 ```
+// file: __hash_table
+
 template<class _NodePtr>
-    struct __hash_node_base {
-        typedef typename std::pointer_traits<_NodePtr>::element_type __node_type;
-        typedef __hash_node_base __first_node;
-        typedef typename std::__rebind_pointer<_NodePtr, __first_node>::type __node_base_pointer;
-        typedef _NodePtr __node_pointer;
-        typedef __node_base_pointer __next_pointer;
-        
-        __next_pointer __next_;
-    };
+struct __hash_node_base {
+    typedef typename std::pointer_traits<_NodePtr>::element_type __node_type;
+    typedef __hash_node_base __first_node;
+    typedef typename std::__rebind_pointer<_NodePtr, __first_node>::type __node_base_pointer;
+    typedef _NodePtr __node_pointer;
+    typedef __node_base_pointer __next_pointer;
+
+    __next_pointer __next_;
+};
     
     template<class _Tp, class _VoidPtr>
     struct __hash_node : public __hash_node_base<typename std::__rebind_pointer<_VoidPtr, __hash_node<_Tp, _VoidPtr> >::type> {
