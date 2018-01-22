@@ -267,5 +267,7 @@ struct hash<Foo> : public unary_function<Foo, size_t> {
 };
 ```
 
-## 2 hash\_table
+## 2 unordered_map
+
+
 
