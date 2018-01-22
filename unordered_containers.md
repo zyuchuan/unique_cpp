@@ -267,7 +267,39 @@ struct hash<Foo> : public unary_function<Foo, size_t> {
 };
 ```
 
-## 2 unordered_map
+## 2. unordered_map
 
+```
+// file: unordered_map
 
+template<class _Key, class _Tp, class _Hash = hash<_Key>, class _Pred = equal_to<_key>, class _Alloc = allocator<pair<const _Key, _Tp> > >
+class unordered_map {
+public:
+    // types
+    typedef _Key                                           key_type;
+    typedef _Tp                                            mapped_type;
+    typedef _Hash                                          hasher;
+    typedef _Pred                                          key_equal;
+    typedef _Alloc                                         allocator_type;
+    typedef pair<const key_type, mapped_type>              value_type;
+    typedef pair<key_type, mapped_type>                    __nc_value_type;
+    typedef value_type&                                    reference;
+    typedef const value_type&                              const_reference;
+    static_assert((is_same<value_type, typename allocator_type::value_type>::value),
+                  "Invalid allocator::value_type");
+
+private:
+    typedef __hash_value_type<key_type, mapped_type>                 __value_type;
+    typedef __unordered_map_hasher<key_type, __value_type, hasher>   __hasher;
+    typedef __unordered_map_equal<key_type, __value_type, key_equal> __key_equal;
+    typedef typename __rebind_alloc_helper<allocator_traits<allocator_type>,
+                                                 __value_type>::type __allocator_type;
+
+    typedef __hash_table<__value_type, __hasher,
+                         __key_equal,  __allocator_type>   __table;
+
+    __table __table_;
+
+};
+```
 
