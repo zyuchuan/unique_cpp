@@ -295,3 +295,90 @@ private:
 };
 ```
 
+可以看到`unordered_map`的实现采用了`Pimp`手法，`unordered_map`只是个`wrapper`，真正的实现是在`__hash_table`中，我们就来看看它的真面目。不过在这之前，请深吸一口气，因为`__hash_table`的源代码很抽象
+
+```
+template<class _NodePtr>
+    struct __hash_node_base {
+        typedef typename std::pointer_traits<_NodePtr>::element_type __node_type;
+        typedef __hash_node_base __first_node;
+        typedef typename std::__rebind_pointer<_NodePtr, __first_node>::type __node_base_pointer;
+        typedef _NodePtr __node_pointer;
+        typedef __node_base_pointer __next_pointer;
+        
+        __next_pointer __next_;
+    };
+    
+    template<class _Tp, class _VoidPtr>
+    struct __hash_node : public __hash_node_base<typename std::__rebind_pointer<_VoidPtr, __hash_node<_Tp, _VoidPtr> >::type> {
+        typedef _Tp __node_value_type;
+        
+        size_t  __hash_;
+        __node_value_type __value_;
+    };
+    
+    
+    template<class _NodeValueTp, class _VoidPtr>
+    struct __make_hash_node_types {
+        typedef __hash_node<_NodeValueTp, _VoidPtr> _NodeTp;
+        typedef typename std::__rebind_pointer<_VoidPtr, _NodeTp>::type _NodePtr;
+        typedef std::__hash_node_types<_NodePtr> type;
+    };
+    
+    
+    template<class _Tp, class _Hash, class _Equal, class _Alloc>
+    class __hash_table {
+    public:
+        typedef _Tp         value_type;
+        typedef _Hash       hasher;
+        typedef _Equal      key_equal;
+        typedef _Alloc      allocator_type;
+        
+    private:
+        typedef std::allocator_traits<allocator_type> __alloc_traits;
+        typedef typename __make_hash_node_types<value_type, typename __alloc_traits::void_pointer>::type _NodeTypes;
+        
+    
+    public:
+        typedef typename _NodeTypes::__node_value_type           __node_value_type;
+        typedef typename _NodeTypes::__container_value_type      __container_value_type;
+        typedef typename _NodeTypes::key_type                    key_type;
+        typedef value_type&                              reference;
+        typedef const value_type&                        const_reference;
+        typedef typename __alloc_traits::pointer         pointer;
+        typedef typename __alloc_traits::const_pointer   const_pointer;
+        typedef typename __alloc_traits::size_type       size_type;
+        typedef typename _NodeTypes::difference_type     difference_type;
+        
+    public:
+        // Create __node
+        
+        typedef typename _NodeTypes::__node_type __node;
+        typedef typename std::__rebind_alloc_helper<__alloc_traits, __node>::type __node_allocator;
+        typedef std::allocator_traits<__node_allocator>       __node_traits;
+        typedef typename _NodeTypes::__void_pointer      __void_pointer;
+        typedef typename _NodeTypes::__node_pointer      __node_pointer;
+        typedef typename _NodeTypes::__node_pointer      __node_const_pointer;
+        typedef typename _NodeTypes::__node_base_type    __first_node;
+        typedef typename _NodeTypes::__node_base_pointer __node_base_pointer;
+        typedef typename _NodeTypes::__next_pointer      __next_pointer;
+        
+    private:
+        typedef typename std::__rebind_alloc_helper<__node_traits, __next_pointer>::type __pointer_allocator;
+        typedef std::__bucket_list_deallocator<__pointer_allocator> __bucket_list_deleter;
+        typedef std::unique_ptr<__next_pointer[], __bucket_list_deleter> __bucket_list;
+        typedef std::allocator_traits<__pointer_allocator>          __pointer_alloc_traits;
+        typedef typename __bucket_list_deleter::pointer       __node_pointer_pointer;
+        
+        // --- Member data begin ---
+        __bucket_list                               __bucket_list_;
+        std::pair<__first_node, __node_allocator>   __p1_;
+        std::pair<size_type, hasher>                __p2_;
+        std::pair<float, key_equal>                 __p3_;
+        
+    public:
+        size_type size() const noexcept { return __p2_.first();}
+        
+        float max_load_factor() const noexcept { return __p3_.first();}
+    };
+```
