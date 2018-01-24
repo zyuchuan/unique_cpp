@@ -299,6 +299,9 @@ private:
 
 要讲清楚`__hash_table`不是一件容易的事情，libc++的`__hash_table`采用的是常规的
 
+
+![](/assets/hashtable.jpg)
+
 ```
 // file: __hash_table
 
