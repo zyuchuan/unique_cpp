@@ -300,7 +300,7 @@ private:
 要讲清楚`__hash_table`不是一件容易的事情，libc++的`__hash_table`采用的是常规的
 
 
-![](/assets/unordered_container_hash_table.jpg)
+![Hash table示意图](/assets/unordered_containers_hash_table.jpg)
 
 ```
 // file: __hash_table
