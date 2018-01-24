@@ -391,3 +391,12 @@ struct __hash_node : public __hash_node_base<typename std::__rebind_pointer<_Voi
 
 默认构造函数
 
+```
+// file: __hash_table
+
+template<class _Tp, class _Hash, class _Equal, class _Alloc>
+inline __hash_table<_Tp, _Hash, _Equal, _Alloc>::__hash_table()
+    : __p2_(0), __p3(1.0f) {
+
+}
+```
