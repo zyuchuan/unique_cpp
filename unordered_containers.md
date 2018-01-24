@@ -400,3 +400,71 @@ inline __hash_table<_Tp, _Hash, _Equal, _Alloc>::__hash_table()
 
 }
 ```
+
+插入一个<key, value>
+
+```
+// file: unordered_map
+
+// ...
+
+pair<iterator, bool> insert(const value_type& __) {
+    return __table_.__insert_unique(__x);
+}
+
+// file: __hash_table
+
+pair<iterator, bool> __insert_unique(__container_value_type&& __x) {
+    return __emplace_unique_key_args(_NodeType::__get_key(__x), std::move(__x));
+}
+
+template<class _Tp, class _Hash, class _Equal, class _Alloc>
+template<class _key, class ..._Args>
+pair<typename __hash_table<_Tp, _Hash, _Equal, _Alloc>::iterator, bool>
+__hash_table<_Tp, _Hash, _Equal, _Alloc>::__emplace_unique_key_args(_Key const& __k, _Args&&... __args) {
+    size_t __hash = hash_function()(__k);
+    size_type __bc = bucket_count();
+    bool __inserted = false;
+    __next_pointer __nd;
+    size_t __chash;
+
+    if (__bc != 0) {
+        __chash = __constrain_hash(__hash, __bc);
+        __nd = __bucket_list_[_chash];
+        if (__nd != nullptr) {
+            for (__nd = __nd->next; __nd != nullptr && (__nd->__hash() == __hash || __constrain_hash(__nd->__hash(), __bc) == __chash);
+                    __nd = __nd->__next_) {
+                if (key_eq()(__nd->__upcast()->__value, __k))
+                    goto __done;
+            }
+        }
+    }
+    {
+        __node_holder __h = __construct_node_hash(__hash, std::forward<_Args>(__args)...);
+        if (size() + 1 > __bc * max_load_factor() || __bc == 0) {
+            // rehash
+        }
+
+        __next_pointer __pn = __bucket_list_[__chash];
+        if (__pn == nullptr) {
+            __pn = __p1_.first().__ptr();
+            __h->__next_ = __pn->__next_;
+            __pn->__next_ = __h.get()->__ptr();
+
+            __bucket_list_[__chash] = __pn;
+            if (__h->__next_ != nullptr)
+                __bucket_list_[__constrain_hash(__h->__next_->__hash(), __bc)] = __h.get()->__ptr();
+        }
+        else {
+            __h->__next_ = __pn->__next_;
+            __pn->__next_ = static_cast<__next_pointer>(__h.get());
+        }
+        __nd = static_cast<__next_pointer>(__h.release());
+        ++size();
+        __inserted = true;
+    }
+__done:
+    return pair<iterator, bool>(iterator(__nd), __inserted);
+}
+
+```
