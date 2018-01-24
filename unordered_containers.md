@@ -386,3 +386,8 @@ struct __hash_node : public __hash_node_base<typename std::__rebind_pointer<_Voi
         float max_load_factor() const noexcept { return __p3_.first();}
     };
 ```
+
+ 源代码太长，从头读到尾是不可能的，我们只能找几个有代表性的函数来讲解
+
+默认构造函数
+
