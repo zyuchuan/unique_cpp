@@ -23,7 +23,7 @@ C++ 11标准对如何计算hash有明确的要求：
 
 1. hash方程应该是一个`function object`，声明如下所示：
 
-```
+```c++
 template<T>
 struct hash {
     size_t operator()(T key) const noexcept;
@@ -40,7 +40,7 @@ struct hash {
 
 对于简单数值类型，如`bool`、`int`、`char`等，libc++的hash算法也很简单：直接返回数值本身。
 
-```
+```c++
 // header: <functional>
 
 template<class T> struct hash; // forward declaration
@@ -74,7 +74,7 @@ struct hash<char> : pubic unary_function<char, size_t> {
 
 针对复杂数值类型，如`float`、`double`等，libc++提供了两种hash算法：[murmur2](https://en.wikipedia.org/wiki/MurmurHash)和[cityhash64](https://github.com/google/cityhash)：
 
-```
+```c++
 // header: <memory>
 
 template<class Size, size_t = sizeof(Size) * 8>
@@ -103,7 +103,7 @@ struct murmur2_or_cityhash<Size, 64> {
 
 `murmur2_or_cityhash::operator()`接受两个参数，并不满足C++标准的要求，为了方便使用，libc++又定义了一个外敷类`scalar_hash`：
 
-```
+```c++
 template<class T, size_t = sizeof(T) / sizeof(size_t)>
 struct scalar_hash;
 
@@ -211,7 +211,7 @@ struct hash<double> : public scalar_hash<double> {
 
 对于标准库中的非数值类型，比如`string`等，标准库也提供了hash方程：
 
-```
+```c++
 // header: <string>
 
 template<class CharT, class Traits, class Allocator>
@@ -244,7 +244,7 @@ inline size_t __do_string_hash(Ptr p, Ptr e) {
 
 如果你有一个类，
 
-```
+```c++
 struct Foo {
     int         _i;
     double      _d;
@@ -257,7 +257,7 @@ struct Foo {
 
 你可以这样计算hash：
 
-```
+```c++
 template<>
 struct hash<Foo> : public unary_function<Foo, size_t> {
     size_t operator()（const Foo& foo）const noexcept {
@@ -273,7 +273,7 @@ struct hash<Foo> : public unary_function<Foo, size_t> {
 
 首先来看`unordered_map`的声明：
 
-```
+```c++
 // file: unordered_map
 
 template<class _Key, class _Tp, class _Hash = hash<_Key>, class _Pred = equal_to<_key>, 
@@ -304,7 +304,7 @@ private:
 
 ![Hash table示意图](/assets/unordered_containers_hash_table.jpg)
 
-```
+```c++
 // file: __hash_table
 
 template<class _NodePtr>
@@ -321,82 +321,80 @@ struct __hash_node_base {
 template<class _Tp, class _VoidPtr>
 struct __hash_node : public __hash_node_base<typename std::__rebind_pointer<_VoidPtr, __hash_node<_Tp, _VoidPtr> >::type> {
     typedef _Tp __node_value_type;
-    
+
     size_t  __hash_;
     __node_value_type __value_;
 };
-    
-    
-    template<class _NodeValueTp, class _VoidPtr>
-    struct __make_hash_node_types {
-        typedef __hash_node<_NodeValueTp, _VoidPtr> _NodeTp;
-        typedef typename std::__rebind_pointer<_VoidPtr, _NodeTp>::type _NodePtr;
-        typedef std::__hash_node_types<_NodePtr> type;
-    };
-    
-    
-    template<class _Tp, class _Hash, class _Equal, class _Alloc>
-    class __hash_table {
-    public:
-        typedef _Tp         value_type;
-        typedef _Hash       hasher;
-        typedef _Equal      key_equal;
-        typedef _Alloc      allocator_type;
-        
-    private:
-        typedef std::allocator_traits<allocator_type> __alloc_traits;
-        typedef typename __make_hash_node_types<value_type, typename __alloc_traits::void_pointer>::type _NodeTypes;
-        
-    
-    public:
-        typedef typename _NodeTypes::__node_value_type           __node_value_type;
-        typedef typename _NodeTypes::__container_value_type      __container_value_type;
-        typedef typename _NodeTypes::key_type                    key_type;
-        typedef value_type&                              reference;
-        typedef const value_type&                        const_reference;
-        typedef typename __alloc_traits::pointer         pointer;
-        typedef typename __alloc_traits::const_pointer   const_pointer;
-        typedef typename __alloc_traits::size_type       size_type;
-        typedef typename _NodeTypes::difference_type     difference_type;
-        
-    public:
-        // Create __node
-        
-        typedef typename _NodeTypes::__node_type __node;
-        typedef typename std::__rebind_alloc_helper<__alloc_traits, __node>::type __node_allocator;
-        typedef std::allocator_traits<__node_allocator>       __node_traits;
-        typedef typename _NodeTypes::__void_pointer      __void_pointer;
-        typedef typename _NodeTypes::__node_pointer      __node_pointer;
-        typedef typename _NodeTypes::__node_pointer      __node_const_pointer;
-        typedef typename _NodeTypes::__node_base_type    __first_node;
-        typedef typename _NodeTypes::__node_base_pointer __node_base_pointer;
-        typedef typename _NodeTypes::__next_pointer      __next_pointer;
-        
-    private:
-        typedef typename std::__rebind_alloc_helper<__node_traits, __next_pointer>::type __pointer_allocator;
-        typedef std::__bucket_list_deallocator<__pointer_allocator> __bucket_list_deleter;
-        typedef std::unique_ptr<__next_pointer[], __bucket_list_deleter> __bucket_list;
-        typedef std::allocator_traits<__pointer_allocator>          __pointer_alloc_traits;
-        typedef typename __bucket_list_deleter::pointer       __node_pointer_pointer;
-        
-        // --- Member data begin ---
-        __bucket_list                               __bucket_list_;
-        std::pair<__first_node, __node_allocator>   __p1_;
-        std::pair<size_type, hasher>                __p2_;
-        std::pair<float, key_equal>                 __p3_;
-        
-    public:
-        size_type size() const noexcept { return __p2_.first();}
-        
-        float max_load_factor() const noexcept { return __p3_.first();}
-    };
+
+
+template<class _NodeValueTp, class _VoidPtr>
+struct __make_hash_node_types {
+    typedef __hash_node<_NodeValueTp, _VoidPtr> _NodeTp;
+    typedef typename std::__rebind_pointer<_VoidPtr, _NodeTp>::type _NodePtr;
+    typedef std::__hash_node_types<_NodePtr> type;
+};
+
+template<class _Tp, class _Hash, class _Equal, class _Alloc>
+class __hash_table {
+public:
+    typedef _Tp         value_type;
+    typedef _Hash       hasher;
+    typedef _Equal      key_equal;
+    typedef _Alloc      allocator_type;
+
+private:
+    typedef std::allocator_traits<allocator_type> __alloc_traits;
+    typedef typename __make_hash_node_types<value_type, typename __alloc_traits::void_pointer>::type _NodeTypes;
+
+public:
+    typedef typename _NodeTypes::__node_value_type           __node_value_type;
+    typedef typename _NodeTypes::__container_value_type      __container_value_type;
+    typedef typename _NodeTypes::key_type                    key_type;
+    typedef value_type&                              reference;
+    typedef const value_type&                        const_reference;
+    typedef typename __alloc_traits::pointer         pointer;
+    typedef typename __alloc_traits::const_pointer   const_pointer;
+    typedef typename __alloc_traits::size_type       size_type;
+    typedef typename _NodeTypes::difference_type     difference_type;
+
+public:
+    // Create __node
+
+    typedef typename _NodeTypes::__node_type __node;
+    typedef typename std::__rebind_alloc_helper<__alloc_traits, __node>::type __node_allocator;
+    typedef std::allocator_traits<__node_allocator>       __node_traits;
+    typedef typename _NodeTypes::__void_pointer      __void_pointer;
+    typedef typename _NodeTypes::__node_pointer      __node_pointer;
+    typedef typename _NodeTypes::__node_pointer      __node_const_pointer;
+    typedef typename _NodeTypes::__node_base_type    __first_node;
+    typedef typename _NodeTypes::__node_base_pointer __node_base_pointer;
+    typedef typename _NodeTypes::__next_pointer      __next_pointer;
+
+private:
+    typedef typename std::__rebind_alloc_helper<__node_traits, __next_pointer>::type __pointer_allocator;
+    typedef std::__bucket_list_deallocator<__pointer_allocator> __bucket_list_deleter;
+    typedef std::unique_ptr<__next_pointer[], __bucket_list_deleter> __bucket_list;
+    typedef std::allocator_traits<__pointer_allocator>          __pointer_alloc_traits;
+    typedef typename __bucket_list_deleter::pointer       __node_pointer_pointer;
+
+    // --- Member data begin ---
+    __bucket_list                               __bucket_list_;
+    std::pair<__first_node, __node_allocator>   __p1_;
+    std::pair<size_type, hasher>                __p2_;
+    std::pair<float, key_equal>                 __p3_;
+
+public:
+    size_type size() const noexcept { return __p2_.first();}
+
+    float max_load_factor() const noexcept { return __p3_.first();}
+};
 ```
 
  源代码太长，从头读到尾是不可能的，我们只能找几个有代表性的函数来讲解
 
 默认构造函数
 
-```
+```c++
 // file: __hash_table
 
 template<class _Tp, class _Hash, class _Equal, class _Alloc>
@@ -408,7 +406,7 @@ inline __hash_table<_Tp, _Hash, _Equal, _Alloc>::__hash_table()
 
 插入一个<key, value>
 
-```
+```c++
 // file: unordered_map
 
 // ...
@@ -472,4 +470,3 @@ __done:
     return pair<iterator, bool>(iterator(__nd), __inserted);
 }
 ```
-
