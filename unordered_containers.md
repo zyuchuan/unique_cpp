@@ -381,6 +381,8 @@ struct __make_hash_node_types {
 
 到目前为止， 我们已经定义了`__hash_node_type，代码看似很复杂抽象，其实也没啥，就是定义了一个node，只是这么抽象的代码，真不知道作者是怎么写出来的，又是怎么测试的。
 
+下面正式进入`__hash_table`：
+
 ```c++
 template<class _Tp, class _Hash, class _Equal, class _Alloc>
 class __hash_table {
