@@ -292,7 +292,7 @@ public:
     typedef const value_type&                              const_reference;
 
 private:
-    typedef __hash_table<__value_type, __hasher, __key_equal,  __allocator_type>   __table;
+    typedef __hash_table<__value_type, __hasher, __key_equal, __allocator_type>   __table;
     __table __table_;
 
     // ...
