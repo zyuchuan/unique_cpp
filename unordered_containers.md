@@ -304,9 +304,89 @@ private:
 
 ![Hash table示意图](/assets/unordered_containers_hash_table.jpg)
 
+在进入`__hash_table`之前，先看几个辅助类，这几个辅助类对我们理解`__hash_table`很有帮助：
+
 ```c++
 // file: __hash_table
 
+// __hash_value_type只有声明，没有定义，因为不需要。
+template<class _Key, class _Tp> struct __hash_value_type;
+
+template<class _Key, class _Tp>
+struct __hash_key_value_types<__hash_value_type<_Key, _Tp> > {
+    typedef _Key                            key_type;
+    typedef _Tp                             mapped_type;
+    typedef __hash_value_type<_Key, _Tp>    __node_value_type;
+    typedef pair<const _Key, _Tp>           __container_value_type;
+    typedef pair<_Key, _Tp>                 __nc_value_type;
+    typedef __container_value_type          __map_value_type;
+    static const bool __is_map = true;
+
+    inline static key_type const& __get_key(__container_value_type const& __v) {
+        return __v.first;
+    }
+
+    template <class _Up>
+    inline static typename enable_if<__is_same_uncvref<_Up, __node_value_type>::value, __container_value_type const&>::type
+    __get_value(_Up& __t) {
+        return __t.__cc;
+    }
+
+    template <class _Up>
+    inline static typename enable_if<__is_same_uncvref<_Up, __container_value_type>::value, __container_value_type const&>::type
+    __get_value(_Up& __t) {
+        return __t;
+    }
+
+    inline static __container_value_type* __get_ptr(__node_value_type& __n) {
+        return addressof(__n.__cc);
+    }
+};
+
+template <class _NodePtr, class _NodeT = typename pointer_traits<_NodePtr>::element_type>
+struct __hash_node_types;
+
+template <class _NodePtr, class _Tp, class _VoidPtr>
+struct __hash_node_types<_NodePtr, __hash_node<_Tp, _VoidPtr> >
+    : public __hash_key_value_types<_Tp>, __hash_map_pointer_types<_Tp, _VoidPtr>
+
+{
+  typedef __hash_key_value_types<_Tp>           __base;
+
+public:
+  typedef ptrdiff_t difference_type;
+  typedef size_t size_type;
+
+  typedef typename __rebind_pointer<_NodePtr, void>::type       __void_pointer;
+
+  typedef typename pointer_traits<_NodePtr>::element_type       __node_type;
+  typedef _NodePtr                                              __node_pointer;
+
+  typedef __hash_node_base<__node_pointer>                      __node_base_type;
+  typedef typename __rebind_pointer<_NodePtr, __node_base_type>::type
+                                                             __node_base_pointer;
+
+  typedef typename __node_base_type::__next_pointer          __next_pointer;
+
+  typedef _Tp                                                 __node_value_type;
+  typedef typename __rebind_pointer<_VoidPtr, __node_value_type>::type
+                                                      __node_value_type_pointer;
+  typedef typename __rebind_pointer<_VoidPtr, const __node_value_type>::type
+                                                __const_node_value_type_pointer;
+
+private:
+    static_assert(!is_const<__node_type>::value,
+                "_NodePtr should never be a pointer to const");
+    static_assert((is_same<typename pointer_traits<_VoidPtr>::element_type, void>::value),
+                  "_VoidPtr does not point to unqualified void type");
+    static_assert((is_same<typename __rebind_pointer<_VoidPtr, __node_type>::type,
+                          _NodePtr>::value), "_VoidPtr does not rebind to _NodePtr.");
+};
+```
+
+下面再看几个辅助类：
+
+```c++
 template<class _NodePtr>
 struct __hash_node_base {
     typedef typename std::pointer_traits<_NodePtr>::element_type __node_type;
@@ -327,25 +407,7 @@ struct __hash_node : public __hash_node_base<typename std::__rebind_pointer<_Voi
 };
 
 
-template<class _Tp>
-struct __hash_key_value_types {
-    typedef _Tp key_type;
-    typedef _Tp __node_value_type;
-    typedef _Tp __container_value_type;
-    static const bool __is_map = false;
 
-    inline static key_type const& __get_key(_Tp const& __v) {
-        return __v;
-    }
-
-    inline static __container_value_type const& __get_value(__node_value_type const& __v) {
-        return __v;
-    }
-
-    inline static __container_value_type* __get_ptr(__node_value_type& __n) {
-        return std::addressof(__n);
-    }
-};
 
 template<class _NodeValueTp, class _VoidPtr>
 struct __make_hash_node_types {
