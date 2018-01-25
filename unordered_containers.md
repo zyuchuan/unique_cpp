@@ -309,7 +309,7 @@ private:
 ```c++
 // file: __hash_table
 
-// __hash_value_type只有声明，没有定义，因为不需要。
+// __hash_value_type只有声明，没有定义。
 template<class _Key, class _Tp> struct __hash_value_type;
 
 template<class _Key, class _Tp>
@@ -342,46 +342,6 @@ struct __hash_key_value_types<__hash_value_type<_Key, _Tp> > {
         return addressof(__n.__cc);
     }
 };
-
-template <class _NodePtr, class _NodeT = typename pointer_traits<_NodePtr>::element_type>
-struct __hash_node_types;
-
-template <class _NodePtr, class _Tp, class _VoidPtr>
-struct __hash_node_types<_NodePtr, __hash_node<_Tp, _VoidPtr> >
-    : public __hash_key_value_types<_Tp>, __hash_map_pointer_types<_Tp, _VoidPtr>
-
-{
-  typedef __hash_key_value_types<_Tp>           __base;
-
-public:
-  typedef ptrdiff_t difference_type;
-  typedef size_t size_type;
-
-  typedef typename __rebind_pointer<_NodePtr, void>::type       __void_pointer;
-
-  typedef typename pointer_traits<_NodePtr>::element_type       __node_type;
-  typedef _NodePtr                                              __node_pointer;
-
-  typedef __hash_node_base<__node_pointer>                      __node_base_type;
-  typedef typename __rebind_pointer<_NodePtr, __node_base_type>::type
-                                                             __node_base_pointer;
-
-  typedef typename __node_base_type::__next_pointer          __next_pointer;
-
-  typedef _Tp                                                 __node_value_type;
-  typedef typename __rebind_pointer<_VoidPtr, __node_value_type>::type
-                                                      __node_value_type_pointer;
-  typedef typename __rebind_pointer<_VoidPtr, const __node_value_type>::type
-                                                __const_node_value_type_pointer;
-
-private:
-    static_assert(!is_const<__node_type>::value,
-                "_NodePtr should never be a pointer to const");
-    static_assert((is_same<typename pointer_traits<_VoidPtr>::element_type, void>::value),
-                  "_VoidPtr does not point to unqualified void type");
-    static_assert((is_same<typename __rebind_pointer<_VoidPtr, __node_type>::type,
-                          _NodePtr>::value), "_VoidPtr does not rebind to _NodePtr.");
-};
 ```
 
 下面再看几个辅助类：
@@ -406,8 +366,10 @@ struct __hash_node : public __hash_node_base<typename std::__rebind_pointer<_Voi
     __node_value_type __value_;
 };
 
-
-
+template <class _NodePtr, class _NodeT = typename pointer_traits<_NodePtr>::element_type>
+struct __hash_node_types {
+    // ...
+};
 
 template<class _NodeValueTp, class _VoidPtr>
 struct __make_hash_node_types {
@@ -415,7 +377,11 @@ struct __make_hash_node_types {
     typedef typename std::__rebind_pointer<_VoidPtr, _NodeTp>::type _NodePtr;
     typedef std::__hash_node_types<_NodePtr> type;
 };
+```
 
+到目前为止， 我们已经定义了`__hash_node_type，代码看似很复杂抽象，其实也没啥，就是定义了一个node，只是这么抽象的代码，真不知道作者是怎么写出来的，又是怎么测试的。
+
+```c++
 template<class _Tp, class _Hash, class _Equal, class _Alloc>
 class __hash_table {
 public:
