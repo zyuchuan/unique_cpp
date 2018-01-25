@@ -327,6 +327,26 @@ struct __hash_node : public __hash_node_base<typename std::__rebind_pointer<_Voi
 };
 
 
+template<class _Tp>
+struct __hash_key_value_types {
+    typedef _Tp key_type;
+    typedef _Tp __node_value_type;
+    typedef _Tp __container_value_type;
+    static const bool __is_map = false;
+
+    inline static key_type const& __get_key(_Tp const& __v) {
+        return __v;
+    }
+
+    inline static __container_value_type const& __get_value(__node_value_type const& __v) {
+        return __v;
+    }
+
+    inline static __container_value_type* __get_ptr(__node_value_type& __n) {
+        return std::addressof(__n);
+    }
+};
+
 template<class _NodeValueTp, class _VoidPtr>
 struct __make_hash_node_types {
     typedef __hash_node<_NodeValueTp, _VoidPtr> _NodeTp;
