@@ -267,7 +267,11 @@ struct hash<Foo> : public unary_function<Foo, size_t> {
 };
 ```
 
+现在我们已经对`hash`算法有所了解，接下来我们就讲讲那些基于`hash`算法的容器是如何实现的。虽然C++ 11标准库中基于`hash`算法的容器一共有四种，但是它们的实现方式大同小异，所以我们就讲讲最典型的`hash`容器：`unordered_map`。
+
 ## 2. unordered_map
+
+
 
 ```
 // file: unordered_map
