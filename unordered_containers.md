@@ -304,6 +304,7 @@ private:
 
 ![Hash table示意图](/assets/unordered_containers_hash_table.jpg)
 
+
 在进入`__hash_table`之前，先看几个辅助类，这几个辅助类对我们理解`__hash_table`很有帮助：
 
 ```c++
@@ -342,11 +343,7 @@ struct __hash_key_value_types<__hash_value_type<_Key, _Tp> > {
         return addressof(__n.__cc);
     }
 };
-```
 
-下面再看几个辅助类：
-
-```c++
 template<class _NodePtr>
 struct __hash_node_base {
     typedef typename std::pointer_traits<_NodePtr>::element_type __node_type;
@@ -358,6 +355,7 @@ struct __hash_node_base {
     __next_pointer __next_;
 };
 
+// 一个__hash_node有三个成员：hash value，value和next pointer 
 template<class _Tp, class _VoidPtr>
 struct __hash_node : public __hash_node_base<typename std::__rebind_pointer<_VoidPtr, __hash_node<_Tp, _VoidPtr> >::type> {
     typedef _Tp __node_value_type;
