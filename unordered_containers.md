@@ -411,6 +411,7 @@ typedef typename __hash_node_base<_NodePtr>::__next_pointer __next_pointer;
 std::unique_ptr<__next_pointer[]>                           __bucket_list_;
 ```
 
+`__hash_node`和`__hash_node_base`就是一切开始的地方：
 
 ```c++
 // file: __hash_table
@@ -435,8 +436,7 @@ struct __hash_node : public __hash_node_base<typename std::__rebind_pointer<_Voi
 };
 ```
 
-
- 源代码太长，从头读到尾是不可能的，我们只能找几个有代表性的函数来讲解
+纵观源代码，我们会发现90%的代码其实都是`typedef`，大量的`typedef`让人头晕目眩，真不知道这样的代码是怎样构思出来的，又是怎样测试的。
 
 默认构造函数
 
