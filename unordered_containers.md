@@ -363,23 +363,6 @@ struct __hash_node : public __hash_node_base<typename std::__rebind_pointer<_Voi
     size_t  __hash_;
     __node_value_type __value_;
 };
-
-template <class _NodePtr, class _NodeT = typename pointer_traits<_NodePtr>::element_type>
-struct __hash_node_types;
-
-template <class _NodePtr, class _Tp, class _VoidPtr>
-struct __hash_node_types<_NodePtr, __hash_node<_Tp, _VoidPtr> >
-    : public __hash_key_value_types<_Tp>, __hash_map_pointer_types<_Tp, _VoidPtr> {
-
-  // ...
-};
-
-template<class _NodeValueTp, class _VoidPtr>
-struct __make_hash_node_types {
-    typedef __hash_node<_NodeValueTp, _VoidPtr> _NodeTp;
-    typedef typename std::__rebind_pointer<_VoidPtr, _NodeTp>::type _NodePtr;
-    typedef __hash_node_types<_NodePtr> type;
-};
 ```
 
 到目前为止， 我们已经定义了`__hash_node_type，代码看似很复杂抽象，其实也没啥，就是定义了一个node，只是这么抽象的代码，真不知道作者是怎么写出来的，又是怎么测试的。
@@ -457,6 +440,36 @@ typedef typename _NodeTypes::__next_pointer                      __next_pointer;
 typedef std::unique_ptr<__next_pointer[], __bucket_list_deleter> __bucket_list;
 ```
 
+这里的关键就是`__make_hash_node_types`：
+
+```c++
+template <class _NodePtr, class _NodeT = typename pointer_traits<_NodePtr>::element_type>
+struct __hash_node_types;
+
+template <class _NodePtr, class _Tp, class _VoidPtr>
+struct __hash_node_types<_NodePtr, __hash_node<_Tp, _VoidPtr> >
+    : public __hash_key_value_types<_Tp>, __hash_map_pointer_types<_Tp, _VoidPtr>{
+
+    typedef _NodePtr                                       __node_pointer;
+    typedef __hash_node_base<__node_pointer>               __node_base_type;
+    typedef typename __node_base_type::__next_pointer      __next_pointer;
+
+    // ...
+};
+
+template<class _NodeValueTp, class _VoidPtr>
+struct __make_hash_node_types {
+    typedef __hash_node<_NodeValueTp, _VoidPtr> _NodeTp;
+    typedef typename std::__rebind_pointer<_VoidPtr, _NodeTp>::type _NodePtr;
+    typedef __hash_node_types<_NodePtr> type;
+};
+```
+
+经过这一连串让人头晕目眩的类型代换，最终我们可以知道了，`__bucket_list_`的定义可以大致写成这样：
+
+```c++
+std::unique_ptr<pair<(__hash_node_base*)[]> __bucket_list_
+```
 
 
  源代码太长，从头读到尾是不可能的，我们只能找几个有代表性的函数来讲解
