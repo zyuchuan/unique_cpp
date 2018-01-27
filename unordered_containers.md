@@ -365,15 +365,20 @@ struct __hash_node : public __hash_node_base<typename std::__rebind_pointer<_Voi
 };
 
 template <class _NodePtr, class _NodeT = typename pointer_traits<_NodePtr>::element_type>
-struct __hash_node_types {
-    // ...
+struct __hash_node_types;
+
+template <class _NodePtr, class _Tp, class _VoidPtr>
+struct __hash_node_types<_NodePtr, __hash_node<_Tp, _VoidPtr> >
+    : public __hash_key_value_types<_Tp>, __hash_map_pointer_types<_Tp, _VoidPtr> {
+
+  // ...
 };
 
 template<class _NodeValueTp, class _VoidPtr>
 struct __make_hash_node_types {
     typedef __hash_node<_NodeValueTp, _VoidPtr> _NodeTp;
     typedef typename std::__rebind_pointer<_VoidPtr, _NodeTp>::type _NodePtr;
-    typedef std::__hash_node_types<_NodePtr> type;
+    typedef __hash_node_types<_NodePtr> type;
 };
 ```
 
@@ -437,6 +442,22 @@ public:
     float max_load_factor() const noexcept { return __p3_.first();}
 };
 ```
+
+ 我们来梳理一下，每一个`__hash_table`都有一个`__bucket_list_`：
+
+```c++
+__bucket_list __bucket_list_
+```
+
+而`__bucket_list_`是一个`smart pointer`：
+
+```c++
+typedef typename __make_hash_node_types<value_type, typename __alloc_traits::void_pointer>::type _NodeTypes;
+typedef typename _NodeTypes::__next_pointer                      __next_pointer;
+typedef std::unique_ptr<__next_pointer[], __bucket_list_deleter> __bucket_list;
+```
+
+
 
  源代码太长，从头读到尾是不可能的，我们只能找几个有代表性的函数来讲解
 
