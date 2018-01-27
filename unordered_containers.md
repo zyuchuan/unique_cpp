@@ -457,6 +457,8 @@ inline __hash_table<_Tp, _Hash, _Equal, _Alloc>::__hash_table()
 
 ### 2.2 插入元素
 
+源代码有点复杂，不过只要看懂了`__hash_table`声明部分的代码，这部分代码相对来说还是比较容易的。
+
 ```c++
 // file: unordered_map
 
@@ -519,3 +521,7 @@ __done:
     return pair<iterator, bool>(iterator(__nd), __inserted);
 }
 ```
+
+## 3. 小结
+
+对`unordered_map`的到此算是告一段落，至于其余三个`unordered`容器，它们的实现方法大同小异，就不一一赘述了。
