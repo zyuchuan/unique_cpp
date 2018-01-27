@@ -304,69 +304,6 @@ private:
 
 ![Hash table示意图](/assets/unordered_containers_hash_table.jpg)
 
-
-在进入`__hash_table`之前，先看几个辅助类，这几个辅助类对我们理解`__hash_table`很有帮助：
-
-```c++
-// file: __hash_table
-
-// __hash_value_type只有声明，没有定义。
-template<class _Key, class _Tp> struct __hash_value_type;
-
-template<class _Key, class _Tp>
-struct __hash_key_value_types<__hash_value_type<_Key, _Tp> > {
-    typedef _Key                            key_type;
-    typedef _Tp                             mapped_type;
-    typedef __hash_value_type<_Key, _Tp>    __node_value_type;
-    typedef pair<const _Key, _Tp>           __container_value_type;
-    typedef pair<_Key, _Tp>                 __nc_value_type;
-    typedef __container_value_type          __map_value_type;
-    static const bool __is_map = true;
-
-    inline static key_type const& __get_key(__container_value_type const& __v) {
-        return __v.first;
-    }
-
-    template <class _Up>
-    inline static typename enable_if<__is_same_uncvref<_Up, __node_value_type>::value, __container_value_type const&>::type
-    __get_value(_Up& __t) {
-        return __t.__cc;
-    }
-
-    template <class _Up>
-    inline static typename enable_if<__is_same_uncvref<_Up, __container_value_type>::value, __container_value_type const&>::type
-    __get_value(_Up& __t) {
-        return __t;
-    }
-
-    inline static __container_value_type* __get_ptr(__node_value_type& __n) {
-        return addressof(__n.__cc);
-    }
-};
-
-template<class _NodePtr>
-struct __hash_node_base {
-    typedef typename std::pointer_traits<_NodePtr>::element_type __node_type;
-    typedef __hash_node_base __first_node;
-    typedef typename std::__rebind_pointer<_NodePtr, __first_node>::type __node_base_pointer;
-    typedef _NodePtr __node_pointer;
-    typedef __node_base_pointer __next_pointer;
-
-    __next_pointer __next_;
-};
-
-// 一个__hash_node有三个成员：hash value，value和next pointer 
-template<class _Tp, class _VoidPtr>
-struct __hash_node : public __hash_node_base<typename std::__rebind_pointer<_VoidPtr, __hash_node<_Tp, _VoidPtr> >::type> {
-    typedef _Tp __node_value_type;
-
-    size_t  __hash_;
-    __node_value_type __value_;
-};
-```
-
-到目前为止， 我们已经定义了`__hash_node_type，代码看似很复杂抽象，其实也没啥，就是定义了一个node，只是这么抽象的代码，真不知道作者是怎么写出来的，又是怎么测试的。
-
 下面正式进入`__hash_table`：
 
 ```c++
@@ -465,10 +402,11 @@ struct __make_hash_node_types {
 };
 ```
 
-经过这一连串让人头晕目眩的类型代换，最终我们可以知道了，`__bucket_list_`的定义可以大致写成这样：
+经过这一连串让人头晕目眩的类型代换后，`__bucket_list_`的大致写成这样：
 
 ```c++
-std::unique_ptr<pair<(__hash_node_base*)[]> __bucket_list_
+typename __hash_node_base<_NodePtr>::__next_pointer __next_pointer;
+std::unique_ptr<__next_pointer[]> __bucket_list_;
 ```
 
 
