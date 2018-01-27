@@ -443,6 +443,8 @@ struct __hash_node
 
 ### 2.1 默认构造函数
 
+默认构造函数非常简单：
+
 ```c++
 // file: __hash_table
 
@@ -453,12 +455,10 @@ inline __hash_table<_Tp, _Hash, _Equal, _Alloc>::__hash_table()
 }
 ```
 
-插入一个<key, value>
+### 2.2 插入元素
 
 ```c++
 // file: unordered_map
-
-// ...
 
 pair<iterator, bool> insert(const value_type& __) {
     return __table_.__insert_unique(__x);
