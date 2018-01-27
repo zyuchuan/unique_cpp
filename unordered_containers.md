@@ -402,11 +402,37 @@ struct __make_hash_node_types {
 };
 ```
 
-经过这一连串让人头晕目眩的类型代换后，`__bucket_list_`的大致写成这样：
+经过这一连串让人头晕目眩的类型代换后，`__bucket_list_`大致可以写成：
 
 ```c++
-typename __hash_node_base<_NodePtr>::__next_pointer __next_pointer;
-std::unique_ptr<__next_pointer[]> __bucket_list_;
+typedef std::pair<Key, Value>                               _Tp;
+typedef __hash_node<_Tp, _VoidPtr>*                         _NodePtr;
+typedef typename __hash_node_base<_NodePtr>::__next_pointer __next_pointer;
+std::unique_ptr<__next_pointer[]>                           __bucket_list_;
+```
+
+
+```c++
+// file: __hash_table
+
+template<class _NodePtr>
+struct __hash_node_base {
+    typedef typename std::pointer_traits<_NodePtr>::element_type __node_type;
+    typedef __hash_node_base __first_node;
+    typedef typename std::__rebind_pointer<_NodePtr, __first_node>::type __node_base_pointer;
+    typedef _NodePtr __node_pointer;
+    typedef __node_base_pointer __next_pointer;
+
+    __next_pointer __next_;
+};
+
+template<class _Tp, class _VoidPtr>
+struct __hash_node : public __hash_node_base<typename std::__rebind_pointer<_VoidPtr, __hash_node<_Tp, _VoidPtr> >::type> {
+    typedef _Tp __node_value_type;
+
+    size_t  __hash_;
+    __node_value_type __value_;
+};
 ```
 
 
