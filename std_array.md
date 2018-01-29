@@ -34,9 +34,9 @@ int main(){
 a b
 ```
 
-## 2. std::array源代码分析
+## 1. std::array源代码分析
 
-总的来说，`std::array`的源代码比较容易看懂，所以下面我们就给出源代码，并不多做解释。
+相较于很多类——比如`tuple`、`bind`等——那如天书一般的源代码，`std::array`的源代码算是真正的良心之作，几乎不需要什么智商就能看明白：
 
 ```c++
 // file: array
@@ -60,14 +60,33 @@ struct array {
    // 唯一的成员，c-style数组
    value_type __elems_[_Size > 0 ? _Size : 1];
    
+   // ...
+```
+
+看到了吧，刨去那一大堆的`typedef`，`std::array`就只有一个成员：`__elems_`，这是一个`c-style`的数组`std::array`就是就是C原生数组的一个马甲而已。
+
+当然，这个马甲有个很好的特性：自带`size`信息：
+
+```c++
+template<class _Tp, size_t _Size>
+struct array {
+   // ...
+   // capacity:
+   inline constexpr size_type size() const noexcept {return _Size;}
+   inline constexpr bool empty() const noexcept {return _Size == 0;}
+   // ...
+};
+```
+
+
+```c++
+   
    // iterators:
    inline constexpr iterator begin() noexcept {return iterator(__elems_);}
    inline constexpr iterator end() noexcept {return iterator(__elems_ + _Size);}
    // ...
    
-   // capacity:
-   inline constexpr size_type size() const noexcept {return _Size;}
-   inline constexpr bool empty() const noexcept {return _Size == 0;}
+   
    // ...
    
    // element access:
