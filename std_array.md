@@ -107,7 +107,22 @@ struct array{
    // ...
    
    inline void swap(array& __a) noexcept(_Size == 0 || __is_nothrow_swappable<_Tp>::value) {
-   __swap_dispatch((std::integral_constant<bool, _Size == 0>()), __a);
+      __swap_dispatch((std::integral_constant<bool, _Size == 0>()), __a);
+   }
+   
+   inline void __swap_dispatch(std::true_type, array&){}
+   
+   inline void __swap_dispatch(std::false_type, array& __a) {
+      std::swap_range(__elems_, __elems_ + _Size, __a.__elems_);
    }
 };
+
+template<class _Tp, size_t _Size>
+inline typename enable_if
+<
+   _Size == 0 || __is_swappable<_Tp>::value, void
+>::type
+swap(array<_Tp, _Size>& __x, array<_Tp, _Size>& __y) {
+   __x.swap(__y);
+}
 ```
