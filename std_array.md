@@ -78,21 +78,24 @@ struct array {
 };
 ```
 
+另外，这个穿上马甲的`std::array`已经摇身一变成了一个容器，既然是容器，就必须遵循C++标准可以关于容器的`concept`，比如遍历，获取元素等等：
 
 ```c++
-   
+template<class _Tp, size_t _Size>
+struct array {
+   // ...
    // iterators:
    inline constexpr iterator begin() noexcept {return iterator(__elems_);}
    inline constexpr iterator end() noexcept {return iterator(__elems_ + _Size);}
    // ...
    
-   
-   // ...
-   
    // element access:
    inline constexpr reference operator[](size_type __n) {return __elems_[__n];}
-   constexpr reference at(size_type __n);
-   
+   constexpr reference at(size_type __n) {
+      if (__n >= _Size) __throw_out_of_range("array:at");
+      return __elems_[__n];
+   }
+   // ...
 };
 ```
 
