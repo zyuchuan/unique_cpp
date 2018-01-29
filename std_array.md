@@ -17,8 +17,7 @@ int main(){
  
     // container operations are supported
     std::sort(a1.begin(), a1.end());
-    std::reverse_copy(a2.begin(), a2.end(), 
-          std::ostream_iterator<int>(std::cout, " "));
+    std::reverse_copy(a2.begin(), a2.end(), std::ostream_iterator<int>(std::cout, " "));
  
     std::cout << '\n';
  
