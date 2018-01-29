@@ -118,10 +118,8 @@ struct array{
 };
 
 template<class _Tp, size_t _Size>
-inline typename enable_if
-<
-   _Size == 0 || __is_swappable<_Tp>::value, void
->::type
+inline
+typename enable_if<_Size == 0 || __is_swappable<_Tp>::value, void>::type
 swap(array<_Tp, _Size>& __x, array<_Tp, _Size>& __y) {
    __x.swap(__y);
 }
