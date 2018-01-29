@@ -99,3 +99,15 @@ struct array {
 };
 ```
 
+源代码确实很简单，就不多讲了。最后再说点题外话：`swap`，我们来看看`std::array`是怎样实现`swap`的：
+
+```c++
+template <class _Tp, size_t _Size>
+struct array{
+   // ...
+   
+   inline void swap(array& __a) noexcept(_Size == 0 || __is_nothrow_swappable<_Tp>::value) {
+   __swap_dispatch((std::integral_constant<bool, _Size == 0>()), __a);
+   }
+};
+```
