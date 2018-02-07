@@ -145,8 +145,8 @@ struct is_placeholder : public __is_placeholder<typename std::remove_cv<_Tp>::ty
 如果一个对象不是`placeholder`，那`is_placeholder<T>`就继承自`integral_constant<int, 0>`，也就是说有`is_placeholder<T>::value = 0`。如果`T`是个`placeholder`，比如`__ph<5>`，那`is_placeholder<T>就继承自`integral_constant<int, 5>`，也就是说有`is_placeholder<T>::value = 5`。后面我们呢会看到，这正是分派绑定参数的关键所在。
 
 
-
 ```
+// 如果_Ti不是一个placeholder
 template<class _Ti, class _Uj>
 inline
 typename enable_if
@@ -158,5 +158,18 @@ typename enable_if
 >::type
 __mu(_Ti& __ti, _Uj&) {
     return __ti;
+}
+
+// 如果_Ti是一个placeholder
+template<class _Ti, class _Uj>
+inline
+typename enable_if
+<
+    0 < is_placeholder<_Ti>::value,
+    typename __mu_return2< 0 < is_placeholder<_Ti>::value, _Ti, _Uj>::type
+>::type
+__mu(_Ti&, _Uj& __uj) {
+    const size_t _Indx = is_placeholder<_Ti>::value - 1;
+    return std::forward<typename tuple_element<_Indx, _Uj>::type>(get::<_Indx>(__uj));
 }
 ```
