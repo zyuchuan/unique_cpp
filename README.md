@@ -10,8 +10,8 @@
 * [smart pointers](smart_pointers.md)
 * [unordered containers](unordered_containers.md)
 * [std::array](std_array.md)
+* [std::bind](std_bind.md)
 * concurrency
-* std::bind
 * std::initializer\_list
 
 
