@@ -110,6 +110,42 @@ __apply_functor(_Fp& __f, _BoundArgs& __bound_args, __tuple_indices<_Indx...>, _
 
 `__apply_functor`内部又调用了`__invoke`，我们对这个函数不做多的纠缠，只要知道它是调用函数`__f(...)`就好。最关键的是这个神秘的`__mu`，它的作用是解析绑定参数。我们知道参数绑定有两个情况，一是构造函数时绑定参数，而是占位符绑定。`__mu`必须能正确地区分这两种情况。
 
+我们先来看`placeholder`长什么样
+
+```
+namespace placeholders {
+    template<int _Np> struct __ph{};
+    constexpr __ph<1>   _1{};
+    constexpr __ph<2>   _2{};
+    constexpr __ph<3>   _3{};
+    constexpr __ph<4>   _4{};
+    constexpr __ph<5>   _5{};
+    constexpr __ph<6>   _6{};
+    constexpr __ph<7>   _7{};
+    constexpr __ph<8>   _8{};
+    constexpr __ph<9>   _9{};
+    constexpr __ph<10> _10{};
+}
+```
+这就是`placeholder`，它是空的，啥也没有，就是个占位符。那该如何判断一个变量或类是不是`placeholder`呢？
+
+```
+template<class _Tp>
+struct __is_placeholder : public integral_constant<int, 0> {};
+
+template<int _Np>
+struct __is_placeholder<placeholders::__ph<_Np> > : public integral_constant<int, _Np> {
+};
+    
+template<class _Tp>
+struct is_placeholder : public __is_placeholder<typename std::remove_cv<_Tp>::type>{
+};
+```
+
+如果一个对象不是`placeholder`，那`is_placeholder<T>`就继承自`integral_constant<int, 0>`，也就是说有`is_placeholder<T>::value = 0`。如果`T`是个`placeholder`，比如`__ph<5>`，那`is_placeholder<T>就继承自`integral_constant<int, 5>`，也就是说有`is_placeholder<T>::value = 5`。后面我们呢会看到，这正是分派绑定参数的关键所在。
+
+
+
 ```
 template<class _Ti, class _Uj>
 inline
@@ -123,3 +159,4 @@ typename enable_if
 __mu(_Ti& __ti, _Uj&) {
     return __ti;
 }
+```
