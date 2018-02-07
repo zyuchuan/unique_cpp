@@ -57,7 +57,7 @@ public:
              class = typename enable_if<is_constructible<_Fd, _Gp>::value &&
                      !is_same<typename remove_reference<_Gp>::type, __bind>::value
           >::type>
-  explicit __bind(_Gp&& __f, _BA&& ...__bound_args)
+    explicit __bind(_Gp&& __f, _BA&& ...__bound_args)
       : __f_(std::forward<_Gp>(__f)),
         __bound_args_(std::forward<_BA>(__bound_args)...){}
     
@@ -67,6 +67,23 @@ public:
        return __apply_functor(__f_, __bound_args_, __indices(),
                               tuple<_Args&&...>(std::forward<_Args>(__args)...));
    }
+   
+   // ...
 };
 ```
+
+如果你觉得你看到了假的C++代码，恭喜你！你终于上道了！C++标准库的源代码就是这么抽象！让我来给你解释一下：
+
+`__bind`类有两个成员变量，一个是`__f_`，类型是`_Fd`，那`_Fd`又是啥？`_Fd`通常是个函数对象，这是由编译器自动生成的。另一个是`__bound_args_`，类型是个`tuple`。这个`tuple`是理解`__bind`的关键，我们后面还要详细解释。
+
+`__bind`有个模板构造函数，但是，要使这个模板构造函数存在的前提条件是：
+1. 可以通过`_Gp`构造出`_Fd`
+2. `_Gp`不能是`__bind`自己
+这就是第三个模板参数
+```
+typename enable_if<is_constructible<_Fd, _Gp>::value && 
+!is_same<typename remove_reference<_Gp>::type, __bind>::value>::type
+```
+
+`__bind`是个`callable object`，所以定义了`operator()`
 
