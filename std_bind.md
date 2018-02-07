@@ -94,3 +94,18 @@ __apply_functor(__f_, __bound_args_, __indices(),
 
 这里有两个`tuple`，一个是`__bound_args_`，是构造`__bind`对象时生成的，另一个是`tuple<_Args&&...>(std::forward<_Args>(__args)...`，这是调用`operator()`时根据传入的参数生成的。这两个`tuple`对理解`__bind`至关重要。
 
+我们接着看`__apply_functor`:
+
+```
+template<class _Fp, class _BoundArgs, size_t ..._Indx, class _Args>
+inline
+typename __bind_return<_Fp, _BoundArgs, _Args>::type
+__apply_functor(_Fp& __f, _BoundArgs& __bound_args, __tuple_indices<_Indx...>, _Args&& _args) {
+    return __invoke(__f, __mu(std::get<_Indx>(__bound_args), __args)...);
+}
+
+```
+
+> `__apply_functor`的第三个参数`__tuple_indices<_Indx...>`并没有用到，似乎是多余的，但是，当我移除这个参数的时候，`clang`抱怨说找不到`__invoke`。说实话，我也不知道`clang`为什么会有这种奇葩的表现。也许在作者的机器上也有同样的问题，所以加了这个参数。
+
+`__apply_functor`内部又调用了`__invoke`，我们对这个函数不做多的纠缠，只要知道它是调用函数`__f(...)`就好。最关键的是这个神秘的`__mu`，它的作用是解析绑定参数。我们知道参数绑定有两个情况，一是构造函数时绑定参数，而是占位符绑定。`__mu`必须能正确地区分这两种情况。
