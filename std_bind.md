@@ -21,3 +21,18 @@ auto bind2 = bind(f, _1, _2, 3);
 bind2(1, 2)
 
 ```
+
+关于`std::bind`的详细用法可以参考[c++ reference](en.cppreference.com/w/cpp/utility/functional/bind)。
+
+## std::bind实现
+
+```
+// file: functional
+
+template<class _Fp, class ..._BoundArgs>
+inline __bind<_Fp, _BoundArgs...>
+bind(_Fp&& __f, _BoundArgs&& ...__bound_args) {
+    typedef __bind<_Fp, _BoundArgs...> type;
+    return type(std::forward<_Fp>(__f), std::forward<_BoundArgs>(__bound_args)...);
+}
+```
