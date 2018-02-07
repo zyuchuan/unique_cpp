@@ -173,3 +173,7 @@ __mu(_Ti&, _Uj& __uj) {
     return std::forward<typename tuple_element<_Indx, _Uj>::type>(get::<_Indx>(__uj));
 }
 ```
+
+看明白了吗？如果参数是一个`placeholder`，则`is_placeholder<_Ti>::value > 0`，于是第二个`__mu`会被调用，因为`placeholder`的`value`同时也是`tuple`的`index`，所以就直接通过取得是不是很巧妙。
+
+巧妙归巧妙，但我知道你还是不太明白，现在我用一个生动活泼的例子来说明：
