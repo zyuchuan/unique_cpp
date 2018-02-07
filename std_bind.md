@@ -65,7 +65,7 @@ public:
    inline typename __bind_return<_Fd, _Td, tuple<_Args&&...> >::type
    operator()(_Args&& ...__args) {
        return __apply_functor(__f_, __bound_args_, __indices(),
-                              tuple<_Args&&...>(std::forward<_Args>(__args)...));
+                      tuple<_Args&&...>(std::forward<_Args>(__args)...));
    }
    
    // ...
@@ -85,5 +85,12 @@ typename enable_if<is_constructible<_Fd, _Gp>::value &&
 !is_same<typename remove_reference<_Gp>::type, __bind>::value>::type
 ```
 
-`__bind`是个`callable object`，所以定义了`operator()`
+`__bind`是个`callable object`，所以定义了`operator()`，`operator()`会调用函数`__apply_functor`，注意这行
+
+```
+__apply_functor(__f_, __bound_args_, __indices(),
+                  tuple<_Args&&...>(std::forward<_Args>(__args)...));
+```
+
+这里有两个`tuple`，一个是`__bound_args_`，是构造`__bind`对象时生成的，另一个是`tuple<_Args&&...>(std::forward<_Args>(__args)...`，这是调用`operator()`时根据传入的参数生成的。这两个`tuple`对理解`__bind`至关重要。
 
