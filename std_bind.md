@@ -21,12 +21,11 @@ bind1(); // 相当于调用 f(1, 2, 3)
 
 `std::bind`的用法很灵活，可以绑定各种各样的`callable object`：普通函数，函数对象（functor），类成员函数等等，有兴趣的同学可以参考[C++ Reference上的说明](en.cppreference.com/w/cpp/utility/functional/bind)。
 
-`std::bind`还有一个巨牛X的功能：绑定占位符。还以刚才的例子为例，你可以这样绑定：
+`std::bind`还有一个巨牛X的功能：绑定占位符。还是刚才的例子，你可以这样绑定：
 
 ```c++
-// 绑定部分参数
 auto bind2 = bind(f, _1, _2, 3); // _1, _2 是占位符
-bind2(1, 2);
+bind2(1, 2); // 1 替换 _1, 2 替换 _2
 ```
 
 
