@@ -210,4 +210,35 @@ tuple<__ph<1>, __ph<2>, int>
 
 我们知道`tuple`是从`__tuple_leaf`继承而来的，`tuple`有到少个模板参数，就继承自多少个`__tuple_leaf`，但是这里的情况有点特殊，`_1`和`_2`其实是个空类，所以在这里编译器就不会生成`__tuple_leaf`，所以我们看到`__bound_args_`的类型是`tuple<__ph<1>, __ph<2>, int>`，但是只有一个`base class`：`__tuple_leaf<2, int, false>`。这点很重要，这是`__mu`函数能够正确取得参数的关键。
 
+当我们调用`bind2(1, 2)`的时候，就调用了`__bind::operator()`，进而调用了
+
+```
+template <class ..._Args>
+typename __bind_return<_Fd, _Td, tuple<_Args&&...> >::type
+operator()(_Args&& ...__args)
+{
+    return __apply_functor(__f_, __bound_args_, __indices(),
+              tuple<_Args&&...>(_VSTD::forward<_Args>(__args)...));
+}
+```
+
+在这里，`__f_`和`__bound_args_`就不多说了，`__indices()`的存在仅仅是为了让编译器满意。重要的来了，我们调用`operator()`时的参数，又被打包成了一个`tuple`，现在我们有了两个`tuple`，
+
+```
+__apply_function<_Fp& __f, _BoundArgs& __bound_args, __tuple_indices<_Indx...>, _Args&& __args) {
+    return __invoke(__f, __mu(std::get<_Indx>(__bound_args), __args)...);
+}
+```
+
+绝妙之笔来了，`_Indx`是一系列的整数索引，编译器在碰到
+
+```
+__mu(std::get<_Indx>(__bound_args), __args)...)
+```
+的时候，会调用`__mu_`三次：
+
+```
+__mu(get<0>(__bou     
+
+
 
