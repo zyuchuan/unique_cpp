@@ -176,4 +176,38 @@ __mu(_Ti&, _Uj& __uj) {
 
 看明白了吗？如果参数是一个`placeholder`，则`is_placeholder<_Ti>::value > 0`，于是第二个`__mu`会被调用，因为`placeholder`的`value`同时也是`tuple`的`index`，所以就直接通过取得是不是很巧妙。
 
-巧妙归巧妙，但我知道你还是不太明白，现在我用一个生动活泼的例子来说明：
+巧妙归巧妙，但我知道你还是不太明白，现在我用一个生动活泼的例子来说明。
+
+还是回到文章开头的那个例子，假设你有个函数
+
+```
+void f(int n1, int n2, int n3) {
+    cout << n1 << " " << n2 << " " << n3 << endl;
+}
+```
+
+你把这个函数绑定到
+
+```
+auto bind2 = bind(f, _1, _2, 3);
+```
+编译器会为你生成一个`__bind`对象：
+
+```
+__bind<void (&)(int, int, int), const __ph<1>&, const __ph<2>&, int> f1 = {
+    __f_ = 0x0000000100000ae0;
+    __bound_args_ = {
+        base = {__tuple_leaf<2, int, flase> = (value = 3)
+    }
+}
+```
+
+在上面的代码中，`__f_`的值是函数的入口地址，而`__bound_args_`的类型是
+
+```
+tuple<__ph<1>, __ph<2>, int>
+```
+
+我们知道`tuple`是从`__tuple_leaf`继承而来的，`tuple`有到少个模板参数，就继承自多少个`__tuple_leaf`，但是这里的情况有点特殊，`_1`和`_2`其实是个空类，所以在这里编译器就不会生成`__tuple_leaf`，所以我们看到`__bound_args_`的类型是`tuple<__ph<1>, __ph<2>, int>`，但是只有一个`base class`：`__tuple_leaf<2, int, false>`。这点很重要，这是`__mu`函数能够正确取得参数的关键。
+
+
