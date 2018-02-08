@@ -22,7 +22,7 @@ bind1();
 auto bind2 = bind(f, _1, _2, 3);
 bind2(1, 2)
 
-```c++
+```
 
 关于`std::bind`的详细用法可以参考[c++ reference](en.cppreference.com/w/cpp/utility/functional/bind)。
 
