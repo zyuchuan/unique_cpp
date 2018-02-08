@@ -238,7 +238,55 @@ __mu(std::get<_Indx>(__bound_args), __args)...)
 的时候，会调用`__mu_`三次：
 
 ```
-__mu(get<0>(__boundddddddddd
+__mu(get<0>(__bound_args), __args)
+__mu(get<1>(__bound_args), __args)
+__mu(get<2>(__bound_args), __args)
+```
 
+当调用`__mu(get<0>(__bound_args), __args)`的时候，`get<0>(__bound_args)`即
 
+```
+get<0>(tuple<__ph<1>, __ph<2>, int>)
+```
+会返回`__ph<1>`，而`__ph<1>`是一个`placeholder`，于是下面的函数会被激活
 
+```
+template<class _Ti, class _Uj>
+inline
+typename enable_if
+<
+    0 < is_placeholder<_Ti>::value,
+    typename __mu_return2<0 < is_placeholder<_Ti>::value, _Ti, _Uj>::type
+>::type
+__mu(_Ti&, _Uj& __uj) {
+    const size_t _Indx = is_placeholder<_Ti>::value - 1; // _Indx = 0
+    return forward<typename tuple_element<_Indx, _Uj>::type>(_get<_Indx>(__uj));
+}
+```
+
+也就是说，如果是`placeholder`，就从`tuple`中取出相应的值。
+
+你可能会说这段代码无法编译，因为`std::get<0>(__bound_arg)`没有值。实际情况是，编译器根本不在乎，因为编译器激活了第二个`__mu`，而这个`__mu`根本不需要这个值。
+
+同样，当`_Indx`为1的时候
+
+当`_Indx`为2，于是下面的函数被激活
+
+```
+template <class _Ti, class _Uj>
+inline
+typename enable_if
+<
+    !is_bind_expression<_Ti>::value &&
+    is_placeholder<_Ti>::value == 0 &&
+    !__is_reference_wrapper<_Ti>::value,
+    _Ti&
+>::type
+__mu(_Ti& __ti, _Uj&) {
+    return __ti;
+}
+```
+
+此时`__ti`是有值得，所以就从
+
+明白了吧，很精妙是不是？
