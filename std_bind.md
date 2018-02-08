@@ -1,8 +1,8 @@
 # std::bind
 
-“bind”就是“绑定”的意思，`std::bind`就是讲`callable object`与其参数一起绑定。我们来看一个例子：
+`std::bind`将一个`callable object`与其参数绑定在一起，并生成一个新的`callable object`，我们来看一个例子：
 
-```
+```c++
 #include <functional>
 #include <iostream>
 
@@ -15,18 +15,20 @@ void f(int n1, int n2, int n3) {
 // 同时绑定函数f及参数
 auto bind1 = bind(f, 1, 2, 3); 
 bind1();
+```
 
+```c++
 // 绑定部分参数
 auto bind2 = bind(f, _1, _2, 3);
 bind2(1, 2)
 
-```
+```c++
 
 关于`std::bind`的详细用法可以参考[c++ reference](en.cppreference.com/w/cpp/utility/functional/bind)。
 
 ## std::bind实现
 
-```
+```c++
 // file: functional
 
 template<class _Fp, class ..._BoundArgs>
@@ -39,7 +41,7 @@ bind(_Fp&& __f, _BoundArgs&& ...__bound_args) {
 
 `bind`其实什么也没做，它只是一个简单的wrapper，实质的内容都在一个叫做`__bind`的类中：
 
-```
+```c++
 template<class _Fp, class ..._BoundArgs>
 class __bind {
 protected:
@@ -104,7 +106,7 @@ __apply_functor(_Fp& __f, _BoundArgs& __bound_args, __tuple_indices<_Indx...>, _
     return __invoke(__f, __mu(std::get<_Indx>(__bound_args), __args)...);
 }
 
-```
+```c++
 
 > `__apply_functor`的第三个参数`__tuple_indices<_Indx...>`并没有用到，似乎是多余的，但是，当我移除这个参数的时候，`clang`抱怨说找不到`__invoke`。说实话，我也不知道`clang`为什么会有这种奇葩的表现。也许在作者的机器上也有同样的问题，所以加了这个参数。
 
