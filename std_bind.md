@@ -80,22 +80,21 @@ public:
 };
 ```
 
-如果你觉得你看到了假的C++代码，恭喜你！你终于上道了！C++标准库的源代码就是这么抽象！让我来给你解释一下：
-
 `__bind`类有两个成员变量，一个是`__f_`，类型是`_Fd`，那`_Fd`又是啥？`_Fd`通常是个函数对象，这是由编译器自动生成的。另一个是`__bound_args_`，类型是个`tuple`。这个`tuple`是理解`__bind`的关键，我们后面还要详细解释。
 
 `__bind`有个模板构造函数，但是，要使这个模板构造函数存在的前提条件是：
 1. 可以通过`_Gp`构造出`_Fd`
 2. `_Gp`不能是`__bind`自己
 这就是第三个模板参数
-```
+
+```c++
 typename enable_if<is_constructible<_Fd, _Gp>::value && 
 !is_same<typename remove_reference<_Gp>::type, __bind>::value>::type
 ```
 
 `__bind`是个`callable object`，所以定义了`operator()`，`operator()`会调用函数`__apply_functor`，注意这行
 
-```
+```c++
 __apply_functor(__f_, __bound_args_, __indices(),
                   tuple<_Args&&...>(std::forward<_Args>(__args)...));
 ```
@@ -104,7 +103,7 @@ __apply_functor(__f_, __bound_args_, __indices(),
 
 我们接着看`__apply_functor`:
 
-```
+```c++
 template<class _Fp, class _BoundArgs, size_t ..._Indx, class _Args>
 inline
 typename __bind_return<_Fp, _BoundArgs, _Args>::type
@@ -112,7 +111,7 @@ __apply_functor(_Fp& __f, _BoundArgs& __bound_args, __tuple_indices<_Indx...>, _
     return __invoke(__f, __mu(std::get<_Indx>(__bound_args), __args)...);
 }
 
-```c++
+```
 
 > `__apply_functor`的第三个参数`__tuple_indices<_Indx...>`并没有用到，似乎是多余的，但是，当我移除这个参数的时候，`clang`抱怨说找不到`__invoke`。说实话，我也不知道`clang`为什么会有这种奇葩的表现。也许在作者的机器上也有同样的问题，所以加了这个参数。
 
@@ -120,7 +119,7 @@ __apply_functor(_Fp& __f, _BoundArgs& __bound_args, __tuple_indices<_Indx...>, _
 
 我们先来看`placeholder`长什么样
 
-```
+```c++
 namespace placeholders {
     template<int _Np> struct __ph{};
     constexpr __ph<1>   _1{};
@@ -135,9 +134,10 @@ namespace placeholders {
     constexpr __ph<10> _10{};
 }
 ```
+
 这就是`placeholder`，它是空的，啥也没有，就是个占位符。那该如何判断一个变量或类是不是`placeholder`呢？
 
-```
+```c++
 template<class _Tp>
 struct __is_placeholder : public integral_constant<int, 0> {};
 
@@ -153,7 +153,7 @@ struct is_placeholder : public __is_placeholder<typename std::remove_cv<_Tp>::ty
 如果一个对象不是`placeholder`，那`is_placeholder<T>`就继承自`integral_constant<int, 0>`，也就是说有`is_placeholder<T>::value = 0`。如果`T`是个`placeholder`，比如`__ph<5>`，那`is_placeholder<T>就继承自`integral_constant<int, 5>`，也就是说有`is_placeholder<T>::value = 5`。后面我们呢会看到，这正是分派绑定参数的关键所在。
 
 
-```
+```c++
 // 如果_Ti不是一个placeholder
 template<class _Ti, class _Uj>
 inline
@@ -188,7 +188,7 @@ __mu(_Ti&, _Uj& __uj) {
 
 还是回到文章开头的那个例子，假设你有个函数
 
-```
+```c++
 void f(int n1, int n2, int n3) {
     cout << n1 << " " << n2 << " " << n3 << endl;
 }
@@ -196,12 +196,12 @@ void f(int n1, int n2, int n3) {
 
 你把这个函数绑定到
 
-```
+```c++
 auto bind2 = bind(f, _1, _2, 3);
 ```
 编译器会为你生成一个`__bind`对象：
 
-```
+```c++
 __bind<void (&)(int, int, int), const __ph<1>&, const __ph<2>&, int> f1 = {
     __f_ = 0x0000000100000ae0;
     __bound_args_ = {
@@ -212,7 +212,7 @@ __bind<void (&)(int, int, int), const __ph<1>&, const __ph<2>&, int> f1 = {
 
 在上面的代码中，`__f_`的值是函数的入口地址，而`__bound_args_`的类型是
 
-```
+```c++
 tuple<__ph<1>, __ph<2>, int>
 ```
 
@@ -220,7 +220,7 @@ tuple<__ph<1>, __ph<2>, int>
 
 当我们调用`bind2(1, 2)`的时候，就调用了`__bind::operator()`，进而调用了
 
-```
+```c++
 template <class ..._Args>
 typename __bind_return<_Fd, _Td, tuple<_Args&&...> >::type
 operator()(_Args&& ...__args)
@@ -232,7 +232,7 @@ operator()(_Args&& ...__args)
 
 在这里，`__f_`和`__bound_args_`就不多说了，`__indices()`的存在仅仅是为了让编译器满意。重要的来了，我们调用`operator()`时的参数，又被打包成了一个`tuple`，现在我们有了两个`tuple`，
 
-```
+```c++
 __apply_function<_Fp& __f, _BoundArgs& __bound_args, __tuple_indices<_Indx...>, _Args&& __args) {
     return __invoke(__f, __mu(std::get<_Indx>(__bound_args), __args)...);
 }
@@ -240,12 +240,12 @@ __apply_function<_Fp& __f, _BoundArgs& __bound_args, __tuple_indices<_Indx...>, 
 
 绝妙之笔来了，`_Indx`是一系列的整数索引，编译器在碰到
 
-```
+```c++
 __mu(std::get<_Indx>(__bound_args), __args)...)
 ```
 的时候，会调用`__mu_`三次：
 
-```
+```c++
 __mu(get<0>(__bound_args), __args)
 __mu(get<1>(__bound_args), __args)
 __mu(get<2>(__bound_args), __args)
@@ -253,12 +253,13 @@ __mu(get<2>(__bound_args), __args)
 
 当调用`__mu(get<0>(__bound_args), __args)`的时候，`get<0>(__bound_args)`即
 
-```
+```c++
 get<0>(tuple<__ph<1>, __ph<2>, int>)
 ```
+
 会返回`__ph<1>`，而`__ph<1>`是一个`placeholder`，于是下面的函数会被激活
 
-```
+```c++
 template<class _Ti, class _Uj>
 inline
 typename enable_if
@@ -280,7 +281,7 @@ __mu(_Ti&, _Uj& __uj) {
 
 当`_Indx`为2，于是下面的函数被激活
 
-```
+```c++
 template <class _Ti, class _Uj>
 inline
 typename enable_if
