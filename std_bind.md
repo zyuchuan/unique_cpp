@@ -13,7 +13,7 @@ void f(int n1, int n2, int n3) {
 }
 
 // 同时绑定函数f及参数
-auto bind1 = bind(f, 1, 2, 3);
+auto bind1 = bind(f, 1, 2, 3); 
 bind1();
 
 // 绑定部分参数
