@@ -37,7 +37,9 @@ int main(){
 a b
 ----
 
-## 1. std::array源代码分析
+
+== 1. std::array源代码分析
+
 
 相较于很多类——比如`tuple`、`bind`等——那如天书一般的源代码，`std::array`的源代码算是真正的良心之作，几乎不需要什么智商就能看明白：
 
@@ -48,7 +50,7 @@ template<class _Tp, size_t _Size>
 struct array {
    // types:
    typedef array __self;
-   typedef _Tp                                   value_type; // <1>
+   typedef _Tp                                   value_type;
    typedef value_type&                           reference;
    typedef const value_type&                     const_reference;
    typedef value_type*                           iterator;
@@ -65,7 +67,6 @@ struct array {
    
    // ...
 ----
-<1> 啥也不是
 
 看到了吧，刨去那一大堆的`typedef`，`std::array`就只有一个成员：`__elems_`，这是一个`c-style`的数组`std::array`就是就是C原生数组的一个马甲而已。
 
