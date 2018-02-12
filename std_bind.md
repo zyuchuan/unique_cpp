@@ -146,7 +146,7 @@ struct __is_placeholder : public integral_constant<int, 0> {};
 template<int _Np>
 struct __is_placeholder<placeholders::__ph<_Np> > : public integral_constant<int, _Np> {
 };
-    
+
 template<class _Tp>
 struct is_placeholder : public __is_placeholder<typename std::remove_cv<_Tp>::type>{
 };
