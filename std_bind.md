@@ -45,7 +45,7 @@ bind(_Fp&& __f, _BoundArgs&& ...__bound_args) {
 }
 ```
 
-`bind(...)`只是一个简单的wrapper，实质的内容都在一个叫做`__bind`的类中：
+`bind(...)`只是一个壳而已，“瓤”都在一个叫做`__bind`的类中：
 
 ```c++
 template<class _Fp, class ..._BoundArgs>
@@ -82,15 +82,17 @@ public:
 
 `__bind`类有两个成员变量，一个是`__f_`，类型是`_Fd`，那`_Fd`又是啥？`_Fd`通常是个函数对象，这是由编译器自动生成的。另一个是`__bound_args_`，类型是个`tuple`。这个`tuple`是理解`__bind`的关键，我们后面还要详细解释。
 
-`__bind`有个模板构造函数，但是，要使这个模板构造函数存在的前提条件是：
-1. 可以通过`_Gp`构造出`_Fd`
-2. `_Gp`不能是`__bind`自己
-这就是第三个模板参数
+`__bind`有个模板构造函数，这个构造函数通过`enable_if`制定了函数存在的先决条件：
 
 ```c++
 typename enable_if<is_constructible<_Fd, _Gp>::value && 
 !is_same<typename remove_reference<_Gp>::type, __bind>::value>::type
 ```
+
+也就是说，要使这个构造函数存在，则：
+
+1. 可以通过`_Gp`构造出`_Fd`;
+2. `_Gp`不能是`__bind`自己
 
 `__bind`是个`callable object`，所以定义了`operator()`，`operator()`会调用函数`__apply_functor`，注意这行
 
