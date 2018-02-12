@@ -9,7 +9,7 @@
 * [std::function](std_function.md)
 * [smart pointers](smart_pointers.md)
 * [unordered containers](unordered_containers.md)
-* [std::array](std_array.ascii)
+* [std::array](std_array.asciidoc)
 * [std::bind](std_bind.md)
 * concurrency
 * std::initializer\_list
