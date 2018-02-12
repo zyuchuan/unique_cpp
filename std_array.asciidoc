@@ -1,8 +1,9 @@
-# std::array
+= std::array
 
 `array`是“c-style”数组的对象化包装。我们知道“c-style”数组在使用时很痛苦的一点是数组本身并不知道自己有多少个元素，所以我们不得不花很大的精力确保数组不会越界。而`std::array`克服了这一缺陷，它自带`size`信息，这使得它使用起来很方便，我们来看几个例子：
 
-```c++
+[source,c++]
+----
 #include <string>
 #include <iterator>
 #include <iostream>
@@ -25,14 +26,15 @@ int main(){
     for(const auto& s: a3)
         std::cout << s << ' ';
 }
-```
+----
 
 输出：
 
-```c++
+[source,c++]
+----
 3 2 1
 a b
-```
+----
 
 ## 1. std::array源代码分析
 
