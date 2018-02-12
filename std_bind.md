@@ -154,7 +154,6 @@ struct is_placeholder : public __is_placeholder<typename std::remove_cv<_Tp>::ty
 
 如果一个对象不是`placeholder`，那`is_placeholder<T>`就继承自`integral_constant<int, 0>`，也就是说有`is_placeholder<T>::value = 0`。如果`T`是个`placeholder`，比如`__ph<5>`，那`is_placeholder<T>就继承自`integral_constant<int, 5>`，也就是说有`is_placeholder<T>::value = 5`。后面我们呢会看到，这正是分派绑定参数的关键所在。
 
-
 ```c++
 // 如果_Ti不是一个placeholder
 template<class _Ti, class _Uj>
@@ -201,6 +200,7 @@ void f(int n1, int n2, int n3) {
 ```c++
 auto bind2 = bind(f, _1, _2, 3);
 ```
+
 编译器会为你生成一个`__bind`对象：
 
 ```c++
