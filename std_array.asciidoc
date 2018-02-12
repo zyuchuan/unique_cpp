@@ -62,6 +62,7 @@ struct array {
    
    // ...
 ----
+<1> 啥也不是
 
 看到了吧，刨去那一大堆的`typedef`，`std::array`就只有一个成员：`__elems_`，这是一个`c-style`的数组`std::array`就是就是C原生数组的一个马甲而已。
 
