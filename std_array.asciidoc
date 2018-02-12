@@ -43,7 +43,7 @@ a b
 
 相较于很多类——比如`tuple`、`bind`等——那如天书一般的源代码，`std::array`的源代码算是真正的良心之作，几乎不需要什么智商就能看明白：
 
-._array_
+.file: array
 [source, c++]
 ----
 template<class _Tp, size_t _Size>
