@@ -45,7 +45,7 @@ template<class _Tp, size_t _Size>
 struct array {
    // types:
    typedef array __self;
-   typedef _Tp                                   value_type;
+   typedef _Tp                                   value_type; <1>
    typedef value_type&                           reference;
    typedef const value_type&                     const_reference;
    typedef value_type*                           iterator;
