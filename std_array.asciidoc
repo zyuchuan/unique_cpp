@@ -38,9 +38,9 @@ a b
 
 相较于很多类——比如`tuple`、`bind`等——那如天书一般的源代码，`std::array`的源代码算是真正的良心之作，几乎不需要什么智商就能看明白：
 
-```c++
-// file: array
-
+.array
+[source c++]
+----
 template<class _Tp, size_t _Size>
 struct array {
    // types:
@@ -61,7 +61,7 @@ struct array {
    value_type __elems_[_Size > 0 ? _Size : 1];
    
    // ...
-```
+----
 
 看到了吧，刨去那一大堆的`typedef`，`std::array`就只有一个成员：`__elems_`，这是一个`c-style`的数组`std::array`就是就是C原生数组的一个马甲而已。
 
