@@ -7,7 +7,7 @@
 #include <iterator>
 #include <iostream>
 #include <algorithm>
-#include <array>
+#include <array> 
  
 int main(){
     // construction uses aggregate initialization
