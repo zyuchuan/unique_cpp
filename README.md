@@ -25,14 +25,9 @@ C++的第一个标准化版本，C++ 98，无疑是成功的。伴随C++ 98发�
 
 ## 关于标准库版本
 
+本书使用的标准库为[libc++ 6.0](http://libcxx.llvm.org)，这是Apple的XCode 9.0使用的标准库。
 
-XCode 9.0
-
-[libc++ 6.0](http://libcxx.llvm.org)
-
-（未完待续）
-
-
+## 目录索引
 
 * [前言](prefix.md)
 * [C++模板元编程常用技巧](cpp_metaprogramming_idioms.md)
