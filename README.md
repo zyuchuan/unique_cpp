@@ -29,7 +29,6 @@ C++的第一个标准化版本，C++ 98，无疑是成功的。伴随C++ 98发�
 
 ## 目录索引
 
-* [前言](prefix.md)
 * [C++模板元编程常用技巧](cpp_metaprogramming_idioms.md)
 * [type_traits](type_traits.md)
 * [std::tupple](std_tupple.md)
