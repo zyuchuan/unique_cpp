@@ -23,18 +23,14 @@ C++的第一个标准化版本，C++ 98，无疑是成功的。伴随C++ 98发�
 这不是一本C++语言入门书，也不是一本讲述C++ 11新特性的书。本书的目的是剖析C++ 11标准库源代码，教你阅读那些如天书一般的C++源代码。为此你应该熟悉C++ Template；了解C++ 11新特性，比如Move Sementics，Variadic Template等；如果你懂C++ Template Meta-programming，那这本书对你来说就彻底没难度了。
 
 
-## 关于开发环境
+## 关于标准库版本
+
 
 XCode 9.0
 
 [libc++ 6.0](http://libcxx.llvm.org)
 
 （未完待续）
-
-## 本书源代码
-
-在[Github](https://github.com/zyuchuan/unique_cpp)上
-
 
 
 
