@@ -15,7 +15,9 @@ C++的第一个标准化版本，C++ 98，无疑是成功的。伴随C++ 98发�
 ### *Read the Fucking Source Code*
 -- *Linus Torvalds*
 
-<br/>
+
+这本书就是我在天神
+
 
 ## 这本书适合你吗？
 
