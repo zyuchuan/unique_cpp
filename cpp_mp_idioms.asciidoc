@@ -1,6 +1,6 @@
 = 第1章 C++ Template Metaprogramming
 
-按字面意思解释，**metaprogram**的就是**a program about a program**，也就是**关于程序的程序**。元程序就是用于操纵代码的程序。听起来这个概念好像有点乖乖的，其实你可能早已熟悉这方面的一些怪兽了，你手头的C++编译器就是一个例子，它操纵C++++代码来生成汇编语言或机器码。
+按字面意思解释，**metaprogram**的就是**a program about a program**，也就是**程序的程序**，说白了就是**用于操纵代码的程序**。听起来好像很有逼格的样子，确实很有逼格，你用的C+++++编译器就是一段元程序，它操纵C+++++代码来生成汇编语言或机器码。
 
 在C++中，几乎是在不经意中发现模板机制为原生语言元编程提供了丰富的设施。最早的C++源程序在编译器执行整数计算，其中最早的元程序之一是Erwin Unruh在一次C++标准委员会会议上所展示的，那实际是一段不合法的代码，在其编译错误信息中含有一些列计算出来的质数值。
 
@@ -13,11 +13,7 @@
 
 远比在编译器进行数值计算的能力重要得多的对类型进行计算。
 
-**模板元编程**，也就是**[Template Metaprogramming](https://en.wikipedia.org/wiki/Template_metaprogramming)**，是一种编程范式（idiom），或**TPM**，是每一个有追求的C++程序员必须掌握的编程范式之一。TPM在标准库中用得十分普遍，可以说整个标准库都是基于TPM，所以要理解
 
-Template metaprogramming (TMP) is a metaprogramming technique in which templates are used by a compiler to generate temporary source code, which is merged by the compiler with the rest of the source code and then compiled. The output of these templates include compile-time constants, data structures, and complete functions. The use of templates can be thought of as compile-time execution. The technique is used by a number of languages, the best-known being C++, but also Curl, D, and XL.
-
-Template metaprogramming was, in a sense, discovered accidentally.[1][2]
 
 ## 2. 编译期常数
 
