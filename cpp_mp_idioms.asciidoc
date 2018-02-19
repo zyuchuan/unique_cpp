@@ -1,8 +1,8 @@
-= C++ 模板元编程常用手法
+= 第一章 C++模板元编程
 
 ## 1. 关于C++模板元编程
 
-**模板元编程**，也就是**[Template Metaprogramming](https://en.wikipedia.org/wiki/Template_metaprogramming)**、或**TPM**，是每一个有追求的C++程序员必须掌握的编程范式之一。
+**模板元编程**，也就是**[Template Metaprogramming](https://en.wikipedia.org/wiki/Template_metaprogramming)**、或**TPM**，是每一个有追求的C++程序员必须掌握的编程范式之一。TPM在标准库中用得十分普遍，可以说整个标准库都是基于TPM，所以要理解
 
 ## 2. 编译期常数
 
