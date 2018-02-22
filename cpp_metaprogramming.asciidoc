@@ -92,6 +92,7 @@ int main() {
 
 我们知道递归必须要有结束条件，在模板元编程中，通常都用一个特化来作为结束条件，比如上面代码中的`struct factorial<1>`就是递归的结束。
 
+
 === 分支
 
 SFINA代表**S**ubstitution **F**ailure **I**s **N**ot **A**n **E**rror，
