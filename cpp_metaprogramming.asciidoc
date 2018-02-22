@@ -96,3 +96,38 @@ int main() {
 === 分支
 
 分支结构，一般都是通过SFINA代表**S**ubstitution **F**ailure **I**s **N**ot **A**n **E**rror，来实现，最常用的就是``enable_if``：
+
+[source,c++]
+----
+template<bool B, class T = void>
+struct enable_if;
+----
+
+如果``B``是``true``，则``enable_if``有一个``public typedef type``，否则就没有这个``typedef``。
+
+[source,c++]
+----
+#include <type_traits>
+#include <iostream>
+#include <string>
+
+namespace detail {struct inplace_t{};}
+
+void* operator new(std::size_t, void* p, detail::inplace_t) {
+    return p;
+}
+
+// #1, enabled via return type
+template<class T, class ...Args>
+typename std::enable_if<std::is_trivially_constructible<T, Args&&...>::value>::type construct(T* t, Args&&... args) {
+    std::cout << "constructing trivally constructible T\n";
+}
+
+// #2,
+template<class T, class... Args>
+std::enable_if<!std::is_trivially_constructible<T, Args&&...>::value
+construct(T* t, Args&&... args) {
+    std::cout << "constructing non-trivally constructible T\n";
+    new(t, detail::inplace_t{})T(args...);
+}
+----
