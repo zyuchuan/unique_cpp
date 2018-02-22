@@ -71,7 +71,8 @@ typedef std::integral constant<bool, false> false_type;
 
 用模板元来表示
 
-```
+[source,c++]
+----
 template<size_t N>
 struct factorial {
     static constexpr size_t value = N * factorial<N-1>;
@@ -85,8 +86,7 @@ struct factorial<1> {
 int main() {
     std::cout << factorial<5>::value << std::endl; // 20
 }
-
-```
+----
 
 我们知道递归必须要有结束条件，在模板元编程中，通常都用一个特化来作为结束条件，比如上面代码中的`struct factorial<1>`就是递归的结束。
 
