@@ -21,9 +21,10 @@ C++模板元程序难懂的主要原因是它和我们熟知的代码结构不�
 
 ==== 整形常数
 
-.file: type_traits
 [source,c++]
 ----
+// file: type_traits
+
 template <typename T, T v>
 struct integral_constant {
     static constexpr T value =    v;
@@ -70,13 +71,7 @@ typedef std::integral constant<bool, false> false_type;
 
 === 循环
 
-在模板元编程中，常用递归的手法定义，一个经典的例子是计算阶乘，比如
-
-```
-5! = 5 * 4 * 3 * 2 * 1
-```
-
-用模板元来表示
+在模板元编程中，一般都是用递归的方法来定义循环：
 
 [source,c++]
 ----
@@ -95,9 +90,9 @@ int main() {
 }
 ----
 
-我们知道递归必须要有结束条件，在模板元编程中，通常都用一个特化来作为结束条件，比如上面代码中的`struct factorial<1>`就是递归的结束。
+我们知道递归必须要有结束条件，在模板元编程中，通常都用一个特化来作为结束条件，比如上面代码中的``struct factorial<1>``就是递归的结束。
 
 
 === 分支
 
-SFINA代表**S**ubstitution **F**ailure **I**s **N**ot **A**n **E**rror，
+分支结构，一般都是通过SFINA代表**S**ubstitution **F**ailure **I**s **N**ot **A**n **E**rror，来实现，最常用的就是``enable_if``：
