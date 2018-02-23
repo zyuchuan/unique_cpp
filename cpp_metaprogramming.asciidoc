@@ -13,7 +13,7 @@
 
 === 常量
 
-元程序中可以出现的常量包括**整形常量**和**布尔型常量**，为了配合编译器强大的类型计算能力，整形常量通常都被定义为某种类型，在C++ 11中，就是``integral_constant``：
+元程序中可以出现的常量包括**整形常量**和**布尔型常量**，为了配合编译器强大的类型计算能力，整形常量通常都被定义为某种类型，这就是C++ 11中的``integral_constant``：
 
 ==== 整形常量
 
@@ -26,7 +26,8 @@ struct integral_constant {
     static constexpr T value =    v;
     typedef T                     value_type;
     typedef integral_constant     type;
-    constexpr operator value_type() const noexcept {return value;}
+    
+    // ...
 };
 ----
 
