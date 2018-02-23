@@ -30,15 +30,21 @@ struct integral_constant {
 };
 ----
 
-注意上面的代码中的这两行
+注意上面的代码中的这两行：
 
 [source,c++]
 ----
-static constexpr T         value = v;``
-typedef integral_constant  type;``
+static constexpr T         value = v;
+typedef integral_constant  type;
 ----
 
-这是C++标准库的一个惯例：如果类型``T``有``value semantics``，则它的值就是``static constexpr T::value``，同理如果有``type semantics``，则它的类型就是``T::type``。``integral_constant``同时具有两种``semantics``，所以既有``integral_constant::value``，也有``integral_constant::type``。这不是强制要求，但是是一个惯例。
+这是C++标准库的一个惯例：
+
+* 如果类型``T``有``value semantics``，则它的值就定义为``static constexpr T::value``。
+
+* 如果类型``T``有``type semantics``，则它的类型就定义为是``T::type``。
+
+``integral_constant``同时具有两种``semantics``，所以既有``integral_constant::value``，也有``integral_constant::type``。
 
 
 ``integral_constant``的定义虽然很简单，但是意义却很重要。它将一个数值包装成为一个对象，这从一个侧面揭示模板元编程的真谛：**编译期类型计算**。
