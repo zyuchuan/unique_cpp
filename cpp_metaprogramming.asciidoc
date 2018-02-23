@@ -40,10 +40,17 @@ struct integral_constant {
 typedef integral_const<int, 2> two_type;
 typedef integral_const<int, 6> six_type;
 
-static_assert(two_type::value * 3 == six_type::value);
+static_assert(two_type::value * 3 == six_type::value, "2*3 != 6");
 ----
 
-当然，这样写并没有实际意义，``static_assert(2 * 3 == 6)
+当然，上面的代码并不必直接写
+
+[source,c++]
+----
+static_assert(2 * 3 == 6, "2*3 != 6");
+----
+
+更有意义，甚至更繁琐。
 
 这是C++标准库的一个惯例：如果一个模板类有静态常量，则用``value``表示，如果有type的，则用``type``表示，例如：
 
