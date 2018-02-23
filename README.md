@@ -12,7 +12,7 @@ C++的第一个标准化版本，C++ 98，无疑是成功的。伴随C++ 98发�
 
 当然，要看懂标准库源代码，也不是什么“mission impossible”，Linus（没错，就是那个大神中的天神Linus Torvalds）早就给我们指明了方向：
 
-#### *Read the Fucking Source Code*
+>#### *Read the Fucking Source Code*
 -- *Linus Torvalds*
 
 这本书就是我在天神的指引下，花费数月，埋头阅读标准库源代码的成果。
