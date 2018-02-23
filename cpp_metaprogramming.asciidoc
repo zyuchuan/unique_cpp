@@ -31,7 +31,20 @@ struct integral_constant {
 };
 ----
 
-上面的代码定义了一个``const integer``类型，它有一个静态类成员常量``value``，还有一个``typedef``的``type``。这是C++标准库的一个惯例：如果一个模板类有静态常量，则用``value``表示，如果有type的，则用``type``表示，例如：
+``integral_constant``的定义虽然很简单，但是意义却很重要。它将一个数值包装成为一个对象。没有这层包装，编译期强大的类型计算能力就会大打折扣。
+
+``integral_constant``的使用方法也很简单：
+
+[source,c++]
+----
+typedef integral_const<int, 2> two_type;
+typedef integral_const<int, 4> four_type;
+
+static_assert(two_type::value * 2 == four_type::value);
+----
+
+这是C++标准库的一个惯例：如果一个模板类有静态常量，则用``value``表示，如果有type的，则用``type``表示，例如：
+
 
 [source,c++]
 ----
@@ -44,15 +57,7 @@ struct my_meta_class {
 
 这不是强制要求，但是是一个惯例，你写代码的时候，建议也遵守这个惯例。
 
-``integral_const``的用法比较简单
 
-[source,c++]
-----
-typedef integral_const<int, 2> two_type;
-typedef integral_const<int, 4> four_type;
-
-static_assert(two_type::value * 2 == four_type::value);
-----
 
 ==== 布尔型常数
 
