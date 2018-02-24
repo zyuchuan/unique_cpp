@@ -49,11 +49,11 @@ static_assert(two_type::value * 3 == six_type::value, "2*3 != 6");
 static_assert(2 * 3 == 6, "2*3 != 6");
 ----
 
-更有意义，甚至更繁琐。这里只是举个例子说明它的用法，在后面我们会看到``integral_constant``的各种用法，其中之一便是用来定义布尔型常量。
+更有意义，甚至更繁琐。这里只是举个例子说明它的用法，在后面我们会看到``integral_constant``的各种用法。
 
 ==== 布尔型常量
 
-同整形常量一样，布尔型常量也有对应的元类型``true_type``和``false_type``：
+同整形常量一样，布尔型常量也有对应的元类型：``true_type``和``false_type``：
 
 [source,c++]
 ----
