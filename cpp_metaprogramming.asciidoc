@@ -53,7 +53,7 @@ static_assert(2 * 3 == 6, "2*3 != 6");
 
 ==== 布尔型常量
 
-同整形常量一样，布尔型常量也有对应的元类型：``true_type``和``false_type``：
+同整形常量一样，布尔型常量也有对应的元类型：``true_type``和``false_type``，这两个类其实是``integral_constant``的``type alias``：
 
 [source,c++]
 ----
@@ -62,7 +62,6 @@ static_assert(2 * 3 == 6, "2*3 != 6");
 typedef std::integral_constant<bool, true>  true_type;
 typedef std::integral constant<bool, false> false_type;
 ----
-
 
 === 循环
 
