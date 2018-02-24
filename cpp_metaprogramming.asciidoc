@@ -74,20 +74,11 @@ struct factorial {
     static constexpr size_t value = N * factorial<N-1>;
 };
 
+// 递归必须要有结束条件，一般用一个特化的模板来作为结束条件
 template<>
 struct factorial<1> {
     static constexpr size_t value = 1;
 };
-----
-
-这段代码翻译过来，大概相当于这样：
-
-[source,c++]
-----
-size_t factorial(size_t n) {
-    if (n == 1) return 1;
-    return n * factorial(n-1);
-}
 ----
 
 这段代码计算某个数的阶乘，比如要计算并输出``5!``，你可以这样写：
@@ -97,7 +88,7 @@ size_t factorial(size_t n) {
 std::cout << factorial<5>::value << std::endl; // 20
 ----
 
-需要指出的，我们知道递归必须要有结束条件，在模板元编程中，通常都用一个特化来作为结束条件，比如上面代码中的``struct factorial<1>``就是递归的结束。
+
 
 
 === 分支
