@@ -179,7 +179,17 @@ calling do_something(T), return 3
 calling do_something(T*), return nothing
 ----
 
-可见，当调用``do_something(i)``的时候，因为``i``的类型是``int``，``is_pointer<int>::value``的值为``false``，于是``enable_if<is_pointer<T>::value, void>::type``不存在，第一个``do_something``会导致一个匹配失败，于是编译器转而去匹配第二个``do_something``函数。同理可以知道``do_something(&i)``会匹配第一个``do_something``函数。总的来说，上面的代码相当于于一个如下的``if...else``分支结构：
+可见，当调用``do_something(i)``的时候，因为``i``的类型是``int``，``is_pointer<int>::value``的值为``false``，于是``enable_if<is_pointer<T>::value, void>::type``不存在，第一个``do_something``会导致一个匹配失败，于是编译器转而去匹配第二个``do_something``函数。同理可以知道``do_something(&i)``会匹配第一个``do_something``函数。总的来说，上面的代码相当于于一个如下的``if...else``语句：
+
+[source,c++]
+----
+if T is a pointer {
+    // do something
+}
+else {
+    // do something else
+}
+---
 
 我来解释一下，
 
