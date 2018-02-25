@@ -157,8 +157,8 @@ typename enable_if<is_pointer<T>::value, void>::type do_something(T&) {
 
 // #2,
 template<class T>
-std::enable_if<!is_pointer<T>::value, int>::type
-do_something(T&) {
+enable_if<!is_pointer<T>::value, void>::type
+do_something_else(T&) {
     // ...
     
     return 0;
