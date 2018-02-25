@@ -125,8 +125,12 @@ typename T::multiplication_result multiply(T t1, T t2) {
 
 后面我们还会看到，SFINAE规则是标准库中很多``type trait``存在的基础。在这里我们只讲SFINAE规则的一个具体应用：实现类似于``if...else``的分支结构。
 
+在标准库中有一个模板类``enable_if``，定义如下：
+
 [source,c++]
 ----
+// file: type_traits
+
 template<bool B, class T = void>
 struct enable_if {
 };
