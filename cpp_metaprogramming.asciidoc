@@ -93,7 +93,24 @@ std::cout << factorial<5>::value << std::endl; // 20
 
 === 分支
 
-分支结构，一般都是通过SFINA代表**S**ubstitution **F**ailure **I**s **N**ot **A**n **E**rror，来实现，最常用的就是``enable_if``：
+在模板元编程中，分支结构的实现依赖于一个不太为人熟知的编译器特性：**SFINAE**。 **SFINAE**是**S**ubstitution **F**ailure **I**s **N**ot **A**n **E**rror的首字母缩写。意思是说，当编译器在解析模板时，如果模板参数匹配失败，编译器不会报错，而是默默地跳过这段代码，继续编译后面的代码。举个例子：
+
+[source,c++]
+----
+template<class T>
+typename T::multiplication_result multiply(T t1, T t2) {
+    return t1 * t2;
+}
+
+long multiply(int i, int j){
+    return i * j;
+}
+
+int main() {
+    multiply(1, 2);
+}
+----
+
 
 [source,c++]
 ----
