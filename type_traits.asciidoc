@@ -2,7 +2,7 @@
 
 == 什么是Trait
 
-“Trait”在英语中特指“a particular quality of your personality”，翻译成人话就是“逼格”的意思。那C++的“逼格”又是什么呢？C++之父[Bjarne Stroustrup](http://www.stroustrup.com/index.html)对此的解释是：
+“Trait”在英语中特指“a particular quality of your personality”，翻译成人话就是“逼格”的意思。那C+++++的“逼格”又是什么呢？C+++++之父[Bjarne Stroustrup](http://www.stroustrup.com/index.html)对此的解释是：
 
 > Think of a trait as a small object whose main purpose is to carry information used by another object or algorithm to determine "policy" or "implementation" details.
 
@@ -35,7 +35,7 @@ typedef basic_string<wchar_t, char_traits<wchar_t>, allocator<wchar_t> > wstring
 
 可见``string``和``wstring``其实都是``basica_string``针对不同字符类型的实例，``string``是针对``char``类型的实例，而``wstring``是针对``wchart_t``类型的实例。
 
-字符串都是有长度的，我们希望``basic_string``能提供一个``length()``函数，方便用户获取字符串的长度。问题是，并没有一个通用的函数能同时获取``char``类型字符串和``wchar_t``类型字符串的长度，对``char``类型字符串，获取长度的函数是``strlen(char*)``，而对``wchar_t``类型，获取长度的函数是``wcslen(wchar_t*)``。
+字符串都是有长度的，我们希望basic_string能提供一个``length()``函数，方便用户获取字符串的长度。问题是，并没有一个通用的函数能同时获取``char``类型字符串和``wchar_t``类型字符串的长度，对``char``类型字符串，获取长度的函数是``strlen(char*)``，而对``wchar_t``类型，获取长度的函数是``wcslen(wchar_t*)``。
 
 是时候让*Trait*登场了，再看一下``basic_string``的声明：
 
