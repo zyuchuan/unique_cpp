@@ -141,32 +141,27 @@ struct enable_if<true, T> {
 };
 ----
 
-如果``B``是``true``，则``enable_if``有一个``public typedef type``，否则就没有这个``typedef``。
+如果``B``是``true``，则``enable_if<T>::type``就是存在的，否则``enable_if<T>::type``就不存在。那它怎么用呢？我们来看个例子：
 
 [source,c++]
 ----
 #include <type_traits>
-#include <iostream>
-#include <string>
 
-namespace detail {struct inplace_t{};}
+using namespace std;
 
-void* operator new(std::size_t, void* p, detail::inplace_t) {
-    return p;
-}
-
-// #1, enabled via return type
-template<class T, class ...Args>
-typename std::enable_if<std::is_trivially_constructible<T, Args&&...>::value>::type construct(T* t, Args&&... args) {
-    std::cout << "constructing trivally constructible T\n";
+// #1,
+template<class T>
+typename enable_if<is_pointer<T>::value, void>::type do_something(T&) {
+    // do something with T& and return nothing 
 }
 
 // #2,
-template<class T, class... Args>
-std::enable_if<!std::is_trivially_constructible<T, Args&&...>::value
-construct(T* t, Args&&... args) {
-    std::cout << "constructing non-trivally constructible T\n";
-    new(t, detail::inplace_t{})T(args...);
+template<class T>
+std::enable_if<!is_pointer<T>::value, int>::type
+do_something(T&) {
+    // ...
+    
+    return 0;
 }
 ----
 
