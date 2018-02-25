@@ -1,6 +1,6 @@
-#3. Type Traits
+= Type Traits
 
-## 3.1 什么是Trait
+== 什么是Trait
 
 “Trait”在英语中特指“a particular quality of your personality”，翻译成人话就是“逼格”的意思。那C++的“逼格”又是什么呢？C++之父[Bjarne Stroustrup](http://www.stroustrup.com/index.html)对此的解释是：
 
@@ -10,9 +10,10 @@
 
 > trait是一个小型对象，它的主要目的就是携带信息，而这些信息会被其它的对象或算法使用，用来决定某个“policy”或“implementation”的细节。
 
-还是不知所云？我再举个例子，C++标准库中有两个字符串模板类`string`和`wstring`，类的声明如下（为了方便阅读，代码中省略一些和主题无关的细节）：
+还是不知所云？我再举个例子，C++标准库中有两个字符串模板类``string``和``wstring``，类的声明如下（为了方便阅读，代码中省略一些和主题无关的细节）：
 
-```
+[source,c++]
+----
 template <class T, class Traits = char_traits<T> >
 class basic_string {
 public:
@@ -30,7 +31,7 @@ private:
 
 typedef basic_string<char, char_traits<char>, allocator<char> > string;
 typedef basic_string<wchar_t, char_traits<wchar_t>, allocator<wchar_t> > wstring;
-```
+----
 
 可见`string`和`wstring`其实都是`basica_string`针对不同字符类型的实例，`string`是针对`char`类型的实例，而`wstring`是针对`wchart_t`类型的实例。
 
