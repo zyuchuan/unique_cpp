@@ -157,14 +157,13 @@ typename enable_if<is_pointer<T>::value, void>::type do_something(T t) {
 
 // #2,
 template<class T>
-enable_if<!is_pointer<T>::value, int>::type
+enable_if<!is_pointer<T>::value, void>::type
 do_something(T t) {
     // ...
-    
-    return 0;
 }
 ----
 
+我来解释一下，
 
 元编程的主要内容就是这么多：常量类型，递归，SFINA，构成了元编程的全部。你觉得它难懂，是因为你不熟悉，一旦你熟悉了，也就没什么了。
 
