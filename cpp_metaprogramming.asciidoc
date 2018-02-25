@@ -151,14 +151,14 @@ using namespace std;
 
 // #1,
 template<class T>
-typename enable_if<is_pointer<T>::value, void>::type do_something(T&) {
+typename enable_if<is_pointer<T>::value, void>::type do_something(T t) {
     // ... 
 }
 
 // #2,
 template<class T>
 enable_if<!is_pointer<T>::value, int>::type
-do_something(T&) {
+do_something(T t) {
     // ...
     
     return 0;
