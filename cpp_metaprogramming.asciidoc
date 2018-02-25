@@ -111,7 +111,19 @@ int main() {
 }
 ----
 
-当编译器看到``main``函数中的``multiply(1, 2)``的时候，需要在前面定义的两个``multiply``中挑出一个匹配的，编译器很有可能会选中模板函数，问题是``int::multiplication_result``并不存在，这会导致编译错误，但因为SFINAE规则的存在，编译器会忽略这个错误，转而匹配第二个``multiply``函数。最终第一个``multiple``会被编译器扔掉，就像代码中从来不存在这样一个函数一样。
+当编译器看到``main``函数中的``multiply(1, 2)``的时候，需要在前面定义的两个``multiply``中挑出一个匹配的，编译器很有可能会选中这个：
+
+[source,c++]
+----
+template<class T>
+typename T::multiplication_result multiply(T t1, T t2) {
+    return t1 * t2;
+}
+````
+
+问题是``int::multiplication_result``并不存在，这会导致编译错误，但由于SFINAE规则的存在，编译器会忽略这个错误，转而匹配第二个``multiply``函数。最终第一个``multiple``会被编译器扔掉，就像代码中从来不存在这样一个函数一样。
+
+
 
 [source,c++]
 ----
