@@ -2,7 +2,7 @@
 
 == 什么是Trait
 
-“Trait”在英语中特指“a particular quality of your personality”，翻译成人话就是“逼格”的意思。那C+++++的“逼格”又是什么呢？C+++++之父http://www.stroustrup.com/index.html[Bjarne Stroustrup]对此的解释是：
+“Trait”在英语中特指“a particular quality of your personality”，翻译成人话就是“逼格”的意思。那C+++++的“逼格”又是什么呢？C+++++之父http://www.stroustrup.com/index.html[BjarneStroustrup]对此的解释是：
 
 > Think of a trait as a small object whose main purpose is to carry information used by another object or algorithm to determine "policy" or "implementation" details.
 
