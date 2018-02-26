@@ -9,7 +9,7 @@ ____
 
 翻译成人话就是：
 
-[quote,jack,this book]
+[quote]
 ____
 trait是一个小型对象，它的主要目的就是携带信息，而这些信息会被其它的对象或算法使用，用来决定某个“policy”或“implementation”的细节。
 ____
@@ -37,7 +37,7 @@ typedef basic_string<char, char_traits<char>, allocator<char> > string;
 typedef basic_string<wchar_t, char_traits<wchar_t>, allocator<wchar_t> > wstring;
 ----
 
-可见``string``和``wstring``其实都是``basica_string``针对不同字符类型的实例，``string``是针对``char``类型的实例，而``wstring``是针对``wchart_t``类型的实例。
+``string``和``wstring``其实都是``basica_string``针对不同字符类型的实例，``string``是针对``char``类型的实例，而``wstring``是针对``wchart_t``类型的实例。
 
 字符串都是有长度的，我们希望能有一个``length()``函数以获取字符串的长度。问题是，并没有一个通用的函数能同时获取``char``类型字符串和``wchar_t``类型字符串的长度，对``char``类型字符串，获取长度的函数是``strlen(char*)``，而对``wchar_t``类型，获取长度的函数是``wcslen(wchar_t*)``。
 
@@ -97,31 +97,14 @@ size_t basic_string::length() { return Traits::length(data); }
 
 齐活！借助*Trati*技术，一个优雅的解决方案闪亮登场！
 
-<br/>
-
-> **注**：这里为了解释*Trait*概念，对`basic_string`的定义做了简化处理，C++标准库的实现方式与此有很大的不同，[不信就狠戳这里](http://en.cppreference.com/w/cpp/string/basic_string)。
-
-<br/>
-
-### 小结
-
 相信聪明如你者已经发现：“这TM不就是设计模式中的Strategy模式吗？” 恭喜你学会抢答，*Trait*确实和Strategy模式很像，但是，
 
-1. Strategy模式中，strategy的选择是在运行期进行的，而*Trait*是基于模板的，所以strategy的选择是在**编译期**完成的。
-2. Strategy模式中，strategy的选择通常都是基于变量的值，而*Trait*是基于模板的，所以的strategy的选择是基于**变量类型**的。
+* Strategy模式中，strategy的选择是在运行期进行的，而*Trait*是基于模板的，所以strategy的选择是在**编译期**完成的。
+* Strategy模式中，strategy的选择通常都是基于变量的值，而*Trait*是基于模板的，所以的strategy的选择是基于**变量类型**的。
 
-一句话，*Trait*的实质就是编译期类型推导。不仅*Trait*如此，C++中所有基于模板的解析其实质都是编译期类型推导。重要的话说三遍：
+一句话，*Trait*的实质就是编译期类型推导。不仅*Trait*如此，C++中所有基于模板的解析其实质都是编译期类型推导。
 
-**编译期类型推导！**
-
-**编译期类型推导！**
-
-**编译期类型推导！**
-
-<br/>
-<hr/>
-
-## 3.2 Type Traits
+== Type Traits
 
 *Type Trait*是C++11中引入的新功能，用于在编译期查询或者编辑类型的属性。C++11的*Type Trait*由一系列的模板类组成，全部放在头文件`<type_traits>`中。关于C++ 11 *Type Trait*的详细信息，可以参考[cppreference.com](http://en.cppreference.com/w/cpp/header/type_traits)。
 
