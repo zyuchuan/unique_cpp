@@ -41,14 +41,14 @@ typedef basic_string<wchar_t, char_traits<wchar_t>, allocator<wchar_t> > wstring
 
 字符串都是有长度的，我们希望能有一个``length()``函数以获取字符串的长度。问题是，并没有一个通用的函数能同时获取``char``类型字符串和``wchar_t``类型字符串的长度，对``char``类型字符串，获取长度的函数是``strlen(char*)``，而对``wchar_t``类型，获取长度的函数是``wcslen(wchar_t*)``。
 
-是时候让*Trait*登场了，再看一下``basic_string``的声明：
+是时候让_Trait_登场了，再看一下``basic_string``的声明：
 
 [source,c++]
 ----
 template<class T, class Traits = char_traits<T> > class basic_string
 ----
 
-注意第二个模板参数``Traits``，看名字似乎是一个*Trait*，而它也确实是一个*Trait*，而且这个*Trait*有个默认值``char_traits<T>``，也是个模板类。来看看``char_traits``的定义：
+注意第二个模板参数``Traits``，看名字似乎是一个_Trait_，而它也确实是一个_Trait_，而且这个_Trait_有个默认值``char_traits<T>``：
 
 [source,c++]
 ----
@@ -56,36 +56,36 @@ template<class T>
 struct char_traits {
     typedef T    char_type;
 
-    ...
+    // ...
     
     // 声明函数，实现细节在特化的模板中
     static size_t length(const char_type *c);
 
-    ...
+    // ...
 };
 
 // 针对char类型特化
 template<>
 size_t char_traits<char> {
-    ...
+    // ...
     
     static size_t length(const char_type *c) { return ::strlen(c); }
     
-    ...
+    // ...
 };
 
 // 针对wchar_t类型特化
 template<>
 size_t char_traits<wchar_t> {
-    ...
+    // ...
     
     static size_t length(const char_type *c) { return ::wcslen(c); }
     
-    ...
+    // ...
 };
 ----
 
-可以看到``char_traits<T>::length()``这个函数针对不同的模板参数``T``，有不同的实现。对于``char``类型，调用``strlen()``计算字符串长度；对于``wchar_t``类型，调用``wcslen()``计算字符串长度。
+可以看到``char_traits<T>::length()``这个函数针对不同的模板参数``T``有不同的实现。对于``char``类型，调用``strlen()``计算字符串长度；对于``wchar_t``类型，调用``wcslen()``计算字符串长度。
 
 接下来的事情就很简单了，在``basic_string``中定义函数``length()``：
 
@@ -95,14 +95,14 @@ template <class T, class Traits>
 size_t basic_string::length() { return Traits::length(data); }
 ----
 
-齐活！借助*Trati*技术，一个优雅的解决方案闪亮登场！
+齐活！借助*Trati*技术，一个优雅的解决方案闪亮登场！
 
-相信聪明如你者已经发现：“这TM不就是设计模式中的Strategy模式吗？” 恭喜你学会抢答，*Trait*确实和Strategy模式很像，但是，
+相信聪明如你者已经发现：“这TM不就是设计模式中的Strategy模式吗？” 恭喜你学会抢答，**Trait**确实和Strategy模式很像，但是，
 
-* Strategy模式中，strategy的选择是在运行期进行的，而*Trait*是基于模板的，所以strategy的选择是在**编译期**完成的。
-* Strategy模式中，strategy的选择通常都是基于变量的值，而*Trait*是基于模板的，所以的strategy的选择是基于**变量类型**的。
+* Strategy模式中，strategy的选择是在运行期进行的，而**Trait**是基于模板的，所以strategy的选择是在编译期完成的。
+* Strategy模式中，strategy的选择通常都是基于变量的值，而**Trait**是基于模板的，所以的strategy的选择是基于变量类型的。
 
-一句话，*Trait*的实质就是编译期类型推导。不仅*Trait*如此，C++中所有基于模板的解析其实质都是编译期类型推导。
+一句话，**Trait**的实质就是编译期类型推导。不仅**Trait**如此，C++中所有基于模板的解析其实质都是编译期类型推导。
 
 == Type Traits
 
