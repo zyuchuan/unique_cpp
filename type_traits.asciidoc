@@ -225,18 +225,18 @@ struct is_class : public integral_constant<bool, false> {};
 
 === common_type
 
-`common_type`返回所有模板参数的最大公共类型，比如
+``common_type``返回所有模板参数的最大公共类型，比如
 
-```
+[source,c++]
+----
 common_type<int, float>::type           // float，因为int可以转换成float
 common_type<int, float, double>::type   // double，因为int, float都可以转换成double
-```
+----
 
 这似乎是一件很复杂的事。确实很复杂，不过我们有一个巧妙的方法可以化繁为简，先看源代码：
 
-```
-// header: <type_tratis>
-
+[source,c++]
+----
 // 类声明，注意三个点，这说明这个类可以有任意多个模板参数
 template<class ...T> struct commont_type;
 
@@ -262,36 +262,36 @@ template<class T, class U, class ...V>
 struct common_type<T, U, V...> {
     typedef typename common_type<typename common_type<T, U>::type, V...>::type type;
 };
-```
+----
 
 代码比较简单，首先声明了一个模板类，然后分别针对模板参数的个数为一个和两个的情形做了特化，对于三个以上的模板参数的情况，则用递归的方法定义。
 
 好像哪里不对？
 
 1. 哪里能看出来推导公共类型了？
-2. 这行代码有问题: `typedef typename std::decay<decltype(f() ? t() : u())::type type`，函数`f()`根本没有定义，所以三目运算符`? :`根本没法求值。
+2. 这行代码有问题: ``typedef typename std::decay<decltype(f() ? t() : u())::type type``，函数``f()``根本没有定义，所以三目运算符``? :``根本没法求值。
 
-恭喜你，你有一只火眼金睛（另一只不是，所以看不到代码的精妙之处）。让我来告诉你怎么回事，这两个问题其实是一个问题。我们先从`f() ? t() : u()`说起，我再说一遍，编译器在解析模板时，做的是类型推导，所以`f()`根本不需要定义（即使有定义，编译器也不知道返回值是`true`还是`false`，只有到运行时才知道）。那问题又来了，不知道`f()`的返回值，编译器该如何求解三目运算符呢？答案还是不需要，编译器此时需要知道的是三目运算符的返回类型（而不是返回值），以满足解析`decltype(...)`的需要。问题是，不知道返回值，返回类型也无从谈起。似乎编译进入了死胡同，别急，C++编译器是你的贴心小棉袄，它会尽一切可能编译你的代码，为了让编译进行下去，编译器会自动检查冒号两边的类型，尽可能将其中一个类型转换为另一个类型，并将这个类型作为三目表达式的返回类型，传入`decltype(...)`中。如果你还有疑问，可以做一个简单的测试：
+恭喜你，你有一只火眼金睛（另一只不是，所以看不到代码的精妙之处）。让我来告诉你怎么回事，这两个问题其实是一个问题。我们先从``f() ? t() : u()``说起，我再说一遍，编译器在解析模板时，做的是类型推导，所以``f()``根本不需要定义（即使有定义，编译器也不知道返回值是``true``还是``false``，只有到运行时才知道）。那问题又来了，不知道``f()``的返回值，编译器该如何求解三目运算符呢？答案还是不需要，编译器此时需要知道的是三目运算符的返回类型（而不是返回值），以满足解析``decltype(...)``的需要。问题是，不知道返回值，返回类型也无从谈起。似乎编译进入了死胡同，别急，C++编译器是你的贴心小棉袄，它会尽一切可能编译你的代码，为了让编译进行下去，编译器会自动检查冒号两边的类型，尽可能将其中一个类型转换为另一个类型，并将这个类型作为三目表达式的返回类型，传入``decltype(...)``中。如果你还有疑问，可以做一个简单的测试：
 
-```
+[source,c++]
+----
 std::cout << 
     typeid(decltype(true ? std::declval<int>() : std::declval<double>())).name() << std::endl;  // double
 
 std::cout << 
     typeid(decltype(false ? std::declval<int>() : std::declval<double>())).name() << std::endl; // double
-```
+----
 
-在我的XCode 8.3中，上面两行代码都输出`d`，也就是`double`。这就证明了编译器在三目表达式时，自动对参数类型进行了转换，并返回最大公共类型。
+在我的XCode 9.2中，上面两行代码都输出``d``，也就是``double``。这就证明了编译器在三目表达式时，自动对参数类型进行了转换，并返回最大公共类型。
 
-用三目运算符来推导最大公共类型，我只能用“顶（sang）礼（xin）膜（bing）拜（kuang）”来形容。在C++11的标准库中，类似的使用“奇技淫巧”例子还有很多，这里就不一一介绍了。知乎上有一篇关于C++“奇技淫巧”的讨论帖子，有兴趣的同学可以[狠戳这里](https://www.zhihu.com/question/27338446)
+用三目运算符来推导最大公共类型，我只能用“顶（sang）礼（xin）膜（bing）拜（kuang）”来形容。在C++11的标准库中，类似的使用“奇技淫巧”例子还有很多，这里就不一一介绍了。知乎上有一篇关于C++“奇技淫巧”的讨论帖子，有兴趣的同学可以 https://www.zhihu.com/question/27338446[狠戳这里].
 
-<br/>
+=== is_function
 
-### 3.2.4 is\_function
+最后来一道硬菜：``is_function``。``is_function``检查某个类型是否是``function``。注意，``is_function``不能用于检查``std::function``，lambda表达式，重载了``operator()``的类，以及函数指针。
 
-最后来一道硬菜：`is_function`。`is_function`检查某个类型是否是`function`。注意，`is_function`不能用于检查`std::function`，lambda表达式，重载了`operator()`的类，以及函数指针。
-
-```
+[source,c++]
+----
 // Sample code comes from http://en.cppreference.com/w/cpp/types/is_function
 
 strcut A { int fun(); };
@@ -322,14 +322,12 @@ std::cout << is_function<int>::value << std::endl;          // false
 // 5. T被解析成 int()，是个function
 using T = PM_traits<decltype(&A::fun)>::member_type;
 std::cout << is_function<T>::value << std::endl;            // true
-
-```
+----
 
 是不是觉得很神奇？我们来看一下源代码：
 
-```
-// header: <type_traits>
-
+[source,c++]
+----
 namspace libcpp_is_function_imp {
     template<calss T> char    test(T*);
     template<class T> two     test(...);
@@ -353,44 +351,42 @@ struct libcpp_is_function<Tp, true> : public false_type {};
 
 template<class T>
 struct is_function : public libcpp_is_function<T> {};
-
-```
+----
 
 这段代码比较难懂，需要详细解释一下：
 
-1. 如果你对一个`class`, `union`, `void`, `reference`或`null pointer`，执行`is_function`操作，此时`libcpp_is_function`的第二个模板参数为`true`，而针对这种情况定义了一个特化版本，该特化版本继承于`false_type`，这是我们需要的结果。
+1. 如果你对一个``class``, ``union``, ``void``, ``reference``或``null pointer``，执行``is_function``操作，此时``libcpp_is_function``的第二个模板参数为``true``，而针对这种情况定义了一个特化版本，该特化版本继承于``false_type``，这是我们需要的结果。
 
-2. 除去第一种情况，编译器会激活非特化版本，此时编译器会对模板类`integral_const`的第二个模板参数进行类型推导：
+2. 除去第一种情况，编译器会激活非特化版本，此时编译器会对模板类``integral_const``的第二个模板参数进行类型推导：
 
-    * 如果`T`是一个function对象，比如`void(void)`，则`libcpp_is_function_imp::source<T>(0))`的返回值为`void(void)&`。在编译器眼里，函数对象和函数指针是一种类型，也就是说`void(void)`和`void(*)(void)`是一种类型，编译器于是会匹配参数为`T*`的重载版本`test(T*)`，于是，`sizeof(...)`表达式被替换成`sizeof(test<void(void)>(void(*)(void))`，进而替换成`sizeof(char)`，最终，类的声明被替换成：
+    * 如果``T``是一个function对象，比如``void(void)``，则``libcpp_is_function_imp::source<T>(0))``的返回值为``void(void)&``。在编译器眼里，函数对象和函数指针是一种类型，也就是说``void(void)``和``void(*)(void)``是一种类型，编译器于是会匹配参数为``T*``的重载版本``test(T*)``，于是，``sizeof(...)``表达式被替换成``sizeof(test<void(void)>(void(*)(void))``，进而替换成``sizeof(char)``，最终，类的声明被替换成：
 
-
+[source,c++]
+----
         template<class T>
         struct libcpp_is_function : public integral_const<bool, true> {};
+----
 
     这也是我们需要的结果。
     
-    * 如果`T`不是一个function对象，比如为`int`，这时`source`函数的返回类型为`int&`。由于`int&`和`int*`不是同一个类型，编译器只能匹配`test(...)`函数，于是类的声明就成了：
-    
+    * 如果``T``不是一个_function_对象，比如为``int``，这时``source``函数的返回类型为``int&``。由于``int&``和``int*``不是同一个类型，编译器只能匹配``test(...)``函数，于是类的声明就成了：
+
+[source,c++]
+----
         template<class T>
         struct libcpp_is_function : public integral_const<bool, false>
-    
+----
+
     这仍然是我们需要的结果。
 
+C++11标准库定义的_type trait_还有很多，这里就不一一介绍了。总的来说，这些_type traits_都是基于模板特化和函数重载，利用编译器的类型推导能力，做一些“神奇”的事。因为所有这些都是在编译期进行了，所以对运行期完全没有冲击，完全不必担心效率问题。
 
-<br/>
+== 自己动手写一个Type Trait
 
-### 小结
+下面我们自己动手，写一个_trait_ ``has_to_string``，我们希望达到如下的效果：
 
-C++11标准库定义的*type trait*还有很多，这里就不一一介绍了。总的来说，这些type traits都是基于模板特化和函数重载，利用编译器的类型推导能力，做一些“神奇”的事。因为所有这些都是在编译期进行了，所以对运行期完全没有冲击，完全不必担心效率问题。
-
-<br/>
-
-## 3.3 自己动手写一个Type Trait
-
-下面我们自己动手，写一个*trait* `has_to_string`，我们希望达到如下的效果：
-
-```
+[source,c++]
+----
 struct A {
     std::string to_string();
 };
@@ -401,16 +397,15 @@ struct B {
 
 std::cout << has_to_string<A>::value << std::endl; // 1
 std::cout << has_to_string<B>::value << std::endl; // 0
-
-```
+----
 
 这里给出一种可能的实现：
 
-```
+[source,c++]
+----
 template<typename T, typename = std::string>
 struct has_to_string : std::false_type {};
 
 template<typename T>
 struct has_to_string : decltype(std::declval<T>().to_string())> : std::true_type {};
-
-```
+----
