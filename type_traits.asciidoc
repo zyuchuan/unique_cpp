@@ -37,18 +37,18 @@ typedef basic_string<char, char_traits<char>, allocator<char> > string;
 typedef basic_string<wchar_t, char_traits<wchar_t>, allocator<wchar_t> > wstring;
 ----
 
-``string``和``wstring``其实都是``basica_string``针对不同字符类型的实例，``string``是针对``char``类型的实例，而``wstring``是针对``wchart_t``类型的实例。
+``string``和``wstring``其实是``basica_string``针对不同字符类型的特化，``string``是针对``char``类型的特化，而``wstring``是针对``wchart_t``类型的特化。
 
 字符串都是有长度的，我们希望能有一个``length()``函数以获取字符串的长度。问题是，并没有一个通用的函数能同时获取``char``类型字符串和``wchar_t``类型字符串的长度，对``char``类型字符串，获取长度的函数是``strlen(char*)``，而对``wchar_t``类型，获取长度的函数是``wcslen(wchar_t*)``。
 
-是时候让_Trait_登场了，再看一下``basic_string``的声明：
+是时候让 _Trait_ 登场了，再看一下``basic_string``的声明：
 
 [source,c++]
 ----
 template<class T, class Traits = char_traits<T> > class basic_string
 ----
 
-注意第二个模板参数``Traits``，看名字似乎是一个_Trait_，而它也确实是一个_Trait_，而且这个_Trait_有个默认值``char_traits<T>``：
+注意第二个模板参数``Traits``，看名字似乎是一个 _Trait_ ，而它也确实是一个 _Trait_ ，而且这个 _Trait_ 有个默认值``char_traits<T>``：
 
 [source,c++]
 ----
@@ -95,7 +95,7 @@ template <class T, class Traits>
 size_t basic_string::length() { return Traits::length(data); }
 ----
 
-齐活！借助**Trati**技术，一个优雅的解决方案闪亮登场！
+齐活！借助 _Trati_ 技术，一个优雅的解决方案闪亮登场！
 
 相信聪明如你者已经发现：“这TM不就是设计模式中的Strategy模式吗？” 恭喜你学会抢答，**Trait**确实和Strategy模式很像，但是，
 
