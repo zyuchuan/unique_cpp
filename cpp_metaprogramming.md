@@ -66,12 +66,11 @@ typedef std::integral_constant<bool, true>  true_type;
 typedef std::integral constant<bool, false> false_type;
 ```
 
-=== 循环
+### 循环
 
-说完了常量，我们来说说循环。在模板元编程中，你得忘掉你最喜欢的``for``循环，因为在编译期，编译器只有一种循环方式：递归。下面的代码展示了通过模板实现递归循环的正确方式：
+说完了常量，我们来说说循环。在模板元编程中，你得忘掉你最喜欢的`for`循环，因为在编译期，编译器只有一种循环方式：递归。下面的代码展示了通过模板实现递归循环的正确方式：
 
-[source,c++]
-----
+```c++
 template<size_t N>
 struct factorial {
     static constexpr size_t value = N * factorial<N-1>;
@@ -82,24 +81,22 @@ template<>
 struct factorial<1> {
     static constexpr size_t value = 1;
 };
-----
+```
 
-这段代码计算某个数的阶乘，比如要计算并输出``5!``，你可以这样写：
+这段代码计算某个数的阶乘，比如要计算并输出`5!`，你可以这样写：
 
-[source,c++]
-----
+```c++
 std::cout << factorial<5>::value << std::endl; // 20
-----
+```
 
-需要指出的是，上面这行语句虽然在运行期才能看到结果，但实际的值，也就是``5!``，在编译期就已经被编译器计算出来了。
+需要指出的是，上面这行语句虽然在运行期才能看到结果，但实际的值，也就是`5!`，在编译期就已经被编译器计算出来了。
 
 
-=== 分支
+### 分支
 
 在模板元编程中，分支结构的实现依赖于一个不太为人熟知的编译器特性：**SFINAE**。 **SFINAE**是**S**ubstitution **F**ailure **I**s **N**ot **A**n **E**rror的首字母缩写。意思是说，当编译器在解析模板时，如果模板参数匹配失败，编译器不会报错，而是默默地跳过这段代码，继续编译后面的代码。举个例子：
 
-[source,c++]
-----
+```c++
 template<class T>
 typename T::multiplication_result multiply(T t1, T t2) {
     return t1 * t2;
@@ -112,26 +109,24 @@ long multiply(int i, int j){
 int main() {
     multiply(1, 2);
 }
-----
+```
 
-当编译器看到``main``函数中的``multiply(1, 2)``的时候，需要在前面定义的两个``multiply``中挑出一个匹配的，编译器很有可能会选中这个：
+当编译器看到`main()`中的`multiply(1, 2)`的时候，需要在前面定义的两个`multiply`中挑出一个匹配的，编译器很有可能会选中这个：
 
-[source,c++]
-----
+```c++
 template<class T>
 typename T::multiplication_result multiply(T t1, T t2) {
     return t1 * t2;
 }
-----
+```
 
-问题是``int::multiplication_result``并不存在，这会导致编译错误，但由于SFINAE规则的存在，编译器会忽略这个错误，转而匹配第二个``multiply``函数。最终第一个``multiple``会被编译器扔掉，就像代码中从来不存在这样一个函数一样。
+问题是`int::multiplication_result`并不存在，这会导致编译错误，但由于SFINAE规则的存在，编译器会忽略这个错误，转而匹配第二个`multiply`函数。最终第一个`multiple`会被编译器扔掉，就像代码中从来不存在这样一个函数一样。
 
-后面我们还会看到，SFINAE规则是标准库中很多``type trait``存在的基础。在这里我们只讲SFINAE规则的一个具体应用：实现类似于``if...else``的分支结构。
+后面我们还会看到，SFINAE规则是标准库中很多_type trait_存在的基础。在这里我们只讲SFINAE规则的一个具体应用：实现类似于`if...else`的分支结构。
 
-在标准库中有一个模板类``enable_if``，定义如下：
+在标准库中有一个模板类`enable_if`，定义如下：
 
-[source,c++]
-----
+```c++
 // file: type_traits
 
 template<bool B, class T = void>
@@ -142,9 +137,9 @@ template<class T>
 struct enable_if<true, T> {
     typedef T type;
 };
-----
+```
 
-如果``B``是``true``，则``enable_if<T>::type``就是存在的，否则``enable_if<T>::type``就不存在。那它怎么用呢？我们来看个例子：
+如果`B`是`true`，则`enable_if<T>::type`就是存在的，否则`enable_if<T>::type`就不存在。那它怎么用呢？我们来看个例子：
 
 [source,c++]
 ----
