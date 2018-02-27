@@ -29,7 +29,7 @@ C++的第一个标准化版本，C++ 98，无疑是成功的。伴随C++ 98发�
 
 ## 目录索引
 
-* [C++ Template Metaprogramming](cpp_metaprogramming.asciidoc)
+* [C++ Template Metaprogramming](cpp_metaprogramming.md)
 * [Type Traits](type_traits.asciidoc)
 * [std::tupple](std_tupple.md)
 * [chrono library](chrono_library.md)
