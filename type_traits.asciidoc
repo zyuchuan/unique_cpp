@@ -95,14 +95,15 @@ template <class T, class Traits>
 size_t basic_string::length() { return Traits::length(data); }
 ----
 
-齐活！借助 _Trati_ 技术，一个优雅的解决方案闪亮登场！
+齐活！借助 _Trati_ ，一个优雅的解决方案闪亮登场！
 
-相信聪明如你者已经发现：“这TM不就是设计模式中的Strategy模式吗？” 恭喜你学会抢答，**Trait**确实和Strategy模式很像，但是，
+相信聪明如你者已经发现：“这TM不就是设计模式中的 _Strategy_ 模式吗？” 恭喜你学会抢答，_Trait_ 技法确实和 _Strategy_ 模式很像，但是:
 
-* Strategy模式中，strategy的选择是在运行期进行的，而**Trait**是基于模板的，所以strategy的选择是在编译期完成的。
-* Strategy模式中，strategy的选择通常都是基于变量的值，而**Trait**是基于模板的，所以的strategy的选择是基于变量类型的。
+* _Strategy_ 模式中，strategy的选择是在运行期进行的，而 _Trait_ 是基于模板的，所以strategy的选择是在编译期完成的。
 
-一句话，**Trait**的实质就是编译期类型推导。不仅**Trait**如此，C++中所有基于模板的解析其实质都是编译期类型推导。
+* _Strategy_ 模式中，strategy的选择通常都是基于变量的值，而 _Trait_ 是基于模板的，所以的strategy的选择是基于变量类型的。
+
+_Trait_ 的实质就是编译期类型推导。不仅 _Trait_ 如此，C++中所有基于模板的解析其实质都是编译期类型推导。
 
 == Type Traits
 
