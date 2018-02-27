@@ -22,7 +22,7 @@ C++元编程不是被发明出来的，而是被无意中发现的。上个世�
 
 #### 整形常量
 
-```[c++]
+```c++
 // file: type_traits
 
 template <typename T, T v>
