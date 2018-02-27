@@ -87,9 +87,9 @@ size_t basic_string::length() { return Traits::length(data); }
 
 齐活！借助_trati_ ，一个优雅的解决方案闪亮登场！
 
-相信聪明如你者已经发现：“这TM不就是设计模式中的_**Strategy**_模式吗？” 恭喜你学会抢答，_Trait_ 技法确实和 _Strategy_ 模式很像，但是:
+相信聪明如你者已经发现：“这TM不就是设计模式中的 _**Strategy**_ 模式吗？” 恭喜你学会抢答，_**trait**_ 技法确实和 _**Strategy**_ 模式很像，但是:
 
-* _Strategy_ 模式中，strategy的选择是在运行期进行的;而 _Trait_ 是基于模板的，所以strategy的选择是在编译期完成的。
+* _**Strategy**_ 模式中，_strategy_ 的选择是在运行期进行的；而  _**trait**_ 是基于模板的，所以 _strategy_ 的选择是在编译期完成的。
 
 * _Strategy_ 模式中，strategy的选择通常都是基于变量的值，而 _Trait_ 是基于模板的，所以的strategy的选择是基于变量类型的。
 
