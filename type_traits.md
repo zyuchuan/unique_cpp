@@ -1,23 +1,16 @@
-= Type Traits
+# Type Traits
 
-“Trait”在英语中特指“a particular quality of your personality”，大致相当于汉语中的“逼格”的意思。那C+++++的“逼格”又是什么呢？C+++++之父 http://www.stroustrup.com/index.html[Bjarne Stroustrup] 对此的解释是：
+**_Trait_**在英语中特指**_a particular quality of your personality_**，大致相当于汉语中的**逼格**的意思。那C++的**逼格**又是什么呢？C++之父[Bjarne Stroustrup]( http://www.stroustrup.com/index.html) 对此的解释是：
 
-[quote]
-____
-Think of a trait as a small object whose main purpose is to carry information used by another object or algorithm to determine ``_policy_`` or ``_implementation_`` details.
-____
+>Think of a trait as a small object whose main purpose is to carry information used by another object or algorithm to determine _policy_ or _implementation_ details.
 
 翻译成人话就是：
 
-[quote]
-____
-_trait_ 是一个小型对象，它的主要目的就是携带信息，而这些信息会被其它的对象或算法使用，用来决定某个 _policy_ 或 _implementation_ 的细节。
-____
+> _trait_ 是一个小型对象，它的主要目的就是携带信息，而这些信息会被其它的对象或算法使用，用来决定某个_policy_或_implementation_的细节。
 
-还是不知所云？我再举个例子，C++标准库中有两个字符串模板类``string``和``wstring``，类的声明如下（为了方便阅读，代码中省略一些和主题无关的细节）：
+还是不知所云？我再举个例子，C++标准库中有两个字符串模板类`string`和`wstring`，类的声明如下（为了方便阅读，代码中省略一些和主题无关的细节）：
 
-[source,c++]
-----
+```c++
 template <class T, class Traits = char_traits<T> >
 class basic_string {
 public:
@@ -35,7 +28,7 @@ private:
 
 typedef basic_string<char, char_traits<char>, allocator<char> > string;
 typedef basic_string<wchar_t, char_traits<wchar_t>, allocator<wchar_t> > wstring;
-----
+```
 
 ``string``和``wstring``其实是``basica_string``针对不同字符类型的特化，``string``是针对``char``类型的特化，而``wstring``是针对``wchart_t``类型的特化。
 
