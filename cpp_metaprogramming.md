@@ -36,38 +36,35 @@ struct integral_constant {
 };
 ```
 
-``integral_constant``的定义虽然很简单，但是意义却很重要。它将一个数值包装成为一个对象，这从一个侧面揭示模板元编程的真谛：**编译期类型计算**。
+`integral_constant`的定义虽然很简单，但是意义却很重要。它将一个数值包装成为一个对象，这从一个侧面揭示模板元编程的真谛：**编译期类型计算**。
 
-``integral_constant``的使用方法很简单，比如你可以这样写：
+`integral_constant`的使用方法很简单，比如你可以这样写：
 
-[source,c++]
-----
+```c++
 typedef integral_const<int, 2> two_type;
 typedef integral_const<int, 6> six_type;
 
 static_assert(two_type::value * 3 == six_type::value, "2*3 != 6");
-----
+```
 
 当然，上面的代码并不必直接写
 
-[source,c++]
-----
+```c++
 static_assert(2 * 3 == 6, "2*3 != 6");
-----
+```
 
-更有意义，甚至更繁琐。这里只是举个例子说明它的用法，在后面我们会看到``integral_constant``的各种用法。
+更有意义，甚至更繁琐。这里只是举个例子说明它的用法，后面我们会看到`integral_constant`的各种用法。
 
-==== 布尔型常量
+#### 布尔型常量
 
-同整形常量一样，布尔型常量也有对应的元类型：``true_type``和``false_type``，这两个类其实是``integral_constant``的``type alias``：
+同整形常量一样，布尔型常量也有对应的元类型：`true_type`和`false_type`，这两个类其实是`integral_constant`的`typedef`：
 
-[source,c++]
-----
+```c++
 // file: type_traits
 
 typedef std::integral_constant<bool, true>  true_type;
 typedef std::integral constant<bool, false> false_type;
-----
+```
 
 === 循环
 
