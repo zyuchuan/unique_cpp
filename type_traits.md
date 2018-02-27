@@ -91,15 +91,17 @@ size_t basic_string::length() { return Traits::length(data); }
 
 * _**Strategy**_ 模式中，_strategy_ 的选择是在运行期进行的；而  _**trait**_ 是基于模板的，所以 _strategy_ 的选择是在编译期完成的。
 
-* _Strategy_ 模式中，strategy的选择通常都是基于变量的值，而 _Trait_ 是基于模板的，所以的strategy的选择是基于变量类型的。
+* _**Strategy**_ 模式中，_strategy_ 的选择通常都是基于变量的值；而 _**trait**_ 是基于模板的，所以的 _strategy_ 的选择是基于变量类型的。
 
-_Trait_ 的实质就是编译期类型推导。不仅 _Trait_ 如此，C++中所有基于模板的解析其实质都是编译期类型推导。
+_**trait**_ 的实质就是编译期类型推导。不仅 _**trait**_ 如此，C++中所有基于模板的解析其实质都是编译期类型推导。
 
-== C++ 11 Type Traits
+## C++ 11 Type Traits
 
-C+++++ 11标准库引入了大量的 _type trait_ ,用于在编译期查询或者编辑类型的属性, 这些 _trait_ 全部放在头文件 ``<type_traits>`` 中。关于C+++++ 11 _type trait_ 的详细信息，可以参考 http://en.cppreference.com/w/cpp/header/type_traits[cppreference.com]。
+C++ 11标准库引入了大量的 _type trait_ ，用于在编译期查询或者编辑类型的属性, 这些 _trait_ 全部放在头文件 `<type_traits>` 中。关于C++ 11 _type trait_ 的详细信息，可以参考 [cppreference.com](http://en.cppreference.com/w/cpp/header/type_traits)。
 
-由于篇幅关系,本书只能选择一些有代表性的 _trait_，解释其设计思路和实现原理，目的是让你了解C++ _type trait_ 的编写方法，顺便膜拜一下大神们的编码技巧。
+由于篇幅关系，本书只能选择一些有代表性的 _trait_，解释其设计思路和实现原理，目的是让你了解C++ _type trait_ 的编写方法，顺便膜拜一下大神们的编码技巧。
+
+<br/>
 
 ### is_const
 
