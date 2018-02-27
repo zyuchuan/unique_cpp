@@ -141,8 +141,7 @@ struct enable_if<true, T> {
 
 如果`B`是`true`，则`enable_if<T>::type`就是存在的，否则`enable_if<T>::type`就不存在。那它怎么用呢？我们来看个例子：
 
-[source,c++]
-----
+```c++
 #include <iostream>
 #include <type_traits>
 
@@ -168,28 +167,26 @@ int main() {
     do_something(i);
     do_something(&i);
 }
-----
+```
 
 输出
-[source,c++]
-----
+```c++
 calling do_something(T), return 3
 calling do_something(T*), return nothing
-----
+```
 
-可见，当调用``do_something(i)``的时候，因为``i``的类型是``int``，``is_pointer<int>::value``的值为``false``，于是``enable_if<is_pointer<T>::value, void>::type``不存在，第一个``do_something``会导致一个匹配失败，于是编译器转而去匹配第二个``do_something``函数。同理可以知道``do_something(&i)``会匹配第一个``do_something``函数。总的来说，上面的代码相当于于一个如下的``if...else``语句：
+可见，当调用`do_something(i)`的时候，因为`i`的类型是`int`，`is_pointer<int>::value`的值为`false`，于是`enable_if<is_pointer<T>::value, void>::type`不存在，第一个`do_something`会导致一个匹配失败，于是编译器转而去匹配第二个`do_something`函数。同理可以知道`do_something(&i)`会匹配第一个`do_something`函数。总的来说，上面的代码相当于于一个如下的`if...else`语句：
 
-[source,c++]
-----
+```c++
 if T is a pointer {
     // do something
 }
 else {
     // do something else
 }
-----
+```
 
-=== 总结
+### 总结
 
 整形常量，布尔常量，循环，分支，这基本就是元编程的全部要素了。很简单吧，你觉得它难懂，是因为你还不熟悉它的代码结构，一旦你熟悉了，也就没什么了。
 
