@@ -8,23 +8,23 @@
 
 > _trait_ 是一个小型对象，它的主要目的就是携带信息，而这些信息会被其它的对象或算法使用，用来决定某个 _policy_ 或 _implementation_ 的细节。
 
-**_Trait_**在标准库中大量运用，比如我们熟悉的C++ 98 STL中的`iterator_traits`、`char_traits`等。C++ 11又增加了*type trait*。
+*Trait*在标准库中大量运用，比如我们熟悉的C++ 98 STL中的*iterator trait*、*char trait*等。C++ 11又增加了*type trait*。
 
 ## C++ 11 Type Traits
 
-C++ 11标准库定义了了大量的 _type trait_ ，全部放在头文件 `<type_traits>` 中。这些*trait*大致可以分为一下几类：
+C++ 11标准库定义了超过80中 *type trait* ，全部放在头文件 `<type_traits>` 中。这些*trait*大致可以分为一下几类：
 
-* Primary type categories: `is_void`, `is_null_pointer`, `is_class`, `is_function`...
-* Composite type categories: `is_fundamental`, `is_arithmetic`, `is_object`...
-* Type properties: `is_const`, `is_volatile`, `is_trivival`
+* 基础*Trait*: `is_void`, `is_null_pointer`, `is_class`, `is_function`...
+* 复合*Trait*: `is_fundamental`, `is_arithmetic`, `is_object`...
+* 类型查询*Trait*: `is_const`, `is_volatile`, `is_trivival`
 * Supported operations: 
-* Property quiries
+* 属性查询*Trait*
 * Type relationships
 * Const-volatility specifiers
-* Reference
-* Pointers
+* 引用操作：
+* 指针操作：
 * Sign modifiers
-* Arrays
+* 数组类
 * 
 
 
