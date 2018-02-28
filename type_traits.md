@@ -12,23 +12,22 @@
 
 ## C++ 11 Type Traits
 
-C++ 11标准库定义了超过80中 *type trait* ，全部放在头文件 `<type_traits>` 中。这些*trait*大致可以分为一下几类：
+*type trait*，顾名思义，就是对萃取类型信息的`trait`。C++ 11标准库定义了超过80种*type trait* ，全部放在头文件 `<type_traits>` 中。这些*trait*大致可以分为一下几类：
 
-* 基础*Trait*: `is_void`, `is_null_pointer`, `is_class`, `is_function`...
-* 复合*Trait*: `is_fundamental`, `is_arithmetic`, `is_object`...
-* 类型查询*Trait*: `is_const`, `is_volatile`, `is_trivival`
-* Supported operations: 
-* 属性查询*Trait*
-* Type relationships
-* Const-volatility specifiers
-* 引用操作：
-* 指针操作：
-* Sign modifiers
-* 数组类
-* 
+* Primary type categories: `is_void`, `is_null_pointer`, `is_class`, `is_function`...
+* Composite type categories: `is_fundamental`, `is_arithmetic`, `is_object`...
+* Type properties: `is_const`, `is_volatile`, `is_trivival`, `is_empty`...
+* Supported operations: `is_constructible`, `is_default_constructible`, `is_assignable`... 
+* Property quirries: `alignment_of`, `rank`, `extent`
+* Type relationships: `is_same`, `is_base_of`, `is_convertible`...
+* Const-volatility specifiers: `remove_cv`, `remove_const`, `add_cv`, `add_const`...
+* Reference: `remove_reference`, `add_lvalue_reference`, `add_rvalue_referene`...
+* Pointers: `remove_pointer`, `add_pointer`
+* Sign modifiers: `make_signed`, `make_unsigned`
+* Arrays: `remove_extent`, `remove_all_extent`
+* Miscellaneous: `decay`, `enable_if`, `common_type`...
 
-
-关于C++ 11 _type trait_ 的详细信息，可以参考 [cppreference.com](http://en.cppreference.com/w/cpp/header/type_traits)。
+篇幅有限，不可能列出全部的*trait*。完整的列表可以参考[cppreference.com](http://en.cppreference.com/w/cpp/header/type_traits)。
 
 由于篇幅关系，本书只能选择一些有代表性的 _trait_，解释其设计思路和实现原理，目的是让你了解C++ _type trait_ 的编写方法，顺便膜拜一下大神们的编码技巧。
 
