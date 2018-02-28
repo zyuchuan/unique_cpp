@@ -14,22 +14,21 @@
 
 C++ 11标准库定义了了大量的 _type trait_ ，全部放在头文件 `<type_traits>` 中。这些*trait*大致可以分为一下几类：
 
-1. Primary type categories
+* Primary type categories: `is_void`, `is_null_pointer`, `is_class`, `is_function`...
+* Composite type categories: `is_fundamental`, `is_arithmetic`, `is_object`...
+* Type properties: `is_const`, `is_volatile`, `is_trivival`
+* Supported operations: 
+* Property quiries
+* Type relationships
+* Const-volatility specifiers
+* Reference
+* Pointers
+* Sign modifiers
+* Arrays
+* 
 
->> `is_void`, `is_null_pointer`
-
-2. Composite type categories
-
->> `is_fundamental`
 
 关于C++ 11 _type trait_ 的详细信息，可以参考 [cppreference.com](http://en.cppreference.com/w/cpp/header/type_traits)。
-
-* Primary type categories
-
-
-`is_void`
-
-
 
 由于篇幅关系，本书只能选择一些有代表性的 _trait_，解释其设计思路和实现原理，目的是让你了解C++ _type trait_ 的编写方法，顺便膜拜一下大神们的编码技巧。
 
@@ -39,15 +38,14 @@ C++ 11标准库定义了了大量的 _type trait_ ，全部放在头文件 `<typ
 
 我们先从最简单的**trait** ``is_const``入手，``is_const``检查一个类型声明有没有``const``修饰符，它的用法如下：
 
-[source,c++]
-----
+```c++
  std::cout << std::boolalpha;
  std::cout << std::is_const<int>::value << '\n';         // false
  std::cout << std::is_const<const int>::value  << '\n';  // true
  std::cout << std::is_const<const int*>::value  << '\n'; // false
  std::cout << std::is_const<int* const>::value  << '\n'; // true
  std::cout << std::is_const<const int&>::value  << '\n'; // false
-----
+```
 
 实现原理也很简单，源代码如下（省略了和主题无关的细节）：
 
