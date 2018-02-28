@@ -12,7 +12,17 @@
 
 ## C++ 11 Type Traits
 
-C++ 11标准库引入了大量的 _type trait_ ，用于在编译期查询或者编辑类型的属性, 这些 _trait_ 全部放在头文件 `<type_traits>` 中。关于C++ 11 _type trait_ 的详细信息，可以参考 [cppreference.com](http://en.cppreference.com/w/cpp/header/type_traits)。
+C++ 11标准库定义了了大量的 _type trait_ ，全部放在头文件 `<type_traits>` 中。这些*trait*大致可以分为一下几类：
+
+1. Primary type categories
+
+>> `is_void`, `is_null_pointer`
+
+2. Composite type categories
+
+>> `is_fundamental`
+
+关于C++ 11 _type trait_ 的详细信息，可以参考 [cppreference.com](http://en.cppreference.com/w/cpp/header/type_traits)。
 
 * Primary type categories
 
