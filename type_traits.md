@@ -29,12 +29,11 @@ Sign modifiers | `make_signed`, `make_unsigned`
 Arrays | `remove_extent`, `remove_all_extent`
 Miscellaneous | `decay`, `enable_if`, `common_type` ...
 
-由于篇幅有限，我们不可能列出全部的*trait*，不过在*cppreference.com*上有[完整的列表](http://en.cppreference.com/w/cpp/header/type_traits)，有兴趣的同学可以去观摩一下。
+由于篇幅有限，我们不可能列出全部的*trait*，不过在*cppreference.com*上有[完整的列表](http://en.cppreference.com/w/cpp/header/type_traits)，有兴趣的同学不妨去观摩一下。
 
-由于篇幅关系，本书只能选择一些有代表性的 _trait_，解释其设计思路和实现原理，目的是让你了解C++ _type trait_ 的编写方法，顺便膜拜一下大神们的编码技巧。
+## Type Traits的实现
 
-<br/>
-
+研究这些*trait*的源代码是一件很有意思的事情，你经常会被那些拍$$丧$$ 案（心）惊（病）奇（狂））
 ### is_const
 
 我们先从最简单的**trait** ``is_const``入手，``is_const``检查一个类型声明有没有``const``修饰符，它的用法如下：
@@ -51,15 +50,6 @@ Miscellaneous | `decay`, `enable_if`, `common_type` ...
 实现原理也很简单，源代码如下（省略了和主题无关的细节）：
 
 ```C++
-template <class T, T v>
-struct integral_constant {
-    static constexpr const T    value = v;
-};
-
-typedef integral_constant<bool, true> true_type;
-typedef integral_constant<bool, false> false_type;
-
-
 template<class T>
 struct is_const : public false_type {};
 
