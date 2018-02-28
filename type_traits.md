@@ -33,7 +33,7 @@ Miscellaneous | `decay`, `enable_if`, `common_type` ...
 
 ## Type Traits的实现
 
-研究这些*trait*的源代码是一件很有意思的事情，你经常会被那些拍$$丧$$ 案（心）惊（病）奇（狂））
+研究这些*trait*的源代码是一件很有意思的事情，你经常会被那些拍 案（心）惊（病）奇（狂)
 ### is_const
 
 我们先从最简单的**trait** ``is_const``入手，``is_const``检查一个类型声明有没有``const``修饰符，它的用法如下：
