@@ -8,7 +8,7 @@
 
 > _trait_ 是一个小型对象，它的主要目的就是携带信息，而这些信息会被其它的对象或算法使用，用来决定某个 _policy_ 或 _implementation_ 的细节。
 
-**_Trait_**在标准库中大量运用，比如
+**_Trait_**在标准库中大量运用，比如我们熟悉的C++ 98 STL中的`iterator_traits`、`char_traits`等。C++ 11又增加了*type trait*。
 
 ## C++ 11 Type Traits
 
