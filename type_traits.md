@@ -41,10 +41,7 @@ C++ 11标准库引入了大量的 _type trait_ ，用于在编译期查询或者
 
 实现原理也很简单，源代码如下（省略了和主题无关的细节）：
 
-[source,c++]
-----
-// file: <type_traits>
-
+```C++
 template <class T, T v>
 struct integral_constant {
     static constexpr const T    value = v;
@@ -60,7 +57,7 @@ struct is_const : public false_type {};
 // 针对const类型的特化版本
 template<class T>
 struct is_const<const T> : public true_type {};
-----
+```
 
 代码很好理解，无非就是针对``const``类型的模板特化而已，这里就不详细解释了。如果你理解起来有难度，恐怕得补习一下C++模板知识了。
 
@@ -68,8 +65,7 @@ struct is_const<const T> : public true_type {};
 
 如果要你来写一个**trait**，判断某个类型是否是一_class_或_struct_，比如有如下代码：
 
-[source,c++]
-----
+```c++
 struct A {};
 class B {};
 enum class C {};
@@ -79,24 +75,22 @@ std::cout << is_class<A>::value << std::endl;
 std::cout << is_class<B>::value << std::endl;
 std::cout << is_class<C>::value << std::endl;
 std::cout << is_class<int>::value << std::endl;
-----
+```
 
 我希望输出如下：
 
-[source,c++]
-----
+```c++
 true
 true
 false
 false
-----
+```
 
 你该怎么做？
 
 有点晕菜是不是？考虑一下什么是_class_?_class_无非就是一组数据以及用以操纵这些数据的函数的集合。对于类中的数据，C++允许你定义一个指向类成员变量的指针，这是_class_所特有的属性，那可不可以针对这些特有属性，在模板特化上做文章呢？答案是肯定的，而且这也正是``is_class``的实现原理：
 
-[source,c++]
-----
+```c++
 // helper class, sizeof(two) = 2
 struct two {
     char c[2];
@@ -114,11 +108,11 @@ namespace is_class_imp {
 template<class T>
 struct is_class 
     : public integral_constant<bool, sizeof(is_class_imp::test<T>(0)) == 1> {};
-----
+```
 
-上面的代码重载了函数``test``，第一个重载函数接受一个，呃...，那个“T冒号冒号星号”是啥？...``int T::*``定义了一个``int``类型的指向类成员变量的指针，也就是说函数接受一个类成员变量指针作为参数，当然也接受一个结构体成员变量指针（C++中``struct``和``class``其实是一样的）作为参数。第二个``test``是个可变参数函数，接受任意数量和类型的参数。
+上面的代码重载了函数`test`，第一个重载函数接受一个，呃...，那个“T冒号冒号星号”是啥？...`int T::*`定义了一个`int`类型的指向类成员变量的指针，也就是说函数接受一个类成员变量指针作为参数，当然也接受一个结构体成员变量指针（C++中`struct`和`class`其实是一样的）作为参数。第二个`test`是个可变参数函数，接受任意数量和类型的参数。
 
-当编译器看到``sizeof(is_class_imp::test<T>(0))``的时候，首先需要决定匹配哪个``test``函数。如果模板参数``T``确实是一个``class``或``struct``，那``int T::*``就是合法的C++表达式。至于``T``中有没有``int``类型的成员变量，编译器根本不关心。
+当编译器看到`sizeof(is_class_imp::test<T>(0))`的时候，首先需要决定匹配哪个`test`函数。如果模板参数`T`确实是一个`class`或``struct``，那``int T::*``就是合法的C++表达式。至于``T``中有没有``int``类型的成员变量，编译器根本不关心。
 
 等等！你又发现了问题，“``test``函数只有声明，没有定义，没有定义的函数该怎么编译？” 答案是根本不需要，编译器关心的是如何求出表达式``sizeof(...)``的值，而求解``sizeof(...)``只需要知道``is_class_imp::test<T>(0)``的返回类型，不需要看到函数的定义。所以如果``T``是个``class``或``struct``，那``int t::*``就是合法的类型定义，且精确匹配第一个重载函数，于是编译器用第一个函数的返回类型去求``sizeof``，于是``is_class``的声明就会被替换成
 
