@@ -14,6 +14,13 @@
 
 C++ 11标准库引入了大量的 _type trait_ ，用于在编译期查询或者编辑类型的属性, 这些 _trait_ 全部放在头文件 `<type_traits>` 中。关于C++ 11 _type trait_ 的详细信息，可以参考 [cppreference.com](http://en.cppreference.com/w/cpp/header/type_traits)。
 
+* Primary type categories
+
+
+`is_void`
+
+
+
 由于篇幅关系，本书只能选择一些有代表性的 _trait_，解释其设计思路和实现原理，目的是让你了解C++ _type trait_ 的编写方法，顺便膜拜一下大神们的编码技巧。
 
 <br/>
