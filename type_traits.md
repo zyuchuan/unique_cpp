@@ -14,7 +14,7 @@
 
 *Type trait*，顾名思义，就是对萃取类型信息的*trait*。C++ 11标准库定义了超过80种*type trait* ，全部放在头文件 `<type_traits>` 中。这些*trait*大致可以分为一下几类：
 
-  Categories | Trait 
+Categories | Trait 
 ------------ | -------------
 Primary type | `is_void`, `is_null_pointer`, `is_class`, `is_function` ...
 Composite type | `is_fundamental`, `is_arithmetic`, `is_object` ...
@@ -29,7 +29,7 @@ Sign modifiers | `make_signed`, `make_unsigned`
 Arrays | `remove_extent`, `remove_all_extent`
 Miscellaneous | `decay`, `enable_if`, `common_type` ...
 
-篇幅有限，不可能列出全部的*trait*。完整的列表可以参考[cppreference.com](http://en.cppreference.com/w/cpp/header/type_traits)。
+由于篇幅有限，我们不可能列出全部的*trait*，不过在*cppreference.com*上有[完整的列表](http://en.cppreference.com/w/cpp/header/type_traits)，有兴趣的同学可以去观摩一下。
 
 由于篇幅关系，本书只能选择一些有代表性的 _trait_，解释其设计思路和实现原理，目的是让你了解C++ _type trait_ 的编写方法，顺便膜拜一下大神们的编码技巧。
 
