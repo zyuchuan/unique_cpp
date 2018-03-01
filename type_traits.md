@@ -245,11 +245,11 @@ struct is_function : public libcpp_is_function<T> {};
 
 这段代码比较难懂，需要详细解释一下：
 
-1. 如果你对一个``class``, ``union``, ``void``, ``reference``或``null pointer``，执行``is_function``操作，此时``libcpp_is_function``的第二个模板参数为``true``，而针对这种情况定义了一个特化版本，该特化版本继承于``false_type``，这是我们需要的结果。
+如果你对一个``class``, ``union``, ``void``, ``reference``或``null pointer``，执行``is_function``操作，此时``libcpp_is_function``的第二个模板参数为``true``，而针对这种情况定义了一个特化版本，该特化版本继承于``false_type``，这是我们需要的结果。
 
-2. 除去第一种情况，编译器会激活非特化版本，此时编译器会对模板类``integral_const``的第二个模板参数进行类型推导：
+除去第一种情况，编译器会激活非特化版本，此时编译器会对模板类``integral_const``的第二个模板参数进行类型推导：
 
-3. 如果``T``是一个*function*对象，比如``void(void)``，则``libcpp_is_function_imp::source<T>(0))``的返回值为``void(void)&``。在编译器眼里，函数对象和函数指针是一种类型，也就是说``void(void)``和``void(*)(void)``是一种类型，编译器于是会匹配参数为``T*``的重载版本``test(T*)``，于是，``sizeof(...)``表达式被替换成``sizeof(test<void(void)>(void(*)(void))``，进而替换成``sizeof(char)``，最终，类的声明被替换成：
+如果``T``是一个*function*对象，比如``void(void)``，则``libcpp_is_function_imp::source<T>(0))``的返回值为``void(void)&``。在编译器眼里，函数对象和函数指针是一种类型，也就是说``void(void)``和``void(*)(void)``是一种类型，编译器于是会匹配参数为``T*``的重载版本``test(T*)``，于是，``sizeof(...)``表达式被替换成``sizeof(test<void(void)>(void(*)(void))``，进而替换成``sizeof(char)``，最终，类的声明被替换成：
 
 ```c++
 template<class T>
@@ -258,7 +258,7 @@ struct libcpp_is_function : public integral_const<bool, true> {};
 
 这也是我们需要的结果。
     
-4. 如果``T``不是一个_function_对象，比如为``int``，这时``source``函数的返回类型为``int&``。由于``int&``和``int*``不是同一个类型，编译器只能匹配``test(...)``函数，于是类的声明就成了：
+如果``T``不是一个_function_对象，比如为``int``，这时``source``函数的返回类型为``int&``。由于``int&``和``int*``不是同一个类型，编译器只能匹配``test(...)``函数，于是类的声明就成了：
 
 ```c++
 template<class T>
@@ -267,11 +267,9 @@ struct libcpp_is_function : public integral_const<bool, false>
 
 这仍然是我们需要的结果。
 
-C++11标准库定义的_type trait_还有很多，这里就不一一介绍了。总的来说，这些_type traits_都是基于模板特化和函数重载，利用编译器的类型推导能力，做一些“神奇”的事。因为所有这些都是在编译期进行了，所以对运行期完全没有冲击，完全不必担心效率问题。
+## 自己动手写一个Type Trait
 
-== 自己动手写一个Type Trait
-
-下面我们自己动手，写一个_trait_ ``has_to_string``，我们希望达到如下的效果：
+看了那么多，下面我们自己动手写一个*trait*： ``has_to_string``，我们希望达到如下的效果：
 
 ```c++
 struct A {
@@ -286,12 +284,12 @@ std::cout << has_to_string<A>::value << std::endl; // 1
 std::cout << has_to_string<B>::value << std::endl; // 0
 ```
 
-这里给出一种可能的实现：
+各位同学可以开动脑筋，看看能否写出惊天地泣鬼神的代码。作为参考，这里给出一种可能的实现：
 
 ```c++
 template<typename T, typename = std::string>
 struct has_to_string : std::false_type {};
 
 template<typename T>
-struct has_to_string : decltype(std::declval<T>().to_string())> : std::true_type {};
+struct has_to_string<decltype(std::declval<T>().to_string())> : std::true_type {};
 ```
