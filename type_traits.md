@@ -291,5 +291,5 @@ template<typename T, typename = std::string>
 struct has_to_string : std::false_type {};
 
 template<typename T>
-struct has_to_string<decltype(std::declval<T>().to_string())> : std::true_type {};
+struct has_to_string<T, decltype(std::declval<T>().to_string())> : std::true_type {};
 ```
