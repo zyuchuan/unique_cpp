@@ -119,6 +119,7 @@ struct is_class : public integral_constant<bool, false> {};
 看到这里，相信你已经明白了``is_class``的实现原理，无非就是利用了重载函数的匹配规则而已。值得注意的是，上面代码中的``test``函数只有声明，没有定义。其实文件``type_traits``中声明了众多的辅助函数，却没有一个定义，因为根本不需要。正如前面反复强调的，编译器只是在做类型推导，唯一需要知道的就是参数类型和返回类型，至于有没有定义，编译器完全不关心。
 
 <br/>
+
 ### common_type
 
 ``common_type``返回所有模板参数的最大公共类型，比如
@@ -145,7 +146,7 @@ template<class T, class U>
 struct common_type<T, U> {
 private:
     static T&& t();
-    statuc U&& u();
+    static U&& u();
     static bool f();
 public:
     typedef typename std::decay<decltype(f() ? t() : u())>::type type;
@@ -181,7 +182,7 @@ std::cout <<
 
 ### is_function
 
-最后来一道硬菜：``is_function``。``is_function``检查某个类型是否是``function``，比如下面代码所示：
+最后来一道硬菜：``is_function``。这个*trait*检查某个类型是否是``function``，比如下面代码所示：
 
 ```c++
 // Sample code comes from http://en.cppreference.com/w/cpp/types/is_function
@@ -214,7 +215,7 @@ using T = PM_traits<decltype(&A::fun)>::member_type;
 is_function<T>::value                       // true
 ```
 
-是不是觉得很神奇？我们来看一下源代码：
+是不是觉得很神奇？我们来看一下它的实现代码：
 
 ```c++
 namspace libcpp_is_function_imp {
@@ -244,11 +245,11 @@ struct is_function : public libcpp_is_function<T> {};
 
 这段代码比较难懂，需要详细解释一下：
 
-如果你对一个``class``, ``union``, ``void``, ``reference``或``null pointer``，执行``is_function``操作，此时``libcpp_is_function``的第二个模板参数为``true``，而针对这种情况定义了一个特化版本，该特化版本继承于``false_type``，这是我们需要的结果。
+1. 如果你对一个``class``, ``union``, ``void``, ``reference``或``null pointer``，执行``is_function``操作，此时``libcpp_is_function``的第二个模板参数为``true``，而针对这种情况定义了一个特化版本，该特化版本继承于``false_type``，这是我们需要的结果。
 
-除去第一种情况，编译器会激活非特化版本，此时编译器会对模板类``integral_const``的第二个模板参数进行类型推导：
+2. 除去第一种情况，编译器会激活非特化版本，此时编译器会对模板类``integral_const``的第二个模板参数进行类型推导：
 
-如果``T``是一个_function_对象，比如``void(void)``，则``libcpp_is_function_imp::source<T>(0))``的返回值为``void(void)&``。在编译器眼里，函数对象和函数指针是一种类型，也就是说``void(void)``和``void(\*)(void)``是一种类型，编译器于是会匹配参数为``T*``的重载版本``test(T*)``，于是，``sizeof(...)``表达式被替换成``sizeof(test<void(void)>(void(*)(void))``，进而替换成``sizeof(char)``，最终，类的声明被替换成：
+3. 如果``T``是一个*function*对象，比如``void(void)``，则``libcpp_is_function_imp::source<T>(0))``的返回值为``void(void)&``。在编译器眼里，函数对象和函数指针是一种类型，也就是说``void(void)``和``void(*)(void)``是一种类型，编译器于是会匹配参数为``T*``的重载版本``test(T*)``，于是，``sizeof(...)``表达式被替换成``sizeof(test<void(void)>(void(*)(void))``，进而替换成``sizeof(char)``，最终，类的声明被替换成：
 
 ```c++
 template<class T>
@@ -257,7 +258,7 @@ struct libcpp_is_function : public integral_const<bool, true> {};
 
 这也是我们需要的结果。
     
-如果``T``不是一个_function_对象，比如为``int``，这时``source``函数的返回类型为``int&``。由于``int&``和``int*``不是同一个类型，编译器只能匹配``test(...)``函数，于是类的声明就成了：
+4. 如果``T``不是一个_function_对象，比如为``int``，这时``source``函数的返回类型为``int&``。由于``int&``和``int*``不是同一个类型，编译器只能匹配``test(...)``函数，于是类的声明就成了：
 
 ```c++
 template<class T>
