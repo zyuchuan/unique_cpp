@@ -33,7 +33,7 @@ Miscellaneous | `decay`, `enable_if`, `common_type` ...
 
 ## Type Traits的实现
 
-研究这些*trait*的源代码是一件很有意思的事情，你会看到各种让你脑洞大开拍案惊奇技巧。下面让我们一起去看看这些代码长什么样。
+研究这些*trait*的源代码是一件很有意思的事情，你会看到各种让你脑洞大开拍案惊奇的编码技巧。下面让我们一起去看看这些代码长什么样。
 ### is_const
 
 ``is_const``检查一个类型声明有没有``const``修饰符
@@ -98,7 +98,7 @@ struct is_class
     : public integral_constant<bool, sizeof(is_class_imp::test<T>(0)) == 1> {};
 ```
 
-上面的代码重载了函数`test`，第一个重载函数接受一个，呃...，那个“T冒号冒号星号”是啥？...`int T::*`定义了一个`int`类型的指向类成员变量的指针，也就是说函数接受一个类成员变量指针作为参数，当然也接受一个结构体成员变量指针（C++中`struct`和`class`其实是一样的）作为参数。第二个`test`是个可变参数函数，接受任意数量和类型的参数。
+上面的代码重载了函数`test()`，第一个重载函数接受一个，呃...，那个“T冒号冒号星号”是啥？...`int T::*`定义了一个`int`类型的指向类成员变量的指针，也就是说函数接受一个类成员变量指针作为参数，当然也接受一个结构体成员变量指针（C++中`struct`和`class`其实是一样的）作为参数。第二个`test`是个可变参数函数，接受任意数量和类型的参数。
 
 当编译器看到`sizeof(is_class_imp::test<T>(0))`的时候，首先需要决定匹配哪个`test`函数。如果模板参数`T`确实是一个`class`或``struct``，那``int T::*``就是合法的C++表达式。至于``T``中有没有``int``类型的成员变量，编译器根本不关心。
 
@@ -109,7 +109,7 @@ template<class T>
 struct is_class : public integral_constant<bool, true> {};
 ```
 
-如果``T``不是一个``class``或``struct``，那``int T::*``就是一个非法的类型定义，根据**SFINAE**规则，编译器不会报错，而是试着匹配第二个重载函数，也就是``test``的三个点版本，而这个版本是可以匹配任何参数类型的，``is_class``的声明会被替换成
+如果``T``不是一个``class``或``struct``，那``int T::*``就是一个非法的类型定义，根据*SFINAE*规则，编译器不会报错，而是试着匹配第二个重载函数，也就是``test``的三个点版本，而这个版本是可以匹配任何参数类型的，``is_class``的声明会被替换成
 
 ```c++
 template<class T>
@@ -118,7 +118,8 @@ struct is_class : public integral_constant<bool, false> {};
 
 看到这里，相信你已经明白了``is_class``的实现原理，无非就是利用了重载函数的匹配规则而已。值得注意的是，上面代码中的``test``函数只有声明，没有定义。其实文件``type_traits``中声明了众多的辅助函数，却没有一个定义，因为根本不需要。正如前面反复强调的，编译器只是在做类型推导，唯一需要知道的就是参数类型和返回类型，至于有没有定义，编译器完全不关心。
 
-=== common_type
+<br/>
+### common_type
 
 ``common_type``返回所有模板参数的最大公共类型，比如
 
@@ -157,14 +158,12 @@ struct common_type<T, U, V...> {
 };
 ```
 
-代码比较简单，首先声明了一个模板类，然后分别针对模板参数的个数为一个和两个的情形做了特化，对于三个以上的模板参数的情况，则用递归的方法定义。
-
-好像哪里不对？
+代码首先声明了一个模板类，然后分别针对模板参数的个数为一个和两个的情形做了特化，对于三个以上的模板参数的情况，则用递归的方法定义。然而...好像哪里不对？
 
 1. 哪里能看出来推导公共类型了？
 2. 这行代码有问题: ``typedef typename std::decay<decltype(f() ? t() : u())::type type``，函数``f()``根本没有定义，所以三目运算符``? :``根本没法求值。
 
-恭喜你，你有一只火眼金睛（另一只不是，所以看不到代码的精妙之处）。让我来告诉你怎么回事，这两个问题其实是一个问题。我们先从``f() ? t() : u()``说起，我再说一遍，编译器在解析模板时，做的是类型推导，所以``f()``根本不需要定义（即使有定义，编译器也不知道返回值是``true``还是``false``，只有到运行时才知道）。那问题又来了，不知道``f()``的返回值，编译器该如何求解三目运算符呢？答案还是不需要，编译器此时需要知道的是三目运算符的返回类型（而不是返回值），以满足解析``decltype(...)``的需要。问题是，不知道返回值，返回类型也无从谈起。似乎编译进入了死胡同，别急，C++编译器是你的贴心小棉袄，它会尽一切可能编译你的代码，为了让编译进行下去，编译器会自动检查冒号两边的类型，尽可能将其中一个类型转换为另一个类型，并将这个类型作为三目表达式的返回类型，传入``decltype(...)``中。如果你还有疑问，可以做一个简单的测试：
+恭喜你，你有一只火眼金睛（另一只不是，所以看不到代码的精妙之处）。让我来告诉你怎么回事，这两个问题其实是一个问题。我们先从``f() ? t() : u()``说起，我再说一遍，编译器在解析模板时，做的是类型推导，所以``f()``根本不需要定义（即使有定义，编译器也不知道返回值是``true``还是``false``，只有到运行时才知道）。那问题又来了，不知道``f()``的返回值，编译器该如何求解三目运算符呢？答案还是不需要，编译器此时需要知道的是三目运算符的返回类型（而不是返回值），以满足解析``decltype(...)``的需要。问题是，不知道返回值，返回类型也无从谈起。这似乎进入了死胡同，别急，C++编译器是你的贴心小棉袄，它会尽一切可能编译你的代码，为了让编译进行下去，编译器会自动检查冒号两边的类型，尽可能将其中一个类型转换为另一个类型，并将这个类型作为三目表达式的返回类型，传入``decltype(...)``中。如果你还有疑问，可以做一个简单的测试：
 
 ```c++
 std::cout << 
@@ -176,11 +175,13 @@ std::cout <<
 
 在我的XCode 9.2中，上面两行代码都输出``d``，也就是``double``。这就证明了编译器在三目表达式时，自动对参数类型进行了转换，并返回最大公共类型。
 
-用三目运算符来推导最大公共类型，我只能用“顶（sang）礼（xin）膜（bing）拜（kuang）”来形容。在C++11的标准库中，类似的使用“奇技淫巧”例子还有很多，这里就不一一介绍了。知乎上有一篇关于C++“奇技淫巧”的讨论帖子，有兴趣的同学可以 https://www.zhihu.com/question/27338446[狠戳这里].
+用三目运算符来推导最大公共类型，我只能用 **顶（丧）礼（心）膜（病）拜（狂）** 来形容。在标准库中，类似的使用*奇技淫巧*例子还有很多，这里就不一一介绍了。知乎上有一篇关于C++*奇技淫巧*的讨论帖子，有兴趣的同学可以[狠戳这里](https://www.zhihu.com/question/27338446)。
 
-=== is_function
+<br/>
 
-最后来一道硬菜：``is_function``。``is_function``检查某个类型是否是``function``。注意，``is_function``不能用于检查``std::function``，lambda表达式，重载了``operator()``的类，以及函数指针。
+### is_function
+
+最后来一道硬菜：``is_function``。``is_function``检查某个类型是否是``function``，比如下面代码所示：
 
 ```c++
 // Sample code comes from http://en.cppreference.com/w/cpp/types/is_function
@@ -196,23 +197,21 @@ struct PM_traits<U T::*> {
 
 int f();
 
-std::cout << std::boolalpha;
-
 // 1. A是个class，不是function;
-std::cout << is_function<A>::value << std::endl;            // false
+is_function<A>::value;                      // false
 
 // 2. int(int)表示一个以int为参数，并返回int的function类型；
-std::cout << is_function<int(int)>::value << std::endl;     // true
+is_function<int(int)>::value                // true
 
 // 3. f是个function的名字，decltype(f)是个function类型
-std::cout << is_function<decltype(f)>::value << std::endl;  // true
+is_function<decltype(f)>::value             // true
 
 // 4. 显然int不是一个function
-std::cout << is_function<int>::value << std::endl;          // false
+is_function<int>::value                     // false
 
 // 5. T被解析成 int()，是个function
 using T = PM_traits<decltype(&A::fun)>::member_type;
-std::cout << is_function<T>::value << std::endl;            // true
+is_function<T>::value                       // true
 ```
 
 是不是觉得很神奇？我们来看一下源代码：
@@ -221,7 +220,7 @@ std::cout << is_function<T>::value << std::endl;            // true
 namspace libcpp_is_function_imp {
     template<calss T> char    test(T*);
     template<class T> two     test(...);
-    template<calss T> T&     source(int);
+    template<calss T> T&      source(int);
 }
 
 // 如果T是class, union, void, reference或null pointer,
