@@ -13,7 +13,7 @@
 
 2. 都是通过hast table实现的。这点我们稍后会详细介绍。
 
-标准库中已经有了`map`和`set`，为什么还要定义`unordered`的`map`和`set`呢？答案还是那两个字：**效率**。我们知道，`map`和`set`的底层数据结构是红黑树，执行查找、插入，删除等操作的时间复杂度为O(logn)；而`unordered map`和`unordered set`的底层数据为`hash table`，执行查找、插入和删除等操作的时间复杂度为O(1)，明显要快很多，所以如果对元素的排列顺序没有要求，建议使用无序关联容器。
+标准库中已经有了`map`和`set`，为什么还要定义`unordered`的`map`和`set`呢？答案还是那两个字：**效率**。我们知道，`map`和`set`的底层数据结构是红黑树，执行查找、插入，删除等操作的时间复杂度为O(logn)；而`unordered map`和`unordered set`的底层数据为`hash table`，执行查找、插入和删除等操作的时间复杂度为O(1)，明显要快很多，所以如果对元素的排列顺序没有要求，建议使用无序关联容器。
 
 既然无序关联容器都是基于`hash table`的，那我们就有必要先了解一下C++ 11中的hash算法。
 
@@ -30,20 +30,20 @@ struct hash {
 };
 ```
 
-2. 对于类型为`T`的参数`t1`和`t2`，如果`t1 == t2`，则`hash<T>()(t1) == hash<T>()(t2)`;
+2. 对于类型为`T`的参数`t1`和`t2`，如果`t1 == t2`，则`hash<T>()(t1) == hash<T>()(t2)`;
 
-3. 对于类型为`T`的参数`t1`和`t2`，如果`t1 != t2`，则`hash<T>()(t1) == hash<T>()(t2)`的概率应近似于`1.0/std::numeric_limits<size_t>::max()`（在我的MacBook Pro上，这个值为0.00000000000000000005.421，小数点后面19个`0`）。
+3. 对于类型为`T`的参数`t1`和`t2`，如果`t1 != t2`，则`hash<T>()(t1) == hash<T>()(t2)`的概率应近似于`1.0/std::numeric_limits<size_t>::max()`（在我的MacBook Pro上，这个值为0.00000000000000000005.421，小数点后面19个`0`）。
 
 不过，C++标准只是规定了hash方程的形式和必须满足的条件，具体到如何计算hash值，则没有要求。就libc++而言，针对不同的类型，其计算方法也不尽相同。
 
 ### 简单数值类型
 
-对于简单数值类型，如`bool`、`int`、`char`等，libc++的hash算法也很简单：直接返回数值本身。
+对于简单数值类型，如`bool`、`int`、`char`等，libc++的hash算法也很简单：直接返回数值本身。
 
 ```c++
 // header: <functional>
 
-template<class T> struct hash; // forward declaration
+template<class T> struct hash; // forward declaration
 
 // specialization for bool
 template<>
@@ -54,7 +54,7 @@ struct hash<bool> : pubic unary_function<bool, size_t> {
 };
 
 // specialization for int
-template<>
+template<>
 struct hash<int> : public unary_function<int, size_t> {
     size_t operator()(int value) const noexcept {
         return static_cast<size_t>(value);
@@ -72,7 +72,7 @@ struct hash<char> : pubic unary_function<char, size_t> {
 
 ### 浮点数值类型
 
-针对复杂数值类型，如`float`、`double`等，libc++提供了两种hash算法：[murmur2](https://en.wikipedia.org/wiki/MurmurHash)和[cityhash64](https://github.com/google/cityhash)：
+针对复杂数值类型，如`float`、`double`等，libc++提供了两种hash算法：[murmur2](https://en.wikipedia.org/wiki/MurmurHash)和[cityhash64](https://github.com/google/cityhash)：
 
 ```c++
 // header: <memory>
@@ -209,7 +209,7 @@ struct hash<double> : public scalar_hash<double> {
 
 ### 内置非数值类型
 
-对于标准库中的非数值类型，比如`string`等，标准库也提供了hash方程：
+对于标准库中的非数值类型，比如`string`等，标准库也提供了hash方程：
 
 ```c++
 // header: <string>
@@ -218,7 +218,7 @@ template<class CharT, class Traits, class Allocator>
 struct hash<basic_string<CharT, Traits, Allocator> >
     : public unary_function<basic_string<CharT, Traits, Allocator>, size_t> {
 
-    size_t operator()(const basic_string<CharT, Traits, Allocator>& val) const noexcept;
+    size_t operator()(const basic_string<CharT, Traits, Allocator>& val) const noexcept;
 };
 
 template<class CharT, class Traits, class Allocator>
@@ -255,12 +255,12 @@ struct Foo {
 };
 ```
 
-你可以这样计算hash：
+你可以这样计算hash：
 
 ```c++
 template<>
 struct hash<Foo> : public unary_function<Foo, size_t> {
-    size_t operator()（const Foo& foo）const noexcept {
+    size_t operator()（const Foo& foo）const noexcept {
         return murmur2_or_cityhash<size_t>()
             (static_cast<const void*>(&foo), sizeof(Foo));
     }
@@ -363,7 +363,7 @@ public:
 };
 ```
 
- 我们来梳理一下，每一个`__hash_table`都有一个`__bucket_list_`：
+我们来梳理一下，每一个`__hash_table`都有一个`__bucket_list_`：
 
 ```c++
 __bucket_list __bucket_list_
@@ -377,7 +377,7 @@ typedef typename _NodeTypes::__next_pointer                      __next_pointer;
 typedef std::unique_ptr<__next_pointer[], __bucket_list_deleter> __bucket_list;
 ```
 
-这里的关键就是`__make_hash_node_types`：
+这里的关键就是`__make_hash_node_types`：
 
 ```c++
 template <class _NodePtr, class _NodeT = typename pointer_traits<_NodePtr>::element_type>
