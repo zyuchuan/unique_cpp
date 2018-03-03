@@ -11,7 +11,7 @@ C++ 11标准库提供了四种智能指针：
 
 `auto_ptr`因为功能有限，用处也有限，所以就不讲了。至于`weak_ptr`，它的实现方式和`shared_ptr`很像，甚至大部分代码是通用的，所以也不专门讲了。下面我们重点分析一下`unique_ptr`和`shared_ptr`。
 
-## 1. unique\_ptr
+## unique_ptr
 
 顾名思义，`unique_ptr`就是一个原生指针独一无二的拥有者和管理者。当一个`unique_ptr`离开其作用域时，其管理的原生指针会被自动销毁。
 
@@ -22,9 +22,9 @@ C++ 11标准库提供了四种智能指针：
 
 这两种智能指针的实现方式大同小异，我们主要分析`unique_ptr<T>`的源码。理解了`unique_ptr<T>`的实现原理，`unique_ptr<T[]>`的实现原理自然也就明了了。
 
-### 1.1 unique\_ptr的源代码
+### unique_ptr的源代码
 
-```
+```c++
 // file: <memory>
 
 template<class _Tp, class _Dp = default_delete<_Tp> >
@@ -43,7 +43,7 @@ private:
 
 `unique_ptr`的声明包含两个模板参数，第一个参数`_Tp`显然就是原生指针的类型。第二个模板参数`_Dp`是一个`deleter`，默认值为`default_delete<_Tp>`。`default_delete`是一个针对`delete operator`的函数对象：
 
-```
+```c++
 // file: memory
 
 template<class T>
@@ -56,13 +56,13 @@ struct default_delete {
 
 注意这行代码：
 
-```
+```c++
 typedef typename __pointer_type<_Tp, deleter_type>::type pointer;
 ```
 
 `__pointer_type`是一个type trait，用来“萃取”出正确的指针类型。为了方便理解，大可以认为它和下面的代码是等价的：
 
-```
+```c++
 typedef _Tp* pointer;
 ```
 
@@ -71,7 +71,7 @@ typedef _Tp* pointer;
 
 这基本就是`unique_ptr`的全部声明，下面我们来看如何构造一个`unique_ptr`：
 
-```
+```c++
 // file: memory
 
 template<class _Tp, class _Dp = default_delete<_Tp> >
@@ -115,7 +115,7 @@ public:
 
 `unqiue_ptr`还定义了两个很重要的函数：`reset(pointer)`和`release()`。`reset(pointer)`的功能是用一个新指针替换原来的指针，而`release()`则是是放弃原生指针的所有权。
 
-```
+```c++
 // file: memory
 
 template<class _Tp, class _Dp = default_delete<_Tp> >
@@ -142,7 +142,7 @@ public:
 
 到目前为止，`unique_ptr`还不像个指针，因为还缺少两个方法：`operator*`和`operator->`：
 
-```
+```c++
 // file: memory
 
 template<class _Tp, class _Dp = default_delete<_Tp> >
@@ -162,11 +162,11 @@ public:
 这几乎就是`unique_ptr`的全部源代码了，总的来说比较容易理解。下面我们来分析一个稍微复杂一些的智能指针：`shared_ptr`。
 
 
-## 2. shared\_ptr
+## shared_ptr
 
 还是先从声明入手：
 
-```
+```c++
 // file: memory
 
 template<class _Tp>
@@ -184,7 +184,7 @@ private:
 
 `shared_ptr`内部维护了两个指针：一个是被其管理原生指针`__ptr_`，还有一个类型为`__shared_weak_count`的指针`__cntrl_`。那么这个`__shared_weak_count`又是什么呢？
 
-```
+```c++
 file: memory
 
 class __shared_count {
@@ -231,7 +231,7 @@ private:
 
 虚基类的作用类似于接口，是没法直接使用的，所以还必须定义一个“实在”类：
 
-```
+```c++
 // file: memory
 
 template<class _Tp, class _Dp, class _Alloc>
@@ -249,7 +249,7 @@ public:
 
 后面我们会看到，`__shared_ptr_pointer`正是`shared_ptr`的大内总管，不仅要记录`shared_ptr`的`shared owner`，还要负责分配内存和销毁指针等工作。所以`__shared_ptr_pointer`类实际上有三个成员：
 
-```
+```c++
 long __shared_owners_;
 long __shared_weak_owners_;
 __compressed_pair<__compressed_pair<_Tp, _Dp>, _Alloc> __data_;
@@ -257,7 +257,7 @@ __compressed_pair<__compressed_pair<_Tp, _Dp>, _Alloc> __data_;
 
 理解了`__shatrf_ptr_pointer`，`shared_ptr`的源代码就容易读了：
 
-```
+```c++
 // file: memory
 
 template<class _Tp>>
@@ -312,7 +312,7 @@ shared_ptr<_Tp>::~shared_ptr(){
 
 `shared_ptr`的实现虽然比`unique_ptr`复杂了一些，但是如果你能读懂`unique_ptr`的源代码，那`shared_ptr`的源代码对你来说也不算个事。因为篇幅的关系，对`shared_ptr`的分析就到这里。最后顺便说说一个关于效率的话题，我们已经看到了，`shared_ptr`内部维护了两个指针，如果你直接调用构造函数，就想这样：
 
-```
+```c++
 class Widget;
 
 auto sp = shared_ptr<Widget>(new Widget());
@@ -320,7 +320,7 @@ auto sp = shared_ptr<Widget>(new Widget());
 
 这里实际分配了两次内存，第一次是调用`new Widget()`的时候，第二次则是在`shared_ptr`构造函数的内部构造`__cntrl_`的时候。分配内存是很昂贵的操作，所以标准库提供了`make_shared()`函数，让你一次分配全部所需的内存：
 
-```
+```c++
 // file: memory
 
 template<class _Tp, class ..._Args>
@@ -349,17 +349,18 @@ shared_ptr<_Tp> shared_ptr<_Tp>::make_shared(_Args&& ...__args) {
 
 我们可以看到，确实只分配了一次内存。注意内存的分配是在这里：
 
-```
+```c++
 unique_ptr<_CntrlBlk, _D2> __hold2(__a2.allocate(1), _D2(__a2, 1));
 ```
 
 而不是：
-```
+
+```c++
 ::new(__hold2.get()) _CntrlBlk(__a2, std::forward<_Args>(_args)...);
 ```
 这里是调用`placement new`, 在`__hold2`的地址上构造一个`__CntrBlk`。`__CntrBlk`的类型是`__shared_ptr_emplace<T, Alloc>`，它的定义如下：
 
-```
+```c++
 // file: memory
 
 template<class _Tp, class _Alloc>
