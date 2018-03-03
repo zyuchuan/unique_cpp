@@ -17,7 +17,7 @@
 
 既然无序关联容器都是基于`hash table`的，那我们就有必要先了解一下C++ 11中的hash算法。
 
-## 1. C++ 11中的hash算法
+## C++ 11中的hash算法
 
 C++ 11标准对如何计算hash有明确的要求：
 
@@ -36,7 +36,7 @@ struct hash {
 
 不过，C++标准只是规定了hash方程的形式和必须满足的条件，具体到如何计算hash值，则没有要求。就libc++而言，针对不同的类型，其计算方法也不尽相同。
 
-### 1.1 简单数值类型
+### 简单数值类型
 
 对于简单数值类型，如`bool`、`int`、`char`等，libc++的hash算法也很简单：直接返回数值本身。
 
@@ -70,7 +70,7 @@ struct hash<char> : pubic unary_function<char, size_t> {
 };
 ```
 
-### 1.2 浮点数值类型
+### 浮点数值类型
 
 针对复杂数值类型，如`float`、`double`等，libc++提供了两种hash算法：[murmur2](https://en.wikipedia.org/wiki/MurmurHash)和[cityhash64](https://github.com/google/cityhash)：
 
@@ -183,7 +183,7 @@ struct scalar_hash<T, 4> : public unary_function<T, size_t> {
 
 浮点数值类型最终的hash计算方法如下：
 
-```
+```c++
 template <>
 struct hash<float> : public scalar_hash<float> {
     size_t operator()(float value) const
@@ -207,7 +207,7 @@ struct hash<double> : public scalar_hash<double> {
 };
 ```
 
-### 1.3 内置非数值类型
+### 内置非数值类型
 
 对于标准库中的非数值类型，比如`string`等，标准库也提供了hash方程：
 
@@ -240,7 +240,7 @@ inline size_t __do_string_hash(Ptr p, Ptr e) {
 }
 ```
 
-### 1.4 自定义类型
+### 自定义类型
 
 如果你有一个类，
 
@@ -269,7 +269,7 @@ struct hash<Foo> : public unary_function<Foo, size_t> {
 
 现在我们已经对`hash`算法有所了解，接下来我们就讲讲那些基于`hash`算法的容器是如何实现的。虽然C++ 11标准库中基于`hash`算法的容器一共有四种，但是它们的实现方式大同小异，所以我们就讲讲最典型的`hash`容器：`unordered_map`。
 
-## 2. unordered_map
+## unordered_map
 
 首先来看`unordered_map`的声明：
 
@@ -441,7 +441,7 @@ struct __hash_node
 
 写了这么多，也仅仅是了解了`__hash_table`的声明而已。篇幅有限，我们不能详细讲解`__hash_table`具体的实现了，就挑两个方法讲一下吧：
 
-### 2.1 默认构造函数
+### 默认构造函数
 
 默认构造函数非常简单：
 
@@ -455,7 +455,7 @@ inline __hash_table<_Tp, _Hash, _Equal, _Alloc>::__hash_table()
 }
 ```
 
-### 2.2 插入元素
+### 插入元素
 
 源代码有点复杂，不过只要看懂了`__hash_table`声明部分的代码，这部分代码相对来说还是比较容易的。
 
@@ -522,6 +522,6 @@ __done:
 }
 ```
 
-## 3. 小结
+## 小结
 
 对`unordered_map`的到此算是告一段落，至于其余三个`unordered`容器，它们的实现方法大同小异，就不一一赘述了。
