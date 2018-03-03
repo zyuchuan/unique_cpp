@@ -1,14 +1,14 @@
-# 4. tuple
+# std::tuple
 
-## 4.1 tuple简史
+## tuple简史
 
 [C++ Reference](http://en.cppreference.com/w/)对[tuple](http://en.cppreference.com/w/cpp/utility/tuple)的解释是“fixed-size collection of heterogeneous values”，也就是有固定长度的异构数据的集合。每一个C++代码仔都很熟悉的`std::pair`就是一种`tuple`。但是`std::pair`只能容纳两个数据，而C++11标准库中定义的`tuple`可以容纳任意多个、任意类型的数据。
 
-## 4.2 tuple的用法
+## tuple的用法
 
 C++ 11标准库中的`tuple`是一个模板类，使用时需要包含头文件`<tuple>`：
 
-```
+```c++
 #include <tuple>
 
 using tuple_type = std::tuple<int, double, char>;
@@ -17,7 +17,7 @@ tuple_type t1(1, 2.0, 'a');
 
 不过我们一般都用`std::make_tuple`函数来创建一个`tuple`，使用`std::make_tuple`的好处是不需要指定`tuple`参数的类型，编译器会自己推断：
 
-```
+```c++
 #include <iostream>
 #include <tuple>
 
@@ -27,14 +27,14 @@ std::cout << typeid(t1).name() << std::endl
 
 可以使用`std::get`函数取出`tuple`中的数据：
 
-```
+```c++
 auto t = std::make_tuple(1, 2.0, 'a');
 std::cout << std::get<0>(t) << ", " << std::get<1>(t) << ", " << std::get<2>(t) << std::endl; // 1, 2.0, a
 ```
 
 C++ 11标准库中还定义了一些辅助类，方便我们取得一个`tuple`类的信息：
 
-```
+```c++
 using tuple_type = std::tuple<int, double, char>;
 
 // tuple_size: 在编译期获得tuple元素个数
@@ -46,15 +46,15 @@ cout << typeid(std::tuple_element<2, tuple_type>::type).name() << endl; // c
 
 关于`tuple`的用法就简要介绍到这里，C++ Reference上有关于[`std::tuple`](http://en.cppreference.com/w/cpp/utility/tuple)的详细介绍，感兴趣的同学可以去看看。下面我们着重讲一下`tuple`的实现原理。
 
-## 4.3 tuple的实现原理
+## tuple的实现原理
 
 如果你对`boost::tuple`有所了解的话，应该知道`boost::tuple`是使用递归嵌套实现的，这也是大多数类库--比如Loki和 MS VC--实现`tuple`的方法。而`libc++`另辟蹊径，采用了多重继承的手法实现。`libc++`的`tuple`的源代码极其复杂，大量使用了元编程技巧，如果我一行行解读这些源代码，那本章就会变成C++模板元编程入门。为了让你有继续看下去的勇气，我将`libc++ tuple`的源代码简化，实现了一个极简版`tuple`，希望能帮助你理解`tuple`的工作原理。
 
-### 4.3.1 tuple_size
+### tuple_size
 
 我们先从辅助类开始：
 
-```
+```c++
 // forward declaration
 template<class ...T> class tuple;
 
@@ -71,11 +71,11 @@ class tuple_size<tuple<T...> > : public std::integral_constant<size_t, sizeof...
 cout << tuple_size<tuple<int, double, char> >::value << endl;    // 3
 ```
 
-### 4.3.2 tuple_types
+### tuple_types
 
 下一个辅助类就是`tuple_types`：
 
-```
+```c++
 template<class ...T> struct tuple_types{};
 
 template<class T, size_t End = tuple_size<T>::value, size_t Start = 0>
@@ -96,11 +96,11 @@ struct make_tuple_types<tuple_types<T...>, End, 0> {
 这个简化版的`typle_types`并不做具体的事，就是纯粹的类型定义。需要说明的是，如果你要使用这个简化版的`tuple_types`，最好保证`End == sizeof...(T) - 1`，否则有可能编译器会报错。
 
 
-### 4.3.3 type_indices
+### type_indices
 
 下面这个有点复杂：
 
-```
+```c++
 template<size_t ...value> struct tuple_indices {};
 
 template<class IndexType, IndexType ...values>
@@ -120,36 +120,36 @@ struct make_tuple_indices {
 
 `__make_integer_seq`是LLVM编译器的一个内置的函数，它的作用--顾名思义--是在编译期生成一个序列，如果你写下这样的代码：
 
-```
+```c++
 __mkae_integer_seq<integer_sequence, size_t, 3>
 ```
 
 则编译器会将它展开成：
 
-```
+```c++
 integer_sequence<0>, integer_sequence<1>, integer_sequence<2>
 ```
 
 所以，对于下面的代码：
 
-```
+```c++
 make_tuple_indices<3>
 ```
 
 编译器最终会展开成：
 
-```
+```c++
 tuple_indices<0>, tuple_indices<1>, tuple_indices<2>
 ```
 
 这样就定义了一个`tuple`的索引。
 
 
-### 4.3.4 tuple_element
+### tuple_element
 
 最后一个辅助类是`tuple_element`：
 
-```
+```c++
 namespace indexer_detail {
     template<size_t Index, class T>
     struct indexed {
@@ -183,13 +183,13 @@ struct tuple_element<Index, tuple<T...> > {
 
 我知道上面的代码又让你头晕目眩，所以我会详细解释一下。如果你写下这样的代码：
 
-```
+```c++
 tuple_element<1, tuple<int, double, char> >::type
 ```
 
 编译器会展开成（省略那些烦人的namespace限定符后）：`tuple_pack_element<1, int, double, char>`，进而展开成
 
-```
+```c++
 decltype(
     at_index<1>(indexer<tuple_types<int, double, char>, tuple_indices<3>>{})
 )
@@ -200,11 +200,11 @@ decltype(
 看似很复杂，其实无非就是文字代换而已。
 
 
-### 4.3.5 tuple
+### tuple
 
 好了，酒水备齐了，下面上主菜：
 
-```
+```c++
 template<size_t Index, class Head>
 class tuple_leaf {
     Head value;
@@ -224,7 +224,7 @@ public:
 
 继续看：
 
-```
+```c++
 template<class Index, class ...T> struct tuple_imp;
 
 template<size_t ...Index, class ...T>
@@ -253,13 +253,13 @@ struct tuple {
 
 看到了吧，每一个`tuple`都继承自数个`tuple_leaf`。而前面说过，每个`tuple_leaf`都有索引和值，所以定义一个`tuple`所需要的信息都保存在这些`tuple_leaf`中。如果有这样的代码
 
-```
+```c++
 tuple(1, 2.0, 'a')
 ```
 
 编译器会展开成
 
-```
+```c++
 struct tuple_imp : public tuple_leaf<0, int>,       // value = 1
                    public tuple_leaf<1, double>     // value = 2.0
                    public tuple_leaf<2, char>       // value = 'a'
@@ -267,11 +267,11 @@ struct tuple_imp : public tuple_leaf<0, int>,       // value = 1
 
 是不是有种脑洞大开的感觉？
 
-### 4.3.6 make_tuple 和 get
+### make_tuple 和 get
 
 为了方便使用，标准库还定义了函数`make_tuple`和`get`
 
-```
+```c++
 // make_tuple
 
 template<class T>
@@ -299,6 +299,6 @@ inline typename tuple_element<Index, tuple<T...> >::type& get(tuple<T...>& t) {
 
 这些代码我就不解释了，留给你自己消化。
 
-## 4.4 总结
+## 总结
 
 本章展示的`tuple`只是个简化版的示例而已，要实现工业强度的`tuple`，要做的工作还很多。有兴趣的同学可以去看看`libc++`的[源代码](https://llvm.org/svn/llvm-project/libcxx/trunk/include/tuple)。
