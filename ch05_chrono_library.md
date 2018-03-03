@@ -1,6 +1,8 @@
+# std::chrono
+
 说起来有点令人难以置信，直到C++ 11之前，标准库中唯一可以处理时间的就是`<ctime>`提供的有限的几个函数，而即使这有限的几个函数还是C函数，这使得在C++中处理时间成为一件头疼的事情。不过现在情况有了很大改观，因为有了`std::chrono`。
 
-## 1. chrono简介
+## chrono简介
 
 `chrono`是一个基于模板的，面向对象的，设计优雅且功能强大的*time library*。`chrono`内部定义了三种和时间相关的类型：
 
@@ -11,11 +13,11 @@
 * **time point**：*time point*表示某个特定的时间点。
 
 
-## 1. std::duration
+## std::duration
 
 前面说过，`duration`代表了一段时间，比如2分钟，4小时等。注意我不仅指出了数量（“2”、“4”），还指出了单位（“分钟”，“小时”），也就是说一个`duration`的定义应该包括两个部分：数量和单位。我们来看`chrono`是怎样做到这一点的。
 
-```
+```c++
 // file: chrono
 
 namespace chrono {
@@ -36,7 +38,7 @@ namespace chrono {
 `duration`的声明包含两个模板参数，第一个模板参数是C++的原生数值类型，如`long`, `long long`等，代表了`duration`的数值部分。第二个模板参数`_Period`又是一个模板类`std::ratio`，它的定义如下：
 
 
-```
+```c++
 // file: ratio
 
 namespace chrono {
@@ -80,7 +82,7 @@ template<class _Rep, class _Period = ratio<1> > class duration
 
 为了方便我们使用，对常用的时间单位，标准库都已经替我们定义好了：
 
-```
+```c++
 namespace chrono {
 
     // 1nano = 1/1,000,000,000 秒
@@ -114,7 +116,7 @@ namespace chrono {
 }
 ```
 
-### 1.1 duration的用法
+### duration的用法
 
 标准委员会重写了标准库中全部和时间有关的函数，使之可以和`duration`协同工作，这使得`duration`的使用非常简单直观，举个例子：
 
@@ -145,10 +147,8 @@ Start waiting...
 Waited 2002.58 ms
 ```
 
-### 1.2 为什么你应该使用duration
+### 为什么你应该使用duration
 
 1. `duration`是轻量级的，在前面的源代码中我们已经看到了，`duration`内部仅有一个数值类型的变量，很是轻量级。至于`ratio`，因为其成员变量都是静态的，所以你不用担心系统内会有很多的`ratio`存在。
 
 2. `duration`是类型安全的。
-
-太累了写不动了，有兴趣的人自己去看源代码吧，`chrono`的源代码还是很有意思的。
