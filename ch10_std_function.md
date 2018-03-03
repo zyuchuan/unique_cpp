@@ -1,12 +1,11 @@
 # std::function
 
-## 1. std::function的用法
 
 `std::function`是一个泛化的“function wrapper”，可以保存、拷贝和调用函数，lambda表达式，`bind expression`、函数对象（functor），甚至类成员函数指针和类成员变量指针等等。
 
 `std::function`的用法非常灵活，[cppreference.com](http://en.cppreference.com/w/cpp/utility/functional/function)列出了它的八大用法：
 
-```
+```c++
 #include <functional>
 #include <iostream>
 
@@ -64,11 +63,11 @@ int main() {
 }
 ```
 
-## 2. std::function源代码分析
+## std::function源代码分析
 
 `std::function`的源代码在文件`functional`中：
 
-```
+```c++
 // file: functional
 
 // general declaration, undefined
@@ -86,7 +85,7 @@ class function<_Rp(_ArgTypes...)> {
 
 `std::function`内部有两个成员：一个可以容纳三个指针的缓冲区`__buf_`和一个`__base`类型的指针`__f_`。那这个`__base`又是啥呢？
 
-```
+```c++
 // file: functional
 
 namespace __function {
@@ -114,7 +113,7 @@ namespace __function {
 
 `__base`其实是一个接口。我们应该能猜到，`std::function`一定是把“callable object”的信息存放在一个实现了`__base`接口的对象中。我们暂且不去理会这个实现了`__base`接口的对象，回到`std::function`的声明中来：
 
-```
+```c++
 // file: functional 
 
 template<class _Rp, class ..._ArgTypes>
@@ -129,7 +128,7 @@ class function<_Rp(_ArgTypes...)> {
 
 `std::function`的构造函数是个模板函数，它的第二个模板参数有个默认值`_EnableIfCallable<_Fp>`，这个参数很重要，它决定了什么样的数据可以用于构造一个`std::function`：
 
-```
+```c++
 // file: functional
 
 template<class _Rp, class ..._ArgTypes>
@@ -138,7 +137,7 @@ class function<_Rp(_ArgTypes...)> {
     // ...
 
     template<class _Fp, bool = __lazy_and<
-        integral_constant<bool, !is_same<__uncvref_t<_Fp>, function>::value>, __invokable<_Fp&, _ArgTypes...>
+        integral_constant<bool, !is_same<__uncvref_t<_Fp>, function>::value>, __invokable<_Fp&, _ArgTypes...>
     >::value>
     struct __callable;
 
@@ -160,15 +159,15 @@ class function<_Rp(_ArgTypes...)> {
 };
 ```
 
-简单来说，一个`callable object`必须：
+简单来说，一个`callable object`必须：
 
-1. 不能是`std::function`自身；
+1. 不能是`std::function`自身；
 2. 可以被“invoke”（好像是废话）；
-3. 返回类型是`void`或者可以转换成类型`_Rp`。
+3. 返回类型是`void`或者可以转换成类型`_Rp`。
 
-知道了什么是`callable object`，我们再来看如何通过这个`callable object`构造一个`function`对象：
+知道了什么是`callable object`，我们再来看如何通过这个`callable object`构造一个`function`对象：
 
-```
+```c++
 // file: functional
 
 template<class _Rp, class ..._ArgTypes>
@@ -207,10 +206,10 @@ class __func<_Fp, _Alloc, _Rp(_ArgTypes...)> : public __base<_Rp(_ArgTypes...)> 
 }
 ```
 
-真正的主角终于登场了，那就是`__function::__func`，这个类实现了`__base`接口，而且有一个成员变量`__f_`，类型为`__compressed_pair<_Fp, _Alloc>`。需要说明的是：
+真正的主角终于登场了，那就是`__function::__func`，这个类实现了`__base`接口，而且有一个成员变量`__f_`，类型为`__compressed_pair<_Fp, _Alloc>`。需要说明的是：
 
  1. `__function::__func`的定义中出现了一个模板参数`_Alloc`，这是个`allocator`。C++标准对这个`allocator`并没有做出详细的说明，这导致了不同的标准库实现在使用这个`allocator`使出现了一些混乱，标准委员会已经决定将`_Alloc`移出C++17，所以你可以忽略这个参数。
 
 2. `__compressed_pair`是个优化了内部存储的`pair`，功能和`std::pair`完全相同。
 
-理解上面两点，上面代码的意思就很清楚了：如果缓冲区`__buf_`可以容纳`__function::__func`，则通过`placement new`在`__buf`里，用参数`__f_`构造出一个`__function::__func`，并且让`__f_`指向`__buf`；否则就新开辟一块内存，构造出`__function::__func`，再让`__f_`指向新开辟的内存。
+理解上面两点，上面代码的意思就很清楚了：如果缓冲区`__buf_`可以容纳`__function::__func`，则通过`placement new`在`__buf`里，用参数`__f_`构造出一个`__function::__func`，并且让`__f_`指向`__buf`；否则就新开辟一块内存，构造出`__function::__func`，再让`__f_`指向新开辟的内存。
