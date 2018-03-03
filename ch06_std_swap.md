@@ -8,11 +8,11 @@
 
 要回答这两个问题，就要从`std::swap`的实现说起。
 
-## 1. std::swap()的实现
+## std::swap()的实现
 
 libc++中，`swap()`定义在文件“type_traits”中：
 
-```
+```c++
 // file: type_traits
 
 template<class T>
@@ -37,7 +37,7 @@ swap(T& x, T& y) noexcept(
 
 虽然标准并没有强制规定`swap()`不能抛出异常，但是实际使用中，我们都要确保`swap()`不抛出异常，这是为什么呢？要回答这个问题，就要从**C++异常安全保证**说起。
 
-## 2. 异常安全保证
+## 异常安全保证
 
 维基百科对[异常安全保证](https://en.wikipedia.org/wiki/Exception_safety)（Exception Safety Guarantees）的解释是“***类的设计者和使用者在使用任何一门程序设计语言，特别是C++时可以遵守的一系列异常处理准则***”。
 
@@ -51,7 +51,7 @@ swap(T& x, T& y) noexcept(
 
 **不抛出异常保证**还比较好理解，不过另外两个**保证**可能会让你有点摸不着头脑，下面我就举个例子来说明。假设你要实现一个`list`数据结构，你打算用一系列相互连接的节点来实现这个`list`：
 
-```
+```c++
 template<typename T>
 class list {
 private:
@@ -78,7 +78,7 @@ public:
 
 因为查询`list`的长度是一个常用的操作，所以你将`list`的长度保存在`_length`中。同时，`list`还应该支持从头部插入新元素：
 
-```
+```c++
 template<typename T>
 void list<T>::insert(T&& val) {
     ++_length;
@@ -91,13 +91,13 @@ void list<T>::insert(T&& val) {
 
 现在设想一下，如果`insert`函数抛出了异常会发生什么？要弄清楚问题的答案，首先要弄清楚哪行代码会抛出异常。很显然，在`insert`函数中，最有可能、或者说唯一有可能抛出异常的代码是
 
-```
+```c++
 node<T>* n = new node<T>(std::forward<T>(val));
 ```
 
 假如这行代码抛出异常，因为`insert`并没有捕捉异常，所以异常会向上传播，达到`insert`的调用者，进一步假设`insert`的调用者捕捉到了这个异常，并决定忽略这个错误，就像这样：
 
-```
+```c++
 void insert_and_print(const list &l) {
     try {
         l.insert(1);
@@ -115,19 +115,19 @@ insert_and_print(l);
 
 如果`l.insert(1)`失败，你可能认为上面的代码会输出
 
-```
+```c++
 There are 0 element(s) in list
 ```
 
 **错！大错特错！**这才是你会看到的：
 
-```
+```c++
 There are 1 element(s) in list
 ```
 
 我们再来看一下`insert()`的代码：
 
-```
+```c++
 template<typename T>
 void list<T>::insert(T&& val) {
     ++_length;
@@ -144,7 +144,7 @@ void list<T>::insert(T&& val) {
 
 通常来说，基本异常安全保证并不是我们追求的目标，因为基本异常安全保证只保证不泄露资源，并不保证程序总是处于合法的状态，所以我们总希望提供强烈安全保证。你可能觉得这很难，其实并非如此，我们把`list::insert`方法稍做改动：
 
-```
+```c++
 template<typename T>
 void list<T>::insert(T&& val) {    
     node<T>* n = new node<T>(std::forward<T>(val));
@@ -160,13 +160,13 @@ void list<T>::insert(T&& val) {
 
 扯了这么多，你可能已经不耐烦了：“这TMD和`swap`有什么关系？”
 
-## 3. std::swap和异常安全保证
+## std::swap和异常安全保证
 
 如果你有一个管理资源的类，比如智能指针，那么一个不抛出异常的`swap()`将会非常有用。对于管理资源的类，你通常都需要定义析构函数、拷贝构造函数，拷贝赋值函数、移动构造函数和移动赋值操作。有了`swap()`，拷贝赋值函数和移动构造函数将会变得很简单，而且提供强烈异常安全保证。
 
 假如你有一个类`ResourceManager`，你可以这样实现上面
 
-```
+```c++
 class ResourceManager {
     // ....
 public:
@@ -192,11 +192,11 @@ public:
 
 现在我们知道了为什么一个不抛出异常的`swap()`很重要，但是还有一个重要的问题：如何才能让`swap()`能够高效地作用于我们自定义的类？
 
-## 4. 实现你自己的swap()
+## 实现你自己的swap()
 
 前面我们已经看到了`std::swap()`的源代码，三行简单的代码居然调用了一次拷贝构造函数，两次拷贝赋值函数，很多时候这样的行为都包含着资源的分配和释放，而资源的分配和释放是非常低效率的，这对于为效率而生的C++而言是不可接受的，这就是为什么标准库中的几乎每个类都重载了`swap()`的原因。如果你有一个管理资源的类，你几乎总是需要重载`swap()`，那该怎样做呢？很简单，定义两个`swap()`：一个类成员`swap`和一个重载的`std::swap`：
 
-```
+```c++
 class ResourceManager {
     // ...
     
